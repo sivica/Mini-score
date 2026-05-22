@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path android:pathData="M0,0h108v108h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:endX="108"
+                android:endY="108"
+                android:startX="0"
+                android:startY="0"
+                android:type="linear">
+                <item
+                    android:color="#02141C"
+                    android:offset="0.0" />
+                <item
+                    android:color="#0A2D3C"
+                    android:offset="0.5" />
+                <item
+                    android:color="#051D28"
+                    android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Premium Sports technical alignment grids -->
+    <path
+        android:pathData="M54,0L54,108M0,54L108,54"
+        android:strokeColor="#1F3F4D"
+        android:strokeWidth="0.5" />
+</vector>

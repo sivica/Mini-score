@@ -1,0 +1,6 @@
+{
+  "name": "NBA Today",
+  "description": "Live NBA game scores and real-time player rating analysis matching the Flashscore layout, with live simulation and AI-powered coach reviews.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
