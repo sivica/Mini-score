@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Expressive NBA Box Score</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="header-title">NBA Box Score</h1>
+            <p class="header-subtitle">Live Game Statistics</p>
+        </header>
+
+        <!-- Game Container -->
+        <main class="game-container">
+            <!-- Home Team -->
+            <section class="team-section team-home" id="homeTeam">
+                <div class="team-header">
+                    <div class="team-logo-wrapper">
+                        <img src="https://via.placeholder.com/80?text=LAL" alt="Home Team Logo" class="team-logo">
+                    </div>
+                    <div class="team-info">
+                        <h2 class="team-name">Los Angeles Lakers</h2>
+                        <p class="team-record">22-8</p>
+                    </div>
+                    <div class="team-score-display">
+                        <span class="team-total-score" id="homeScore">118</span>
+                    </div>
+                </div>
+
+                <div class="stats-header">
+                    <div class="stat-col stat-player">Player</div>
+                    <div class="stat-col stat-pts">PTS</div>
+                    <div class="stat-col stat-reb">REB</div>
+                    <div class="stat-col stat-ast">AST</div>
+                    <div class="stat-col stat-fg">FG%</div>
+                </div>
+
+                <div class="players-list" id="homePlayers"></div>
+            </section>
+
+            <!-- Away Team -->
+            <section class="team-section team-away" id="awayTeam">
+                <div class="team-header">
+                    <div class="team-logo-wrapper">
+                        <img src="https://via.placeholder.com/80?text=BOS" alt="Away Team Logo" class="team-logo">
+                    </div>
+                    <div class="team-info">
+                        <h2 class="team-name">Boston Celtics</h2>
+                        <p class="team-record">24-6</p>
+                    </div>
+                    <div class="team-score-display">
+                        <span class="team-total-score" id="awayScore">124</span>
+                    </div>
+                </div>
+
+                <div class="stats-header">
+                    <div class="stat-col stat-player">Player</div>
+                    <div class="stat-col stat-pts">PTS</div>
+                    <div class="stat-col stat-reb">REB</div>
+                    <div class="stat-col stat-ast">AST</div>
+                    <div class="stat-col stat-fg">FG%</div>
+                </div>
+
+                <div class="players-list" id="awayPlayers"></div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">Last updated: <span id="lastUpdated">Just now</span></p>
+        </footer>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
