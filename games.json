@@ -1,7 +1,636 @@
 {
   "schemaVersion": 1,
-  "defaultGameId": "0012600034",
+  "defaultGameId": "0012600012",
   "games": [
+    {
+      "id": "0012600012",
+      "date": "2026-10-09",
+      "competition": "NBA Preseason",
+      "status": "FINISHED",
+      "venue": "Venetian Arena, Macao, China",
+      "tipoffUTC": "2026-10-09T12:00:00Z",
+      "sources": [
+        "https://www.nba.com/game/hou-vs-dal-0012600012/box-score"
+      ],
+      "away": {
+        "code": "HOU",
+        "name": "Houston Rockets",
+        "shortName": "Rockets",
+        "primaryColor": "#CE1141",
+        "secondaryColor": "#C4CED4",
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/hou.png",
+        "score": 135,
+        "quarters": [
+          27,
+          38,
+          34,
+          36
+        ],
+        "players": [
+          {
+            "id": "nba_1631095",
+            "name": "Jabari Smith Jr.",
+            "number": "10",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631095.png",
+            "stats": {
+              "points": 12,
+              "rebounds": 4,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 4,
+              "fgAttempted": 8,
+              "minutes": 21,
+              "seconds": 56
+            }
+          },
+          {
+            "id": "nba_201142",
+            "name": "Kevin Durant",
+            "number": "7",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/201142.png",
+            "stats": {
+              "points": 15,
+              "rebounds": 0,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 7,
+              "fgAttempted": 12,
+              "minutes": 23,
+              "seconds": 12
+            }
+          },
+          {
+            "id": "nba_1630578",
+            "name": "Alperen Sengun",
+            "number": "28",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630578.png",
+            "stats": {
+              "points": 16,
+              "rebounds": 10,
+              "assists": 10,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 6,
+              "fgAttempted": 9,
+              "minutes": 21,
+              "seconds": 47
+            }
+          },
+          {
+            "id": "nba_1641708",
+            "name": "Amen Thompson",
+            "number": "1",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641708.png",
+            "stats": {
+              "points": 8,
+              "rebounds": 7,
+              "assists": 2,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 6,
+              "fgMade": 4,
+              "fgAttempted": 8,
+              "minutes": 23,
+              "seconds": 51
+            }
+          },
+          {
+            "id": "nba_1627832",
+            "name": "Fred VanVleet",
+            "number": "5",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1627832.png",
+            "stats": {
+              "points": 17,
+              "rebounds": 2,
+              "assists": 7,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 5,
+              "fgAttempted": 12,
+              "minutes": 24,
+              "seconds": 23
+            }
+          },
+          {
+            "id": "nba_1631106",
+            "name": "Tari Eason",
+            "number": "17",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631106.png",
+            "stats": {
+              "points": 20,
+              "rebounds": 9,
+              "assists": 2,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 6,
+              "fgAttempted": 10,
+              "minutes": 23,
+              "seconds": 56
+            }
+          },
+          {
+            "id": "nba_203500",
+            "name": "Steven Adams",
+            "number": "12",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203500.png",
+            "stats": {
+              "points": 2,
+              "rebounds": 3,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 14,
+              "seconds": 13
+            }
+          },
+          {
+            "id": "nba_1642263",
+            "name": "Reed Sheppard",
+            "number": "15",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642263.png",
+            "stats": {
+              "points": 16,
+              "rebounds": 1,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 6,
+              "fgAttempted": 10,
+              "minutes": 18,
+              "seconds": 41
+            }
+          },
+          {
+            "id": "nba_203992",
+            "name": "Bogdan Bogdanović",
+            "number": "31",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203992.png",
+            "stats": {
+              "points": 4,
+              "rebounds": 2,
+              "assists": 4,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 4,
+              "minutes": 15,
+              "seconds": 35
+            }
+          },
+          {
+            "id": "nba_1642384",
+            "name": "Isaiah Crawford",
+            "number": "27",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642384.png",
+            "stats": {
+              "points": 4,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 11,
+              "seconds": 51
+            }
+          },
+          {
+            "id": "nba_1631131",
+            "name": "Oscar Tshiebwe",
+            "number": "34",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631131.png",
+            "stats": {
+              "points": 5,
+              "rebounds": 3,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 2,
+              "fgAttempted": 2,
+              "minutes": 12,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "nba_1643570",
+            "name": "Bruce Thornton",
+            "number": "2",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643570.png",
+            "stats": {
+              "points": 13,
+              "rebounds": 0,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 2,
+              "fgMade": 4,
+              "fgAttempted": 6,
+              "minutes": 8,
+              "seconds": 56
+            }
+          },
+          {
+            "id": "nba_1643595",
+            "name": "Quadir Copeland",
+            "number": "—",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643595.png",
+            "stats": {
+              "points": 3,
+              "rebounds": 1,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 0,
+              "fgAttempted": 0,
+              "minutes": 8,
+              "seconds": 56
+            }
+          },
+          {
+            "id": "nba_1641763",
+            "name": "Julian Phillips",
+            "number": "4",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641763.png",
+            "stats": {
+              "points": 0,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 0,
+              "minutes": 6,
+              "seconds": 44
+            }
+          },
+          {
+            "id": "nba_1642951",
+            "name": "Sean Pedulla",
+            "number": "—",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642951.png",
+            "stats": {
+              "points": 0,
+              "rebounds": 0,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 1,
+              "minutes": 3,
+              "seconds": 59
+            }
+          }
+        ]
+      },
+      "home": {
+        "code": "DAL",
+        "name": "Dallas Mavericks",
+        "shortName": "Mavericks",
+        "primaryColor": "#00538C",
+        "secondaryColor": "#B8C4CA",
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/dal.png",
+        "score": 117,
+        "quarters": [
+          19,
+          26,
+          35,
+          37
+        ],
+        "players": [
+          {
+            "id": "nba_1642843",
+            "name": "Cooper Flagg",
+            "number": "32",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642843.png",
+            "stats": {
+              "points": 19,
+              "rebounds": 6,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 2,
+              "fgMade": 7,
+              "fgAttempted": 14,
+              "minutes": 19,
+              "seconds": 2
+            }
+          },
+          {
+            "id": "nba_1642258",
+            "name": "Zaccharie Risacher",
+            "number": "10",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642258.png",
+            "stats": {
+              "points": 9,
+              "rebounds": 8,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 9,
+              "minutes": 23,
+              "seconds": 40
+            }
+          },
+          {
+            "id": "nba_1643516",
+            "name": "Morez Johnson Jr.",
+            "number": "14",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643516.png",
+            "stats": {
+              "points": 4,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 12,
+              "seconds": 14
+            }
+          },
+          {
+            "id": "nba_1631108",
+            "name": "Max Christie",
+            "number": "0",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1631108.png",
+            "stats": {
+              "points": 14,
+              "rebounds": 2,
+              "assists": 2,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 5,
+              "fgAttempted": 12,
+              "minutes": 24,
+              "seconds": 10
+            }
+          },
+          {
+            "id": "nba_1630230",
+            "name": "Naji Marshall",
+            "number": "3",
+            "starter": true,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630230.png",
+            "stats": {
+              "points": 16,
+              "rebounds": 2,
+              "assists": 3,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 7,
+              "fgAttempted": 14,
+              "minutes": 24,
+              "seconds": 9
+            }
+          },
+          {
+            "id": "nba_1643547",
+            "name": "Sergio de Larrea",
+            "number": "55",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643547.png",
+            "stats": {
+              "points": 11,
+              "rebounds": 2,
+              "assists": 6,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 4,
+              "fgMade": 4,
+              "fgAttempted": 6,
+              "minutes": 24,
+              "seconds": 12
+            }
+          },
+          {
+            "id": "nba_1629655",
+            "name": "Daniel Gafford",
+            "number": "21",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1629655.png",
+            "stats": {
+              "points": 7,
+              "rebounds": 3,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 4,
+              "minutes": 8,
+              "seconds": 22
+            }
+          },
+          {
+            "id": "nba_1641844",
+            "name": "Tarik Biberovic",
+            "number": "—",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641844.png",
+            "stats": {
+              "points": 9,
+              "rebounds": 3,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 9,
+              "minutes": 18,
+              "seconds": 31
+            }
+          },
+          {
+            "id": "nba_1641754",
+            "name": "Seth Lundy",
+            "number": "31",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641754.png",
+            "stats": {
+              "points": 3,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 4,
+              "minutes": 13,
+              "seconds": 38
+            }
+          },
+          {
+            "id": "nba_1643588",
+            "name": "Tobi Lawal",
+            "number": "33",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1643588.png",
+            "stats": {
+              "points": 13,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 5,
+              "fgAttempted": 6,
+              "minutes": 15,
+              "seconds": 9
+            }
+          },
+          {
+            "id": "nba_1641724",
+            "name": "Jett Howard",
+            "number": "9",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1641724.png",
+            "stats": {
+              "points": 8,
+              "rebounds": 1,
+              "assists": 3,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 6,
+              "minutes": 15,
+              "seconds": 50
+            }
+          },
+          {
+            "id": "nba_203939",
+            "name": "Dwight Powell",
+            "number": "7",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/203939.png",
+            "stats": {
+              "points": 1,
+              "rebounds": 1,
+              "assists": 8,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 0,
+              "fgAttempted": 1,
+              "minutes": 13,
+              "seconds": 24
+            }
+          },
+          {
+            "id": "nba_1642967",
+            "name": "John Poulakidas",
+            "number": "1",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1642967.png",
+            "stats": {
+              "points": 3,
+              "rebounds": 0,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 13,
+              "seconds": 39
+            }
+          },
+          {
+            "id": "nba_1630619",
+            "name": "Moussa Cisse",
+            "number": "30",
+            "starter": false,
+            "portraitUrl": "https://cdn.nba.com/headshots/nba/latest/260x190/1630619.png",
+            "stats": {
+              "points": 0,
+              "rebounds": 6,
+              "assists": 3,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 0,
+              "fgAttempted": 3,
+              "minutes": 14,
+              "seconds": 0
+            }
+          }
+        ]
+      }
+    },
+    {
+      "id": "0012600037",
+      "date": "2026-10-09",
+      "competition": "NBA Preseason · 8:00 PM ET",
+      "status": "SCHEDULED",
+      "venue": "United Center, Chicago, IL",
+      "tipoffUTC": "2026-10-10T00:00:00Z",
+      "sources": [
+        "https://www.nba.com/game/mem-vs-chi-0012600037"
+      ],
+      "away": {
+        "code": "MEM",
+        "name": "Memphis Grizzlies",
+        "shortName": "Grizzlies",
+        "primaryColor": "#5D76A9",
+        "secondaryColor": "#12173F",
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/mem.png",
+        "score": 0,
+        "quarters": [],
+        "players": []
+      },
+      "home": {
+        "code": "CHI",
+        "name": "Chicago Bulls",
+        "shortName": "Bulls",
+        "primaryColor": "#CE1141",
+        "secondaryColor": "#000000",
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/chi.png",
+        "score": 0,
+        "quarters": [],
+        "players": []
+      }
+    },
     {
       "id": "0012600034",
       "date": "2026-10-08",
@@ -615,5 +1244,6 @@
         ]
       }
     }
-  ]
+  ],
+  "updatedAt": "2026-10-09T22:08:24Z"
 }
