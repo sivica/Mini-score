@@ -12,6 +12,10 @@ The screen and Android launcher share a lavender **m** mark and the **Miniscore*
 
 The scoreboard uses compact team names/logos and mirrored scores in the center. Both teams' players remain side by side at normal text sizes, with circular portraits and a `PTS / REB / AST / FGM / FGA` labels row above the values. Player names and values use 14sp; labels and metadata use 12sp. At font scales of 150% or greater, player cards stack vertically and grow with the text. Main screen text colors have contrast above 4.5:1 against their surfaces. Tap a player for steals, blocks, turnovers and exact minutes; tap the header arrow for quarter scores. Scheduled games emphasize **Game hasn’t started** and their Eastern tipoff time. The promotion is a small muted footer below other games.
 
+## Play Store distribution
+
+A signed AAB and a manual, approval-gated GitHub workflow support Play **Internal testing**. See the [release setup guide](docs/play-store.md) for the first Console upload, signing secrets, version codes and subsequent releases.
+
 ## Initial published game
 
 Philadelphia 76ers at Brooklyn Nets, October 8, 2026, Barclays Center: **PHI 108, BKN 114 (Final)**. All 30 participating players are included. Player ratings are unavailable. Quarter scores: PHI **33 / 25 / 23 / 27**, BKN **33 / 23 / 37 / 21**. Player rebounds and turnovers exclude team-only events.

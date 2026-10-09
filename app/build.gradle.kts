@@ -14,8 +14,8 @@ android {
     applicationId = "com.aistudio.nbatracker.qfzwpm"
     minSdk = 24
     targetSdk = 36
-    versionCode = 7
-    versionName = "1.5.1"
+    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 7
+    versionName = providers.gradleProperty("versionName").orNull ?: "1.5.1"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -25,7 +25,7 @@ android {
       val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
       storeFile = file(keystorePath)
       storePassword = System.getenv("STORE_PASSWORD")
-      keyAlias = "upload"
+      keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
       keyPassword = System.getenv("KEY_PASSWORD")
     }
     create("debugConfig") {

@@ -16,3 +16,7 @@
 local.properties
 .env
 debug.keystore
+.play-release/
+*.jks
+*.keystore
+service-account*.json
