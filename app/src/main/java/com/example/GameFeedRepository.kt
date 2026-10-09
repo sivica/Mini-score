@@ -7,7 +7,6 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
-import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.text.SimpleDateFormat
@@ -24,7 +23,7 @@ object GameFeedCodec {
     fun decode(json: String): GameFeed {
         require(json.toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "Feed too large" }
         val root = JSONObject(json)
-        require(root.getInt("schemaVersion") == 1) { "Unsupported feed version" }
+        require(root.stat("schemaVersion", 1) == 1) { "Unsupported feed version" }
         val entries = root.getJSONArray("games")
         require(entries.length() in 1..100) { "Expected 1–100 games" }
         val games = (0 until entries.length()).map { game(entries.getJSONObject(it)) }
@@ -110,15 +109,19 @@ object GameFeedCodec {
     }
 
     private fun quarters(json: JSONObject): List<Int> {
-        val array = json.optJSONArray("quarters") ?: JSONArray()
+        if (!json.has("quarters")) return emptyList()
+        val array = json.getJSONArray("quarters")
         require(array.length() <= 15) { "Too many periods" }
-        return (0 until array.length()).map { array.getInt(it).also { v -> require(v in 0..100) } }
+        return (0 until array.length()).map { strictInteger(array.get(it), "quarters[$it]", 100) }
     }
 
-    private fun JSONObject.stat(key: String, max: Int): Int {
-        val raw = get(key)
-        require(raw is Number && raw.toDouble() == raw.toInt().toDouble()) { "$key must be an integer" }
-        return raw.toInt().also { require(it in 0..max) { "Invalid $key" } }
+    private fun JSONObject.stat(key: String, max: Int): Int = strictInteger(get(key), key, max)
+
+    private fun strictInteger(raw: Any, field: String, max: Int): Int {
+        require(raw is Int || raw is Long) { "$field must be a JSON integer" }
+        val value = (raw as Number).toLong()
+        require(value in 0..max.toLong()) { "Invalid $field" }
+        return value.toInt()
     }
 
     private fun JSONObject.text(key: String): String = getString(key).trim().also {

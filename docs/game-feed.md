@@ -1,6 +1,6 @@
 # Update Miniscore games without rebuilding the APK
 
-Install **Miniscore 1.5 once**. Its date, games, scores, rosters and player stats then come from a public GitHub JSON feed (existing 1.3 installations also support feed updates):
+Install **Miniscore 1.5.1 once**. Its date, games, scores, rosters and player stats then come from a public GitHub JSON feed (existing 1.3 installations also support feed updates):
 
 - [Edit the live games.json](https://github.com/sivica/Mini-score/edit/game-data/games.json)
 - [View the live feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json)
@@ -24,6 +24,8 @@ You can also ask Codex to update this file with a sourced game, or use GitHub De
 Each game requires `id`, `date`, `competition`, `status`, `away` and `home`. `venue`, `tipoffUTC` (UTC timestamp in `YYYY-MM-DDTHH:mm:ssZ` format), and a `sources` list are optional. Supported statuses: `SCHEDULED`, `LIVE`, `FINISHED`, `POSTPONED`, `CANCELLED`. Missing or unreadable tipoff times show **Scheduled**. The date remains the declared NBA game date regardless of the phone's timezone.
 
 Each team requires `code` (2–4 uppercase letters), `name`, `score`, and `players`. Optional fields: `shortName`, `primaryColor`, `secondaryColor` (`#RRGGBB`), `logoUrl`, and `quarters` (array of period scores). Both quarter arrays must have the same length. Scores remain away on the left, home on the right.
+
+Use JSON integer literals for `schemaVersion`, scores, quarter scores and player stats: `12`, not `"12"`, `12.0` or `12e0`. Quarter scores must be between 0 and 100. Omitted `quarters` and empty arrays are valid; a present `quarters` field must be an array, including for scheduled games. Strings, objects, booleans and `null` are rejected. A rejected publication leaves the existing cache unchanged.
 
 Each player requires a stable unique `id`, `name`, `number` (string), `starter` (boolean), and a `stats` object with all these integer fields:
 

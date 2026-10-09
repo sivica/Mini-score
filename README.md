@@ -4,7 +4,7 @@ A high-fidelity, mobile-first web interface for presenting basketball statistics
 
 ## Android: remotely updated games
 
-**Miniscore 1.5** loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
+**Miniscore 1.5.1** loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
 
 The app refreshes on opening/resuming, from the header refresh button, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The scoreboard date comes from the selected game's date. The feed is manually maintained; daily sports-API automation is not configured.
 

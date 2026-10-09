@@ -8,6 +8,7 @@ import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
 import org.json.JSONObject
+import org.json.JSONArray
 import org.junit.Assert.*
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -98,6 +99,70 @@ class GameFeedTest {
             cache.writeText("corrupt")
             assertNull(repository.cachedFeed())
         } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun invalidIntegersAndQuarterArraysCannotReplaceSavedGames() = runBlocking {
+        val valid = fixture()
+        val invalid = mutableListOf<Pair<String, String>>()
+        for (value in listOf("1.5", "1.0", "1e0", "\"1\"", "true", "null", "4294967297")) {
+            invalid += "schemaVersion=$value" to valid.replaceFirst(
+                Regex("\"schemaVersion\"\\s*:\\s*1"), "\"schemaVersion\":$value"
+            )
+        }
+        for (side in listOf("away", "home")) {
+            for (value in listOf(2.5, "2", true, JSONObject.NULL, -1, 101, 4294967298L)) {
+                val root = JSONObject(valid)
+                root.getJSONArray("games").getJSONObject(0).getJSONObject(side)
+                    .getJSONArray("quarters").put(0, value)
+                invalid += "$side quarter=$value" to root.toString()
+            }
+        }
+        // Change both teams so the old parser cannot reject these merely for mismatched period counts.
+        for (value in listOf("[]", JSONObject(), 4, true, JSONObject.NULL)) {
+            val root = JSONObject(valid)
+            val game = root.getJSONArray("games").getJSONObject(0)
+            game.getJSONObject("away").put("quarters", value)
+            game.getJSONObject("home").put("quarters", value)
+            invalid += "quarters container=$value" to root.toString()
+        }
+        val decimalQuarter = JSONObject(valid)
+        decimalQuarter.getJSONArray("games").getJSONObject(0).getJSONObject("away")
+            .getJSONArray("quarters").put(0, "DECIMAL_QUARTER")
+        invalid += "whole-number decimal quarter" to decimalQuarter.toString().replace("\"DECIMAL_QUARTER\"", "2.0")
+
+        val directory = java.nio.file.Files.createTempDirectory("miniscore-strict-feed-test").toFile()
+        try {
+            val cache = File(directory, "games.json")
+            val expected = GameFeedRepository(cache) { valid }.refresh()
+            val saved = cache.readBytes()
+            for ((description, publication) in invalid) {
+                var rejected = false
+                try { GameFeedRepository(cache) { publication }.refresh() }
+                catch (_: Exception) { rejected = true }
+                assertTrue("Reject $description", rejected)
+                assertArrayEquals("Keep exact cache bytes after $description", saved, cache.readBytes())
+                assertEquals("Reload saved games after $description", expected, GameFeedRepository(cache).cachedFeed())
+            }
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun omittedAndEmptyQuarterArraysRemainValid() = runBlocking {
+        for (omit in listOf(true, false)) {
+            val root = JSONObject(fixture())
+            val game = root.getJSONArray("games").getJSONObject(0)
+            for (side in listOf("away", "home")) {
+                if (omit) game.getJSONObject(side).remove("quarters")
+                else game.getJSONObject(side).put("quarters", JSONArray())
+            }
+            val directory = java.nio.file.Files.createTempDirectory("miniscore-empty-quarters-test").toFile()
+            try {
+                val repository = GameFeedRepository(File(directory, "games.json")) { root.toString() }
+                val feed = repository.refresh()
+                assertTrue(feed.games.single().awayQuarters.isEmpty())
+                assertTrue(feed.games.single().homeQuarters.isEmpty())
+                assertEquals(feed, repository.cachedFeed())
+            } finally { directory.deleteRecursively() }
+        }
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
