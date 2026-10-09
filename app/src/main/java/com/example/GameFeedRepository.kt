@@ -68,6 +68,7 @@ object GameFeedCodec {
             substitutesAway = awayPlayers.filterNot { it.isStarting }, substitutesHome = homePlayers.filterNot { it.isStarting },
             contextLabel = json.text("competition"), dateLabel = label, gameDate = date,
             venue = json.optionalText("venue"), awayQuarters = awayQuarters, homeQuarters = homeQuarters,
+            tipoffUtc = json.optionalText("tipoffUTC"),
             minutesLeft = 0
         )
     }

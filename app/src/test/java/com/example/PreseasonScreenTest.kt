@@ -3,6 +3,7 @@ package com.example
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.assertHeightIsEqualTo
+import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
@@ -38,7 +39,7 @@ class PreseasonScreenTest {
             MyApplicationTheme { MainNbaScreen(viewModel = viewModel) }
         }
         composeTestRule.onNodeWithText("NBA Preseason").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Thursday, October 8, 2026").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("selected_game_date", useUnmergedTree = true).assertTextEquals("Thu, Oct 8 · Final").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("108").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_score_BKN").assertTextEquals("114").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_logo_PHI").assertIsDisplayed()
@@ -63,23 +64,29 @@ class PreseasonScreenTest {
     @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
     fun selectorSwitchesGameAndScheduledScoresDoNotPretendToBeResults() {
         val model = GameViewModel()
+        val scheduled = PreseasonGameData.createGame().copy(id = "scheduled-test", status = "SCHEDULED",
+            startingAway = emptyList(), startingHome = emptyList(), substitutesAway = emptyList(), substitutesHome = emptyList(),
+            gameDate = "2026-10-10", dateLabel = "Saturday, October 10, 2026", awayQuarters = emptyList(), homeQuarters = emptyList())
+        model.applyFeed(GameFeed(PreseasonGameData.GAME_ID, listOf(PreseasonGameData.createGame(), scheduled)))
         composeTestRule.setContent { MyApplicationTheme { MainNbaScreen(model) } }
         composeTestRule.onNodeWithTag("game_selector").performClick()
-        composeTestRule.onNodeWithTag("select_game_nyk_cle").performClick()
-        composeTestRule.onNodeWithTag("team_score_NYK").assertTextEquals("109")
-        composeTestRule.onNodeWithText("Demo games").assertIsDisplayed()
-        composeTestRule.runOnIdle {
-            val game = PreseasonGameData.createGame().copy(id = "scheduled-test", status = "SCHEDULED",
-                startingAway = emptyList(), startingHome = emptyList(), substitutesAway = emptyList(), substitutesHome = emptyList(),
-                dateLabel = "Saturday, October 10, 2026", awayQuarters = emptyList(), homeQuarters = emptyList())
-            model.applyFeed(GameFeed(game.id, listOf(game)))
-            model.selectGame(game.id)
-        }
+        composeTestRule.onNodeWithText("Choose game").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Thursday, October 8").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertIsSelected()
+        composeTestRule.onNodeWithTag("select_game_nyk_cle").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("select_game_lal_gsw").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("select_game_bos_mia").assertDoesNotExist()
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/game-selector-sheet.png")
+        composeTestRule.onNodeWithTag("select_game_scheduled-test").performClick()
+        composeTestRule.onNodeWithTag("game_picker_sheet").assertDoesNotExist()
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("—")
         composeTestRule.onNodeWithTag("team_score_BKN").assertTextEquals("—")
-        composeTestRule.onNodeWithText("Saturday, October 10, 2026").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("selected_game_date", useUnmergedTree = true).assertTextEquals("Sat, Oct 10 · Scheduled").assertIsDisplayed()
         composeTestRule.onNodeWithText("Player stats will appear when available.").assertIsDisplayed()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/scheduled-game.png")
+        composeTestRule.onNodeWithTag("game_selector").performClick()
+        composeTestRule.onNodeWithTag("close_game_selector").performClick()
+        composeTestRule.onNodeWithTag("game_picker_sheet").assertDoesNotExist()
     }
 
     @Test

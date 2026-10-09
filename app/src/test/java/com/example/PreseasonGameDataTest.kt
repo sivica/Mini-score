@@ -38,7 +38,7 @@ class PreseasonGameDataTest {
         val viewModel = GameViewModel()
         assertEquals(PreseasonGameData.GAME_ID, viewModel.selectedGameId.value)
         assertEquals(PreseasonGameData.GAME_ID, viewModel.games.first().id)
-        viewModel.toggleSimulation(PreseasonGameData.GAME_ID)
+        assertEquals(1, viewModel.games.size)
         val game = viewModel.games.single { it.id == PreseasonGameData.GAME_ID }
         assertEquals("FINISHED", game.status)
         assertFalse(game.isSimulating)

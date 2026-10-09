@@ -23,7 +23,7 @@ class GreetingScreenshotTest {
   fun greeting_screenshot() {
     composeTestRule.setContent { 
       MyApplicationTheme { 
-        ScoreboardHeaderPanel(game = MockData.createNykCleGame()) 
+        ScoreboardHeaderPanel(game = PreseasonGameData.createGame())
       } 
     }
 

@@ -31,6 +31,7 @@ val ElegantAccentBg2 = Color(0xFFE8DEF8)
 val ElegantAccentText2 = Color(0xFF1D192B)
 val ElegantCirclePurple = Color(0xFF381E72)
 val ElegantBorderColor = Color(0xFF49454F)
+val ElegantSelectedBg = Color(0xFF33293F)
 
 // Retro Theme Colors fallback
 val Purple80 = Color(0xFFD0BCFF)

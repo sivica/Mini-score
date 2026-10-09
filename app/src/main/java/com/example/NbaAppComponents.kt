@@ -132,179 +132,9 @@ data class Game(
     val awayQuarters: List<Int> = emptyList(),
     val homeQuarters: List<Int> = emptyList(),
     val isDemo: Boolean = false,
-    val gameDate: String? = null
+    val gameDate: String? = null,
+    val tipoffUtc: String? = null
 )
-
-// ==========================================
-// 2. MOCK DATA CREATOR
-// ==========================================
-
-object MockData {
-    val NYK = Team("NYK", "New York Knicks", Color(0xFF006BB6), Color(0xFFF58426), "NYK")
-    val CLE = Team("CLE", "Cleveland Cavaliers", Color(0xFF860038), Color(0xFFFDBB30), "CLE")
-    
-    val LAL = Team("LAL", "LA Lakers", Color(0xFF552583), Color(0xFFFDB927), "LAL")
-    val GSW = Team("GSW", "Golden State Warriors", Color(0xFF1D428A), Color(0xFFFFC72C), "GSW")
-    
-    val BOS = Team("BOS", "Boston Celtics", Color(0xFF007A33), Color(0xFFBA9653), "BOS")
-    val MIA = Team("MIA", "Miami Heat", Color(0xFF98002E), Color(0xFFF9A01B), "MIA")
-
-    // --- GAME 1: NYK @ CLE (MATCHES USER SCREENSHOT EXACTLY!) ---
-    fun createNykCleGame(): Game {
-        val awayStarters = listOf(
-            Player("nyk_anunoby", "Anunoby OG.", "8", "🇬🇧", true, true, 7.4, PlayerStats(14, 6, 2, 3, 1, 1, 5, 9, 36)),
-            Player("nyk_hart", "Hart J.", "3", "🇺🇸", true, true, 7.9, PlayerStats(19, 13, 7, 2, 0, 2, 7, 11, 41), isTopPerformer = true),
-            Player("nyk_towns", "Towns K.", "32", "🇩🇴", true, true, 7.7, PlayerStats(24, 11, 3, 1, 2, 3, 9, 15, 34)),
-            Player("nyk_bridges", "Bridges M.", "25", "🇺🇸", true, true, 7.8, PlayerStats(22, 4, 3, 2, 1, 0, 8, 14, 38)),
-            Player("nyk_brunson", "Brunson J.", "11", "🇺🇸", true, true, 7.6, PlayerStats(26, 3, 9, 1, 0, 4, 10, 20, 39))
-        )
-
-        val homeStarters = listOf(
-            Player("cle_mobley", "Mobley E.", "4", "🇺🇸", false, true, 7.1, PlayerStats(16, 9, 2, 1, 3, 1, 7, 12, 35)),
-            Player("cle_wade", "Wade D.", "32", "🇺🇸", false, true, 5.9, PlayerStats(5, 4, 1, 0, 1, 0, 2, 6, 22)),
-            Player("cle_allen", "Allen J.", "31", "🇺🇸", false, true, 7.1, PlayerStats(14, 12, 1, 0, 2, 1, 6, 8, 33)),
-            Player("cle_harden", "Harden J.", "1", "🇺🇸", false, true, 7.1, PlayerStats(18, 5, 11, 2, 0, 5, 5, 13, 37)),
-            Player("cle_mitchell", "Mitchell D.", "45", "🇺🇸", false, true, 7.0, PlayerStats(22, 4, 5, 1, 0, 3, 8, 19, 36))
-        )
-
-        val awaySubs = listOf(
-            Player("nyk_alvarado", "Alvarado J.", "5", "🇵🇷", true, false, 6.1, PlayerStats(4, 1, 3, 2, 0, 1, 2, 4, 15)),
-            Player("nyk_clarkson", "Clarkson J.", "00", "🇵🇭", true, false, 6.1, PlayerStats(6, 2, 2, 0, 0, 2, 2, 7, 18)),
-            Player("nyk_dadiet", "Dadiet P.", "4", "🇫🇷", true, false, 5.9, PlayerStats(2, 1, 1, 0, 0, 0, 1, 3, 11)),
-            Player("nyk_diawara", "Diawara M.", "51", "🇫🇷", true, false, null, PlayerStats(0, 0, 0, 0, 0, 0, 0, 0, 0)),
-            Player("nyk_hukporti", "Hukporti A.", "55", "🇩🇪", true, false, null, PlayerStats(0, 1, 0, 0, 1, 0, 0, 1, 4)),
-            Player("nyk_kolek", "Kolek T.", "13", "🇺🇸", true, false, 6.0, PlayerStats(2, 0, 2, 1, 0, 0, 1, 2, 8))
-        )
-
-        val homeSubs = listOf(
-            Player("cle_bryant", "Bryant T.", "3", "🇺🇸", false, false, 6.0, PlayerStats(4, 3, 0, 0, 1, 1, 2, 3, 10)),
-            Player("cle_ellis", "Ellis K.", "14", "🇺🇸", false, false, 6.0, PlayerStats(3, 1, 2, 1, 0, 0, 1, 2, 12)),
-            Player("cle_merrill", "Merrill S.", "5", "🇺🇸", false, false, 5.4, PlayerStats(3, 0, 1, 0, 0, 0, 1, 4, 14)),
-            Player("cle_nance", "Nance L.", "22", "🇺🇸", false, false, null, PlayerStats(0, 2, 1, 0, 0, 1, 0, 1, 6)),
-            Player("cle_porter", "Porter C.", "9", "🇺🇸", false, false, 6.0, PlayerStats(4, 1, 2, 1, 0, 1, 2, 3, 11)),
-            Player("cle_proctor", "Proctor T.", "24", "🇦🇺", false, false, 6.0, PlayerStats(2, 1, 1, 0, 0, 0, 1, 2, 9))
-        )
-
-        return Game(
-            id = "nyk_cle",
-            awayTeam = NYK,
-            homeTeam = CLE,
-            awayScore = 109,
-            homeScore = 93,
-            status = "FINISHED",
-            startingAway = awayStarters,
-            startingHome = homeStarters,
-            substitutesAway = awaySubs,
-            substitutesHome = homeSubs,
-            playLogs = mutableListOf(
-                PlayLog(time = "FINISHED", description = "Match concluded. NYK claims a decisive 109-93 victory.", scoreText = "109 - 93"),
-                PlayLog(time = "0:15 Q4", description = "Donovan Mitchell misses a contested three-pointer. Rebound Towns K.", scoreText = "109 - 93"),
-                PlayLog(time = "1:04 Q4", description = "Jalen Brunson floats a beautiful pass to Josh Hart for a fast break layup!", scoreText = "109 - 93"),
-                PlayLog(time = "2:30 Q4", description = "Mikal Bridges steals the ball from James Harden and slams it home on the run!", scoreText = "107 - 91")
-            )
-        )
-    }
-
-    // --- GAME 2: LAL @ GSW (FINISHED HIGH SCORE) ---
-    fun createLalGswGame(): Game {
-        val awayStarters = listOf(
-            Player("lal_james", "James L.", "23", "🇺🇸", true, true, 8.2, PlayerStats(31, 8, 9, 2, 1, 3, 12, 19, 38), isTopPerformer = true),
-            Player("lal_davis", "Davis A.", "3", "🇺🇸", true, true, 7.8, PlayerStats(26, 12, 4, 1, 4, 2, 10, 16, 35)),
-            Player("lal_hachimura", "Hachimura R.", "28", "🇯🇵", true, true, 6.8, PlayerStats(14, 5, 2, 0, 1, 1, 6, 11, 31)),
-            Player("lal_reaves", "Reaves A.", "15", "🇺🇸", true, true, 7.3, PlayerStats(18, 4, 6, 2, 0, 1, 6, 12, 34)),
-            Player("lal_russell", "Russell D.", "1", "🇺🇸", true, true, 6.5, PlayerStats(12, 2, 5, 1, 0, 3, 4, 10, 28))
-        )
-
-        val homeStarters = listOf(
-            Player("gsw_curry", "Curry S.", "30", "🇺🇸", false, true, 8.1, PlayerStats(33, 5, 7, 1, 0, 2, 11, 21, 37)),
-            Player("gsw_green", "Green D.", "23", "🇺🇸", false, true, 6.9, PlayerStats(8, 9, 10, 3, 1, 4, 3, 6, 33)),
-            Player("gsw_jackson", "Jackson-Davis", "32", "🇺🇸", false, true, 7.1, PlayerStats(12, 8, 2, 0, 3, 1, 5, 7, 26)),
-            Player("gsw_wiggins", "Wiggins A.", "22", "🇨🇦", false, true, 6.7, PlayerStats(16, 6, 2, 1, 1, 2, 6, 13, 31)),
-            Player("gsw_podziemski", "Podziemski B.", "2", "🇺🇸", false, true, 6.4, PlayerStats(9, 4, 4, 1, 0, 2, 3, 8, 27))
-        )
-
-        val awaySubs = listOf(
-            Player("lal_key1", "Knecht D.", "4", "🇺🇸", true, false, 6.2, PlayerStats(9, 2, 1, 0, 0, 0, 3, 6, 15)),
-            Player("lal_key2", "Vincent G.", "7", "🇺🇸", true, false, 5.8, PlayerStats(4, 1, 2, 1, 0, 1, 2, 5, 13)),
-            Player("lal_key3", "Hayes J.", "11", "🇺🇸", true, false, 6.0, PlayerStats(4, 3, 0, 0, 2, 0, 2, 2, 10))
-        )
-
-        val homeSubs = listOf(
-            Player("gsw_sub1", "Hield B.", "7", "🇧🇸", false, false, 7.2, PlayerStats(21, 3, 2, 1, 0, 1, 8, 12, 22)),
-            Player("gsw_sub2", "Kuminga J.", "00", "🇨🇩", false, false, 6.6, PlayerStats(12, 4, 1, 0, 1, 2, 5, 9, 18)),
-            Player("gsw_sub3", "Melton D.", "8", "🇺🇸", false, false, 6.1, PlayerStats(3, 1, 3, 2, 0, 0, 1, 4, 12))
-        )
-
-        return Game(
-            id = "lal_gsw",
-            awayTeam = LAL,
-            homeTeam = GSW,
-            awayScore = 118,
-            homeScore = 114,
-            status = "FINISHED",
-            startingAway = awayStarters,
-            startingHome = homeStarters,
-            substitutesAway = awaySubs,
-            substitutesHome = homeSubs,
-            playLogs = mutableListOf(
-                PlayLog(time = "FINISHED", description = "Match concluded. LAL secures a spectacular away win at GSW, 118-114.", scoreText = "118 - 114"),
-                PlayLog(time = "0:02 Q4", description = "LeBron James sinks two ice-cold free throws to seal the victory.", scoreText = "118 - 114"),
-                PlayLog(time = "0:15 Q4", description = "Stephen Curry knocks down a deep three with hand in face!", scoreText = "116 - 114"),
-                PlayLog(time = "1:10 Q4", description = "Anthony Davis blocks Wiggins' layup attempt from behind.", scoreText = "116 - 111")
-            )
-        )
-    }
-
-    // --- GAME 3: BOS @ MIA (LIVE MATCH FOR INTERACTIVE REAL-TIME SIMULATION) ---
-    fun createBosMiaGame(): Game {
-        val awayStarters = listOf(
-            Player("bos_tatum", "Tatum J.", "0", "🇺🇸", true, true, 7.8, PlayerStats(24, 7, 5, 1, 1, 3, 8, 16, 32)),
-            Player("bos_brown", "Brown J.", "7", "🇺🇸", true, true, 7.6, PlayerStats(22, 6, 3, 2, 0, 2, 7, 14, 31)),
-            Player("bos_porzingis", "Porzingis K.", "8", "🇱🇻", true, true, 7.1, PlayerStats(15, 6, 1, 0, 3, 1, 5, 11, 28)),
-            Player("bos_white", "White D.", "9", "🇺🇸", true, true, 7.2, PlayerStats(11, 3, 6, 2, 1, 0, 4, 8, 30)),
-            Player("bos_holiday", "Holiday J.", "4", "🇺🇸", true, true, 6.9, PlayerStats(9, 4, 5, 1, 0, 1, 3, 7, 29))
-        )
-
-        val homeStarters = listOf(
-            Player("mia_butler", "Butler J.", "22", "🇺🇸", false, true, 7.7, PlayerStats(21, 6, 6, 3, 0, 1, 7, 12, 33)),
-            Player("mia_jovic", "Jovic N.", "5", "🇷🇸", false, true, 5.8, PlayerStats(6, 3, 2, 1, 0, 0, 2, 5, 20)),
-            Player("mia_adebayo", "Adebayo B.", "13", "🇺🇸", false, true, 7.4, PlayerStats(18, 11, 4, 1, 2, 2, 6, 10, 32)),
-            Player("mia_herro", "Herro T.", "14", "🇺🇸", false, true, 7.0, PlayerStats(19, 3, 5, 1, 0, 2, 7, 15, 31)),
-            Player("mia_rozier", "Rozier T.", "2", "🇺🇸", false, true, 6.3, PlayerStats(13, 2, 4, 0, 0, 1, 5, 11, 28))
-        )
-
-        val awaySubs = listOf(
-            Player("bos_sub1", "Pritchard P.", "11", "🇺🇸", true, false, 6.2, PlayerStats(8, 1, 3, 1, 0, 0, 3, 5, 14)),
-            Player("bos_sub2", "Hauser S.", "30", "🇺🇸", true, false, 6.0, PlayerStats(6, 2, 1, 0, 0, 0, 2, 4, 12)),
-            Player("bos_sub3", "Horford A.", "42", "🇩🇴", true, false, 6.3, PlayerStats(3, 5, 2, 0, 2, 1, 1, 3, 15))
-        )
-
-        val homeSubs = listOf(
-            Player("mia_sub1", "Duncan Robinson", "55", "🇺🇸", false, false, 6.5, PlayerStats(12, 2, 2, 1, 0, 1, 4, 7, 16)),
-            Player("mia_sub2", "Jaime Jaquez", "11", "🇲🇽", false, false, 6.3, PlayerStats(8, 4, 3, 1, 0, 2, 3, 6, 18)),
-            Player("mia_sub3", "Love K.", "42", "🇺🇸", false, false, null, PlayerStats(2, 3, 1, 0, 0, 0, 1, 2, 8))
-        )
-
-        return Game(
-            id = "bos_mia",
-            awayTeam = BOS,
-            homeTeam = MIA,
-            awayScore = 85,
-            homeScore = 82,
-            status = "LIVE",
-            startingAway = awayStarters,
-            startingHome = homeStarters,
-            substitutesAway = awaySubs,
-            substitutesHome = homeSubs,
-            playLogs = mutableListOf(
-                PlayLog(time = "8:30 Q4", description = "Match currently Active. Boston Celtics lead Miami Heat 85 to 82.", scoreText = "85 - 82"),
-                PlayLog(time = "8:45 Q4", description = "Herro T. drives past defenders and feeds Tyler Rozier for a corner baseline jumper.", scoreText = "85 - 82"),
-                PlayLog(time = "9:15 Q4", description = "Jaylen Brown logs an aggressive mid-range bank shot.", scoreText = "85 - 80")
-            ),
-            isSimulating = false
-        )
-    }
-}
 
 // ==========================================
 // 3. SECURE GEMINI INTEGRATION & PERSONA
@@ -399,7 +229,7 @@ class GameViewModel : ViewModel() {
     private val _games = mutableStateMapOf<String, Game>()
     
     // Convert to regular list for observing changes
-    val games: List<Game> get() = _games.values.sortedWith(compareBy<Game> { it.isDemo }.thenByDescending { it.gameDate })
+    val games: List<Game> get() = _games.values.sortedWith(compareByDescending<Game> { it.gameDate }.thenBy { if (it.id == feedDefaultId) 0 else 1 }.thenBy { it.id })
     private var feedRepository: GameFeedRepository? = null
     private var feedDefaultId: String? = null
     private val _isRefreshing = MutableStateFlow(false)
@@ -433,13 +263,9 @@ class GameViewModel : ViewModel() {
     }
 
     internal fun applyFeed(feed: GameFeed) {
-        simJob?.cancel()
-        _games.entries.filter { it.value.isDemo && it.value.isSimulating }.forEach { (id, game) ->
-            _games[id] = game.copy(isSimulating = false)
-        }
         val oldSelection = _selectedGameId.value
         val followDefault = feedDefaultId == null && oldSelection == PreseasonGameData.GAME_ID || oldSelection == feedDefaultId
-        _games.entries.removeAll { !it.value.isDemo }
+        _games.clear()
         feed.games.forEach { _games[it.id] = it }
         if (followDefault || oldSelection !in _games) _selectedGameId.value = feed.defaultGameId
         feedDefaultId = feed.defaultGameId
@@ -467,14 +293,7 @@ class GameViewModel : ViewModel() {
     init {
         val preseasonGame = PreseasonGameData.createGame()
         _games[preseasonGame.id] = preseasonGame
-        // Retain the existing demo games in the selector.
-        val game1 = MockData.createNykCleGame()
-        val game2 = MockData.createLalGswGame()
-        val game3 = MockData.createBosMiaGame()
-        
-        _games[game1.id] = game1.copy(isDemo = true)
-        _games[game2.id] = game2.copy(isDemo = true)
-        _games[game3.id] = game3.copy(isDemo = true)
+
     }
 
     fun selectGame(id: String) {
@@ -512,183 +331,10 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    // High fidelity rule-based local sports summaries as fallback
-    private fun generateLocalAnalysis(game: Game): String {
-        if (!game.isDemo) {
-            return "${game.awayTeam.name} ${game.awayScore} – ${game.homeScore} ${game.homeTeam.name}. " +
-                "${game.dateLabel ?: ""}. ${game.status}. " +
-                "Player totals are from the selected game’s saved box score."
-        }
-        return when (game.id) {
-            PreseasonGameData.GAME_ID -> {
-                "Brooklyn beat Philadelphia 114-108 at Barclays Center on October 8, 2026. " +
-                "Philadelphia led 58-56 at halftime, but Brooklyn won the third quarter 37-23. " +
-                "Jaylen Brown led the 76ers with 18 points; Julius Randle led the Nets with 14.\n\n" +
-                "LeBron James recorded 10 points, 4 rebounds and 5 assists in 18:04. " +
-                "Jabari Walker collected 7 rebounds, while Moe Wagner had 4 steals for Brooklyn. " +
-                "These are final preseason statistics; player ratings are unavailable."
-            }
-            "nyk_cle" -> {
-                "The match ended with a dominant NYK display, clinching a 109-93 blowout victory over CLE. " +
-                "Josh Hart put on an absolute masterclass and clinched MVP honors, logging a phenomenal 7.9 rating with 19 points, 13 rebounds, and 7 critical assists that completely tore the Cavs' transition defense apart. " +
-                "Karl-Anthony Towns (7.7 rating) anchored the paint beautifully with 24 points and 11 rebounds, matching Mikal Bridges' (7.8 rating) lockdown perimeter steals. " +
-                "Meanwhile, Dean Wade struggled immensely for Cleveland, picking up a subpar 5.9 rating after hitting only 2-of-6 from the floor and being repeatedly hunted on isolations."
-            }
-            "lal_gsw" -> {
-                "A historic high-scoring western classic resulted in LAL surviving a GSW fourth-quarter barrage, winning 118-114. " +
-                "LeBron James turned back the clock to log the top-performer rating of 8.2, finishing just shy of a triple-double with 31 points, 8 boards, and 9 assists. " +
-                "Anthony Davis (7.8 rating) was an absolute wall inside, swatting 4 crucial blocks and securing 12 defensive rebounds. " +
-                "Stephen Curry was electric for Golden State, keeping them alive singlehandedly with 33 points (8.1 rating), but missed the late go-ahead contested corner shot under intense double teams."
-            }
-            else -> {
-                "This Eastern Conference battle was an intense defensive showcase. " +
-                "Jayson Tatum (7.8 rating) and Jaylen Brown (7.6 rating) led Boston's structured motion offense, generating paint pressure and perimeter kickouts. " +
-                "Jimmy Butler paced Miami with relentless grit (7.7 rating, 3 steals) alongside Adebayo's sturdy double-double. " +
-                "The defensive switching of both teams limited spacing, keeping ratings highly constrained across substitutions."
-            }
-        }
-    }
-
-    // ==========================================
-    // 5. CLIENT-SIDE LIVE SIMULATION ENGINE
-    // ==========================================
-    private var simJob: kotlinx.coroutines.Job? = null
-
-    fun toggleSimulation(gameId: String) {
-        val game = _games[gameId] ?: return
-        if (!game.isDemo) return
-        if (game.isSimulating) {
-            stopSimulation(gameId)
-        } else {
-            startSimulation(gameId)
-        }
-    }
-
-    private fun startSimulation(gameId: String) {
-        val game = _games[gameId] ?: return
-        game.isSimulating = true
-        // Force state update by rewriting to map
-        _games[gameId] = game.copy(status = "LIVE Q4 (12:00)", minutesLeft = 12, secondsLeft = 0, isSimulating = true)
-        
-        simJob = viewModelScope.launch(Dispatchers.Main) {
-            var min = game.minutesLeft
-            var sec = game.secondsLeft
-            val playTicker = listOf(
-                "drives hard down the lane for a stellar finger-roll layup!",
-                "drills a spectacular catch-and-shoot 3-pointer from deep corner!",
-                "grabs a huge offensive board and fires a putback hook!",
-                "logs a massive chase-down block under the rim!",
-                "swipes a clean pocket-pick steal on transition!",
-                "throws a beautiful alley-oop lob in traffic!"
-            )
-            val badPlayTicker = listOf(
-                "commits an unforced passing turnover out of bounds.",
-                "misses a heavily contested step-back jumper.",
-                "picks up an aggressive offensive foul.",
-                "is whistled for a loose-ball push on the defensive rebound."
-            )
-
-            while (game.isSimulating && min >= 0) {
-                delay(1200) // Speed up time: 1 simulated second is 1.2s delay for gameplay rhythm
-                sec -= 15
-                if (sec < 0) {
-                    sec = 45
-                    min--
-                }
-                if (min < 0) {
-                    min = 0
-                    sec = 0
-                    // Conclude game
-                    withContext(Dispatchers.Main) {
-                        val activeGame = _games[gameId] ?: return@withContext
-                        activeGame.isSimulating = false
-                        activeGame.status = "FINISHED"
-                        val finalLogs = activeGame.playLogs.toMutableList()
-                        finalLogs.add(0, PlayLog(time = "FINISHED", description = "Game concluded. Dynamic simulation finalized.", scoreText = "${activeGame.awayScore} - ${activeGame.homeScore}"))
-                        _games[gameId] = activeGame.copy(
-                            status = "FINISHED",
-                            playLogs = finalLogs,
-                            isSimulating = false,
-                            minutesLeft = 0,
-                            secondsLeft = 0
-                        )
-                    }
-                    break
-                }
-
-                // Random event trigger: score increase and player rating adjustments
-                val isAwayEvent = Random.nextBoolean()
-                val scoreIncrease = if (Random.nextInt(5) < 3) if (Random.nextBoolean()) 3 else 2 else 0
-                val isPositiveEvent = scoreIncrease > 0 || Random.nextInt(4) > 0
-
-                val activeGame = _games[gameId] ?: break
-                val currentAwayScore = activeGame.awayScore + (if (isAwayEvent) scoreIncrease else 0)
-                val currentHomeScore = activeGame.homeScore + (if (!isAwayEvent) scoreIncrease else 0)
-
-                // Select acting player
-                val teamStarters = if (isAwayEvent) activeGame.startingAway else activeGame.startingHome
-                val randomPlayerIndex = Random.nextInt(teamStarters.size)
-                val activePlayer = teamStarters[randomPlayerIndex]
-
-                val desc = if (isPositiveEvent) {
-                    // Boost player stats and rating
-                    val play = playTicker.random()
-                    activePlayer.stats.points += scoreIncrease
-                    if (scoreIncrease == 3) {
-                        activePlayer.stats.fgMade++
-                        activePlayer.stats.fgAttempted++
-                    } else if (scoreIncrease == 2) {
-                        activePlayer.stats.fgMade++
-                        activePlayer.stats.fgAttempted++
-                    }
-                    if (Random.nextBoolean()) activePlayer.stats.rebounds++
-                    if (Random.nextBoolean()) activePlayer.stats.assists++
-                    
-                    val change = (Random.nextInt(2, 5) * 0.1)
-                    activePlayer.rating = minOf(9.9, (activePlayer.rating ?: 6.5) + change)
-                    "${activePlayer.name} ${play}"
-                } else {
-                    // Dinger player rating
-                    val play = badPlayTicker.random()
-                    activePlayer.stats.turnovers++
-                    activePlayer.stats.fgAttempted++
-                    val change = (Random.nextInt(1, 3) * 0.1)
-                    activePlayer.rating = maxOf(4.5, (activePlayer.rating ?: 6.5) - change)
-                    "${activePlayer.name} ${play}"
-                }
-
-                val timeStr = String.format("%d:%02d Q4", min, sec)
-                val scoreStr = "$currentAwayScore - $currentHomeScore"
-                
-                withContext(Dispatchers.Main) {
-                    val updatedGame = _games[gameId] ?: return@withContext
-                    val logs = updatedGame.playLogs.toMutableList()
-                    logs.add(0, PlayLog(time = timeStr, description = desc, scoreText = scoreStr))
-                    
-                    _games[gameId] = updatedGame.copy(
-                        awayScore = currentAwayScore,
-                        homeScore = currentHomeScore,
-                        status = "LIVE $timeStr",
-                        playLogs = logs,
-                        minutesLeft = min,
-                        secondsLeft = sec
-                    )
-                }
-            }
-        }
-    }
-
-    private fun stopSimulation(gameId: String) {
-        val game = _games[gameId] ?: return
-        game.isSimulating = false
-        simJob?.cancel()
-        _games[gameId] = game.copy(isSimulating = false)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        simJob?.cancel()
-    }
+    private fun generateLocalAnalysis(game: Game): String =
+        "${game.awayTeam.name} ${game.awayScore} – ${game.homeScore} ${game.homeTeam.name}. " +
+            "${game.dateLabel ?: ""}. ${game.status}. " +
+            "Player totals are from the selected game’s saved box score."
 }
 
 // ==========================================
@@ -696,19 +342,19 @@ class GameViewModel : ViewModel() {
 // ==========================================
 
 @Composable
-fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier) {
+fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffix: String = "") {
     GameImageAssets.teamLogo(team)?.let { logo ->
         Image(
             painter = painterResource(logo),
             contentDescription = "${team.name} logo",
             contentScale = ContentScale.Fit,
             modifier = modifier.size(size).clip(CircleShape).background(Color.White)
-                .padding(size * 0.13f).testTag("team_logo_${team.code}")
+                .padding(size * 0.13f).testTag("team_logo_${team.code}$tagSuffix")
         )
         return
     }
     if (team.logoUrl != null) {
-        Box(modifier.size(size).clip(CircleShape).background(Color.White).testTag("team_logo_${team.code}"),
+        Box(modifier.size(size).clip(CircleShape).background(Color.White).testTag("team_logo_${team.code}$tagSuffix"),
             contentAlignment = Alignment.Center) {
             Text(team.code, color = Color.Black, fontSize = (size.value * 0.24f).sp)
             AsyncImage(model = team.logoUrl, contentDescription = "${team.name} logo",
@@ -901,8 +547,8 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                             .background(ElegantAccent),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text("m", color = ElegantCirclePurple, fontSize = 33.sp,
-                            fontWeight = FontWeight.Bold, modifier = Modifier.testTag("app_logo"))
+                        Image(painterResource(R.drawable.miniscore_mark), contentDescription = "Miniscore logo",
+                            modifier = Modifier.fillMaxSize().testTag("app_logo"))
                     }
                     Column(Modifier.weight(1f)) {
                         Text(
@@ -913,14 +559,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                             letterSpacing = (-0.5).sp,
                             fontFamily = FontFamily.SansSerif
                         )
-                        Text(
-                            text = selectedGame.dateLabel ?: "Demo games",
-                            maxLines = 1, overflow = TextOverflow.Ellipsis,
-                            color = ElegantTextSecondary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Normal,
-                            fontFamily = FontFamily.SansSerif
-                        )
+
                     }
                 }
                 IconButton(onClick = { viewModel.refreshGames() }, enabled = !isRefreshing,
@@ -950,17 +589,6 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                     item {
                         ScoreboardHeaderPanel(game = selectedGame)
                     }
-
-                    // 2. Client side Live Sim details pane
-                    if (selectedGame.isDemo && (selectedGame.status.contains("LIVE") || selectedGame.isSimulating)) {
-                        item {
-                            LiveSimulatorControlPanel(game = selectedGame, onToggleSim = {
-                                viewModel.toggleSimulation(selectedGame.id)
-                            })
-                        }
-                    }
-
-
 
                     // 4. HEADER: STARTING LINEUPS
                     item {
@@ -1147,85 +775,6 @@ fun MainNbaScreen(viewModel: GameViewModel) {
 // ==========================================
 
 @Composable
-fun GameMiniSelectorCard(game: Game, isSelected: Boolean, onClick: () -> Unit) {
-    val borderStrokeColor = if (isSelected) AccentCyan else ElegantBorderColor.copy(alpha = 0.3f)
-    val cardBackground = if (isSelected) Color(0xFF381E72).copy(alpha = 0.3f) else SportsDarkSurface
-    val statusColor = if (game.status.contains("LIVE")) Color(0xFFFF4D4D) else TextSecondary
-
-    Box(
-        modifier = Modifier
-            .width(155.dp)
-            .clip(RoundedCornerShape(12.dp))
-            .background(cardBackground)
-            .border(1.dp, borderStrokeColor, RoundedCornerShape(12.dp))
-            .clickable { onClick() }
-            .padding(12.dp)
-            .testTag("game_selector_${game.id}")
-    ) {
-        Column {
-            Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
-                Text(
-                    text = if (game.status.contains("LIVE")) "● LIVE" else game.status,
-                    color = statusColor,
-                    fontSize = 9.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif
-                )
-                if (game.status.contains("LIVE")) {
-                    Box(
-                        modifier = Modifier
-                            .size(7.dp)
-                            .clip(CircleShape)
-                            .background(Color(0xFFFF4D4D))
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            // Teams Row
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                TeamLogoCanvas(team = game.awayTeam, size = 16.dp)
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = game.awayTeam.code,
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = game.awayScore.toString(),
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Black
-                )
-            }
-
-            Spacer(modifier = Modifier.height(4.dp))
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                TeamLogoCanvas(team = game.homeTeam, size = 16.dp)
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = game.homeTeam.code,
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold
-                )
-                Spacer(modifier = Modifier.weight(1f))
-                Text(
-                    text = game.homeScore.toString(),
-                    color = Color.White,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Black
-                )
-            }
-        }
-    }
-}
-
-@Composable
 fun SymmetricalLineplayRow(
     leftPlayer: Player?,
     rightPlayer: Player?,
@@ -1335,118 +884,6 @@ fun PlayerPortrait(player: Player, size: Dp, modifier: Modifier = Modifier) {
             if (player.portraitUrl != null) {
                 AsyncImage(model = player.portraitUrl, contentDescription = "${player.name} photo",
                     contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-            }
-        }
-    }
-}
-
-// ==========================================
-// 9. LIVE SIMULATOR CONTROLS
-// ==========================================
-
-@Composable
-fun LiveSimulatorControlPanel(game: Game, onToggleSim: () -> Unit) {
-    Card(
-        colors = CardDefaults.cardColors(containerColor = SportsDarkSurface),
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp)
-            .border(1.dp, ElegantBorderColor.copy(alpha = 0.3f), RoundedCornerShape(16.dp)),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(modifier = Modifier.padding(14.dp)) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Icon(
-                        imageVector = Icons.Default.PlayArrow,
-                        contentDescription = "Simulate",
-                        tint = AccentCyan,
-                        modifier = Modifier.size(18.dp)
-                    )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = "Real-Time Game Simulator (Q4)",
-                        color = Color.White,
-                        fontSize = 12.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                Button(
-                    onClick = onToggleSim,
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (game.isSimulating) Color(0xFFFF3333) else AccentCyan,
-                        contentColor = Color.Black
-                    ),
-                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
-                    modifier = Modifier.height(28.dp)
-                ) {
-                    Text(
-                        text = if (game.isSimulating) "PAUSE SIM" else "START DYNAMIC SIM",
-                        fontSize = 9.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            // Pulse ticker indicator
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(
-                    modifier = Modifier
-                        .size(6.dp)
-                        .clip(CircleShape)
-                        .background(if (game.isSimulating) Color(0xFF5EC91F) else Color.Gray)
-                )
-                Spacer(modifier = Modifier.width(6.dp))
-                Text(
-                    text = if (game.isSimulating) "Simulating quarter, ratings updating live..." else "Simulation Idle. Click start to simulate live score / ratings events.",
-                    color = if (game.isSimulating) Color(0xFF8FF05E) else TextSecondary,
-                    fontSize = 11.sp
-                )
-            }
-
-            // Play timeline ticker
-            if (game.playLogs.isNotEmpty()) {
-                Spacer(modifier = Modifier.height(10.dp))
-                Divider(color = ElegantBorderColor.copy(alpha = 0.3f), thickness = 0.5.dp)
-                Spacer(modifier = Modifier.height(6.dp))
-
-                Box(modifier = Modifier.heightIn(max = 70.dp)) {
-                    LazyColumn(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-                        items(game.playLogs) { play ->
-                            Row(verticalAlignment = Alignment.Top) {
-                                Text(
-                                    text = "[${play.time}]",
-                                    color = AccentCyan,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Bold,
-                                    modifier = Modifier.width(55.dp)
-                                )
-                                Text(
-                                    text = play.description,
-                                    color = Color.White,
-                                    fontSize = 10.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                Text(
-                                    text = play.scoreText,
-                                    color = RatingGreen,
-                                    fontSize = 10.sp,
-                                    fontWeight = FontWeight.Black,
-                                    textAlign = TextAlign.End
-                                )
-                            }
-                        }
-                    }
-                }
             }
         }
     }

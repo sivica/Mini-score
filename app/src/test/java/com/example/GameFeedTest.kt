@@ -20,6 +20,15 @@ import java.io.File
 class GameFeedTest {
     private fun fixture() = File("../games.json").readText()
 
+    @Test fun pickerShowsTipoffAndGameDateWithoutPhoneTimezoneDrift() {
+        val root = JSONObject(fixture())
+        root.getJSONArray("games").getJSONObject(0).put("status", "SCHEDULED").put("tipoffUTC", "2026-10-10T00:00:00Z")
+        val game = GameFeedCodec.decode(root.toString()).games.single()
+        assertEquals("8:00 PM ET", pickerStatus(game))
+        assertEquals("Thu, Oct 8", pickerDate(game, compact = true))
+        assertEquals("Thursday, October 8", pickerDate(game))
+    }
+
     @Test fun publishedFeedMatchesRecordedStats() {
         val feed = GameFeedCodec.decode(fixture())
         val actual = feed.games.single()
@@ -53,7 +62,6 @@ class GameFeedTest {
         assertEquals("Saturday, October 10, 2026", game.dateLabel)
         assertEquals("SCHEDULED", game.status)
         assertEquals(2, model.games.count { !it.isDemo })
-        model.toggleSimulation(game.id)
         assertFalse(game.isSimulating)
         model.selectGame(PreseasonGameData.GAME_ID)
         model.applyFeed(GameFeedCodec.decode(root.toString()))

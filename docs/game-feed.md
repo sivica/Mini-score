@@ -1,6 +1,6 @@
 # Update Miniscore games without rebuilding the APK
 
-Install **Miniscore 1.3 once**. Its date, game selector, scores, rosters and player stats then come from a public GitHub JSON feed:
+Install **Miniscore 1.4 once**. Its date, game selector, scores, rosters and player stats then come from a public GitHub JSON feed (existing 1.3 installations also support feed updates):
 
 - [Edit the live games.json](https://github.com/sivica/Mini-score/edit/game-data/games.json)
 - [View the live feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json)
@@ -13,7 +13,7 @@ The `game-data` branch is the published data source. The copy of `games.json` on
 2. Add a game to `games`, using a unique `id`. Keep earlier games to let users select them.
 3. Set `date` to the actual NBA game date (`YYYY-MM-DD`). The app derives the displayed weekday and date from this field. Changing the phone's date does not relabel yesterday's result.
 4. Set `competition`, `venue`, and the two teams. Set `defaultGameId` to the new game's `id` to open it by default.
-5. Before tipoff use `status: "SCHEDULED"`, `score: 0`, `players: []` and `quarters: []` for both teams. The app displays dashes for scheduled scores and a message when stats are unavailable.
+5. Before tipoff use `status: "SCHEDULED"`, `score: 0`, `players: []` and `quarters: []` for both teams. Optionally add `tipoffUTC`, for example `"2026-10-10T00:00:00Z"`. Version 1.4 displays that time as **8:00 PM ET** in the selector. The app displays dashes for scheduled scores and a message when stats are unavailable.
 6. When verified stats are available, add the players, scores and quarter scores; set `status` to `LIVE` or `FINISHED` as appropriate. Do not copy yesterday's player stats into a new game.
 7. Click **Commit changes** and commit directly to **game-data**. Reopen the app, tap the refresh icon, or pull down the lineup to download the published data. GitHub may take a few minutes to serve a new revision.
 
@@ -21,7 +21,7 @@ You can also ask Codex to update this file with a sourced game, or use GitHub De
 
 ## Game fields
 
-Each game requires `id`, `date`, `competition`, `status`, `away` and `home`. `venue` and a `sources` list are optional. Supported statuses: `SCHEDULED`, `LIVE`, `FINISHED`, `POSTPONED`, `CANCELLED`.
+Each game requires `id`, `date`, `competition`, `status`, `away` and `home`. `venue`, `tipoffUTC` (UTC timestamp in `YYYY-MM-DDTHH:mm:ssZ` format), and a `sources` list are optional. Supported statuses: `SCHEDULED`, `LIVE`, `FINISHED`, `POSTPONED`, `CANCELLED`. Missing or unreadable tipoff times show **Scheduled**. The date remains the declared NBA game date regardless of the phone's timezone.
 
 Each team requires `code` (2–4 uppercase letters), `name`, `score`, and `players`. Optional fields: `shortName`, `primaryColor`, `secondaryColor` (`#RRGGBB`), `logoUrl`, and `quarters` (array of period scores). Both quarter arrays must have the same length. Scores remain away on the left, home on the right.
 
@@ -46,6 +46,6 @@ The app checks the feed when opened or resumed. Pull to refresh and the header r
 
 Every valid feed is saved to internal storage before the next launch. Offline, the app loads the last saved feed; on a first launch without a connection it shows the bundled October 8 game. An invalid JSON file, unsupported schema, duplicate ID, negative or fractional stat, invalid date, or insecure image URL is rejected without replacing the working cache. Up to 100 games and a 2 MiB feed are supported.
 
-Changing `defaultGameId` advances users who were viewing the previous default. Users browsing a different retained game keep their selection. Real games cannot use the demo simulator. A feed refresh dismisses any open player sheet so details cannot retain an older box score.
+Changing `defaultGameId` advances users who were viewing the previous default. Users browsing a different retained game keep their selection. Version 1.4 lists only real games; the demo games and simulator have been removed. A feed refresh dismisses any open player sheet so details cannot retain an older box score.
 
 App layout or schema changes still require an APK update. Data edits within this schema do not. The separate static web demo still uses `data.js`.

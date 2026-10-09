@@ -4,11 +4,13 @@ A high-fidelity, mobile-first web interface for presenting basketball statistics
 
 ## Android: remotely updated games
 
-**Miniscore 1.3** loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
+**Miniscore 1.4** loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
 
-The app refreshes on opening/resuming, from the header refresh button, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The header date comes from the selected game's date. The feed is manually maintained; daily sports-API automation is not configured.
+The app refreshes on opening/resuming, from the header refresh button, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The selector date comes from the selected game's date. The feed is manually maintained; daily sports-API automation is not configured.
 
-The screen includes a lavender **m** app mark, a game dropdown, compact team names/logos and mirrored scores in the center. Both teams' players remain side by side, with circular portraits and a `PTS / REB / AST / FGM / FGA` labels row above the values. Tap a player for steals, blocks, turnovers and exact minutes; tap the header arrow for quarter scores. Scheduled games show dashes until play begins. Other selectable demo games are labelled **Demo** and remain isolated from real feed data.
+The screen and Android launcher share a lavender **m** mark and the **Miniscore** name. A compact selector shows both team logos, the matchup, date and status. Tapping it opens a bottom sheet with games grouped by date, aligned team scores and a highlighted selection. The app includes only published games and the real offline fallback; fabricated demo games and the simulator have been removed.
+
+The scoreboard uses compact team names/logos and mirrored scores in the center. Both teams' players remain side by side, with circular portraits and a `PTS / REB / AST / FGM / FGA` labels row above the values. Tap a player for steals, blocks, turnovers and exact minutes; tap the header arrow for quarter scores. Scheduled games show dashes until play begins and can show their tipoff time in Eastern Time.
 
 ## Initial published game
 
@@ -16,7 +18,7 @@ Philadelphia 76ers at Brooklyn Nets, October 8, 2026, Barclays Center: **PHI 108
 
 Sources: [NBA result and quarter scores](https://www.nba.com/game/phi-vs-bkn-0012600034), [RealGM player box score](https://basketball.realgm.com/nba/boxscore/2026-10-08/Philadelphia-at-Brooklyn/526643).
 
-This game's photos and logos are bundled for offline use; [NBA asset sources](docs/nba-image-sources.json). New games can use HTTPS image URLs with image caching and initials/team-code fallbacks. Real feed games cannot be simulated. `PreseasonGameData.kt` is the first-launch offline fallback, `GameFeedRepository.kt` fetches/validates/caches published games, and the development branch's `games.json` is a test fixture. The live file is on **game-data**.
+This game's photos and logos are bundled for offline use; [NBA asset sources](docs/nba-image-sources.json). New games can use HTTPS image URLs with image caching and initials/team-code fallbacks. `PreseasonGameData.kt` is the first-launch offline fallback, `GameFeedRepository.kt` fetches/validates/caches published games, and the development branch's `games.json` is a test fixture. The live file is on **game-data**.
 
 The separate static web demo continues to use `data.js` and shows this same final game, with preseason records PHI 1–1 / BKN 2–0. The sections below describe that web demo.
 
