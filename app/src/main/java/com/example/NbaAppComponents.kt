@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.ui.theme.*
 import androidx.compose.animation.*
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -30,6 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -633,6 +636,16 @@ class GameViewModel : ViewModel() {
 
 @Composable
 fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier) {
+    GameImageAssets.teamLogo(team)?.let { logo ->
+        Image(
+            painter = painterResource(logo),
+            contentDescription = "${team.name} logo",
+            contentScale = ContentScale.Fit,
+            modifier = modifier.size(size).clip(CircleShape).background(Color.White)
+                .padding(size * 0.13f).testTag("team_logo_${team.code}")
+        )
+        return
+    }
     Box(
         modifier = modifier
             .size(size)
@@ -824,7 +837,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                     }
                     Column {
                         Text(
-                            text = "NBA Center",
+                            text = "Miniscore",
                             color = ElegantTextPrimary,
                             fontSize = 18.sp,
                             fontWeight = FontWeight.Medium,
@@ -902,22 +915,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
 
                 // 4. HEADER: STARTING LINEUPS
                 item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(SportsHeaderBg)
-                            .padding(vertical = 10.dp, horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "STARTING LINEUPS",
-                            color = ElegantTextSecondary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.SansSerif,
-                            letterSpacing = 1.2.sp
-                        )
-                    }
+                    LineupSectionHeader(selectedGame, "Starting lineup")
                 }
 
                 // Starting Lineups symmetrically side-by-side
@@ -934,22 +932,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
 
                 // 5. HEADER: SUBSTITUTES
                 item {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .background(SportsHeaderBg)
-                            .padding(vertical = 10.dp, horizontal = 16.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "SUBSTITUTES",
-                            color = ElegantTextSecondary,
-                            fontSize = 12.sp,
-                            fontWeight = FontWeight.Bold,
-                            fontFamily = FontFamily.SansSerif,
-                            letterSpacing = 1.2.sp
-                        )
-                    }
+                    LineupSectionHeader(selectedGame, "Substitutes")
                 }
 
                 // Substitute Lineups symmetrically
@@ -1185,108 +1168,6 @@ fun GameMiniSelectorCard(game: Game, isSelected: Boolean, onClick: () -> Unit) {
 }
 
 @Composable
-fun ScoreboardHeaderPanel(game: Game) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(SportsDarkBackground)
-            .padding(vertical = 18.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        game.contextLabel?.let {
-            Text(text = it, color = AccentCyan, fontSize = 12.sp, textAlign = TextAlign.Center)
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            // Left Team Logo
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                TeamLogoCanvas(team = game.awayTeam, size = 64.dp)
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = game.awayTeam.name,
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(90.dp)
-                )
-            }
-
-            // Score Banner (Match Screenshot structure)
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    text = "${game.awayScore} - ${game.homeScore}",
-                    color = Color.White,
-                    fontSize = 42.sp,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = FontFamily.SansSerif,
-                    letterSpacing = 1.sp
-                )
-                
-                Spacer(modifier = Modifier.height(4.dp))
-
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(Color(0xFF0B212D))
-                        .padding(horizontal = 8.dp, vertical = 3.dp)
-                ) {
-                    Text(
-                        text = game.status,
-                        color = if (game.status.contains("LIVE")) Color(0xFFFF4D4D) else Color(0xFFC7D5DC),
-                        fontSize = 10.sp,
-                        fontWeight = FontWeight.Bold,
-                        letterSpacing = 1.sp
-                    )
-                }
-            }
-
-            // Right Team Logo
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                TeamLogoCanvas(team = game.homeTeam, size = 64.dp)
-                Spacer(modifier = Modifier.height(6.dp))
-                Text(
-                    text = game.homeTeam.name,
-                    color = Color.White,
-                    fontSize = 12.sp,
-                    fontWeight = FontWeight.Bold,
-                    fontFamily = FontFamily.SansSerif,
-                    textAlign = TextAlign.Center,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.width(90.dp)
-                )
-            }
-        }
-        game.venue?.let {
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(text = it, color = TextSecondary, fontSize = 11.sp)
-        }
-        if (game.awayQuarters.isNotEmpty() && game.awayQuarters.size == game.homeQuarters.size) {
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = "     " + (1..4).joinToString("") { "Q$it".padStart(4) } + "\n" +
-                    game.awayTeam.code.padEnd(5) + game.awayQuarters.joinToString("") { it.toString().padStart(4) } + "\n" +
-                    game.homeTeam.code.padEnd(5) + game.homeQuarters.joinToString("") { it.toString().padStart(4) },
-                color = TextSecondary,
-                fontSize = 11.sp,
-                fontFamily = FontFamily.Monospace,
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
 fun SymmetricalLineplayRow(
     leftPlayer: Player?,
     rightPlayer: Player?,
@@ -1296,17 +1177,17 @@ fun SymmetricalLineplayRow(
         modifier = Modifier
             .fillMaxWidth()
             .background(SportsDarkBackground)
-            .padding(horizontal = 14.dp, vertical = 8.dp),
+            .padding(horizontal = 8.dp, vertical = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (leftPlayer != null) {
-            PlayerLineupCell(leftPlayer, Modifier.weight(1f).padding(end = 8.dp), onPlayerClick)
+            PlayerLineupCell(leftPlayer, Modifier.weight(1f).padding(end = 5.dp), onPlayerClick)
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
-        Box(modifier = Modifier.width(1.dp).height(70.dp).background(Color(0xFF142C35)))
+        Box(modifier = Modifier.width(1.dp).height(86.dp).background(ElegantBorderColor.copy(alpha = 0.6f)))
         if (rightPlayer != null) {
-            PlayerLineupCell(rightPlayer, Modifier.weight(1f).padding(start = 8.dp), onPlayerClick)
+            PlayerLineupCell(rightPlayer, Modifier.weight(1f).padding(start = 5.dp), onPlayerClick)
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
@@ -1321,44 +1202,44 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
             .testTag("lineup_player_${player.id}")
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().height(36.dp),
+            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
+            horizontalArrangement = Arrangement.spacedBy(7.dp)
         ) {
-            Text(text = player.number, color = TextSecondary, fontSize = 10.sp)
-            if (player.flag.isNotEmpty()) {
-                Text(text = player.flag, fontSize = 12.sp)
-            }
-            Text(
-                text = player.name,
-                color = Color.White,
-                fontSize = 12.sp,
-                lineHeight = 16.sp,
-                fontWeight = if (player.isTopPerformer) FontWeight.Bold else FontWeight.Normal,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis,
-                modifier = Modifier.weight(1f)
-            )
-            player.rating?.let { rating ->
+            PlayerPortrait(player, size = 38.dp)
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = String.format("%.1f", rating),
-                    color = Color.Black,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(if (rating >= 7.0) RatingGreen else if (rating >= 6.0) RatingOrange else RatingRed)
-                        .padding(horizontal = 3.dp, vertical = 2.dp)
+                    text = player.name,
+                    color = TextPrimary,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                    fontWeight = if (player.isTopPerformer) FontWeight.Bold else FontWeight.Normal,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
+                Text(
+                    text = "#${player.number} · ${player.id.substringBefore('_').uppercase()}" +
+                        if (player.flag.isNotEmpty()) " ${player.flag}" else "",
+                    color = TextSecondary, fontSize = 10.sp, lineHeight = 14.sp,
+                    modifier = Modifier.padding(top = 2.dp)
+                )
+                player.rating?.let { rating ->
+                    Text(
+                        text = String.format("%.1f", rating), color = Color.Black, fontSize = 10.sp,
+                        modifier = Modifier.clip(RoundedCornerShape(3.dp))
+                            .background(if (rating >= 7.0) RatingGreen else if (rating >= 6.0) RatingOrange else RatingRed)
+                            .padding(horizontal = 3.dp)
+                    )
+                }
             }
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
             listOf("PTS", "REB", "AST", "FGM", "FGA").forEach { label ->
                 Text(
                     text = label,
                     color = TextSecondary,
-                    fontSize = 9.sp,
-                    lineHeight = 12.sp,
+                    fontSize = 10.sp,
+                    lineHeight = 14.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
@@ -1377,6 +1258,22 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                     modifier = Modifier.weight(1f)
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun PlayerPortrait(player: Player, size: Dp, modifier: Modifier = Modifier) {
+    val portrait = GameImageAssets.playerPortrait(player)
+    val portraitModifier = modifier.size(size).clip(CircleShape).background(ElegantBorderColor)
+        .testTag("player_portrait_${player.id}")
+    if (portrait != null) {
+        Image(painterResource(portrait), contentDescription = "${player.name} photo",
+            contentScale = ContentScale.Crop, modifier = portraitModifier)
+    } else {
+        Box(portraitModifier, contentAlignment = Alignment.Center) {
+            Text(player.name.split(' ').take(2).mapNotNull { it.firstOrNull() }.joinToString(""),
+                color = TextPrimary, fontSize = (size.value * 0.3f).sp)
         }
     }
 }
@@ -1672,7 +1569,9 @@ fun PlayerDetailBottomSheet(
                     (player.rating ?: 0.0) >= 6.0 -> RatingOrange
                     else -> RatingRed
                 }
-                Box(
+                if (GameImageAssets.playerPortrait(player) != null) {
+                    PlayerPortrait(player, size = 54.dp)
+                } else Box(
                     modifier = Modifier
                         .size(54.dp)
                         .clip(CircleShape)

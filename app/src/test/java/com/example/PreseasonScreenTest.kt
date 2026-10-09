@@ -2,10 +2,16 @@ package com.example
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
+import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.unit.dp
+import android.graphics.BitmapFactory
+import org.junit.Assert.assertNotNull
+import org.junit.Assert.assertTrue
+import org.robolectric.RuntimeEnvironment
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
@@ -33,12 +39,16 @@ class PreseasonScreenTest {
         }
         composeTestRule.onNodeWithText("NBA Preseason • October 8, 2026").assertIsDisplayed()
         composeTestRule.onNodeWithText("Thursday, October 8, 2026").assertIsDisplayed()
-        composeTestRule.onNodeWithText("108 - 114").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("108").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("team_score_BKN").assertTextEquals("114").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("team_logo_PHI").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("team_logo_BKN").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("player_portrait_phi_23", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_phi_23").assertTextEquals(
-            "23", "LeBron James", "PTS", "REB", "AST", "FGM", "FGA", "10", "4", "5", "1", "1"
+            "LeBron James", "#23 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "10", "4", "5", "1", "1"
         )
         composeTestRule.onNodeWithTag("lineup_player_bkn_30").assertTextEquals(
-            "30", "Julius Randle", "PTS", "REB", "AST", "FGM", "FGA", "14", "6", "2", "4", "11"
+            "Julius Randle", "#30 · BKN", "PTS", "REB", "AST", "FGM", "FGA", "14", "6", "2", "4", "11"
         )
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-game.png")
         composeTestRule.onNodeWithText("LeBron James").performClick()
@@ -59,11 +69,45 @@ class PreseasonScreenTest {
             }
         }
         composeTestRule.onNodeWithTag("lineup_player_phi_1").assertTextEquals(
-            "1", "Kentavious Caldwell-Pope", "PTS", "REB", "AST", "FGM", "FGA", "2", "1", "1", "1", "3"
+            "Kentavious Caldwell-Pope", "#1 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "2", "1", "1", "1", "3"
         ).assertIsDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_bkn_14").assertTextEquals(
-            "14", "Terance Mann", "PTS", "REB", "AST", "FGM", "FGA", "0", "2", "1", "0", "4"
+            "Terance Mann", "#14 · BKN", "PTS", "REB", "AST", "FGM", "FGA", "0", "2", "1", "0", "4"
         ).assertIsDisplayed()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-narrow-stats.png")
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
+    fun logosStayAboveScoresAndQuarterDetailsRemainAccessible() {
+        val game = PreseasonGameData.createGame()
+        val resources = RuntimeEnvironment.getApplication().resources
+        (game.startingAway + game.startingHome + game.substitutesAway + game.substitutesHome).forEach { player ->
+            val resource = GameImageAssets.playerPortrait(player)
+            assertNotNull("Bundled portrait for ${player.name}", resource)
+            assertNotNull("Decodable portrait for ${player.name}", BitmapFactory.decodeResource(resources, resource!!))
+        }
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                Column {
+                    ScoreboardHeaderPanel(game)
+                    LineupSectionHeader(game, "Starting lineup")
+                    SymmetricalLineplayRow(game.startingAway.first(), game.startingHome.first()) {}
+                }
+            }
+        }
+        for (team in listOf("PHI", "BKN")) {
+            val logo = composeTestRule.onNodeWithTag("team_logo_$team").fetchSemanticsNode().boundsInRoot
+            val score = composeTestRule.onNodeWithTag("team_score_$team").fetchSemanticsNode().boundsInRoot
+            assertTrue("$team logo is above its score", logo.bottom < score.top)
+            assertTrue("$team score fits 320dp", score.left >= 0 && score.right <= 640)
+        }
+        composeTestRule.onNodeWithTag("lineup_header_Starting lineup").assertHeightIsEqualTo(32.dp)
+        composeTestRule.onNodeWithTag("quarter_scores").assertDoesNotExist()
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-narrow-matchup.png")
+        composeTestRule.onNodeWithTag("quarter_toggle").performClick()
+        composeTestRule.onNodeWithTag("quarter_scores").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("quarter_toggle").performClick()
+        composeTestRule.onNodeWithTag("quarter_scores").assertDoesNotExist()
     }
 }
