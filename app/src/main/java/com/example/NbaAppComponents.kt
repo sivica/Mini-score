@@ -9,6 +9,8 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -64,9 +66,11 @@ data class PlayerStats(
     var turnovers: Int = 0,
     var fgMade: Int = 0,
     var fgAttempted: Int = 0,
-    var minutes: Int = 18
+    var minutes: Int = 18,
+    var seconds: Int = 0
 ) {
     val fgPercentage: Int get() = if (fgAttempted > 0) (fgMade * 100) / fgAttempted else 0
+    val minutesDisplay: String get() = "$minutes:${seconds.toString().padStart(2, '0')}"
 }
 
 data class Player(
@@ -112,7 +116,12 @@ data class Game(
     var isSimulating: Boolean = false,
     var currentQuarter: Int = 4,
     var minutesLeft: Int = 12,
-    var secondsLeft: Int = 0
+    var secondsLeft: Int = 0,
+    val contextLabel: String? = null,
+    val dateLabel: String? = null,
+    val venue: String? = null,
+    val awayQuarters: List<Int> = emptyList(),
+    val homeQuarters: List<Int> = emptyList()
 )
 
 // ==========================================
@@ -303,7 +312,7 @@ object GeminiClient {
         }
 
         try {
-            val systemInstruction = "You are an elite, sharp NBA sports columnist with witty, punchy, expert analysis. Write exactly 2 blocks of paragraphs. Paragraph 1: An exciting, tactical summary of how the game flowed, focusing on defense, team strategies, and momentum. Paragraph 2: Highlight the most crucial players and explain how they drove their Flashscore ratings (like Hart's 7.9 or Wade's 5.9). Keep it highly analytical, using crisp, authentic basketball terminology. Avoid bullet points, titles, or code blocks in your final text."
+            val systemInstruction = "You are an NBA sports analyst. Write two concise paragraphs based only on the supplied game statistics. Summarize the result, then highlight players' contributions. Do not invent plays, ratings, awards, or tactical details absent from the data. Ratings marked N/A are unavailable, not evidence of poor performance. Avoid bullet points, titles, or code blocks."
             
             // Format game and player data for prompt
             val descriptionString = StringBuilder()
@@ -379,9 +388,9 @@ class GameViewModel : ViewModel() {
     private val _games = mutableStateMapOf<String, Game>()
     
     // Convert to regular list for observing changes
-    val games: List<Game> get() = _games.values.toList()
+    val games: List<Game> get() = _games.values.sortedBy { if (it.id == PreseasonGameData.GAME_ID) 0 else 1 }
 
-    private val _selectedGameId = MutableStateFlow("nyk_cle")
+    private val _selectedGameId = MutableStateFlow(PreseasonGameData.GAME_ID)
     val selectedGameId: StateFlow<String> = _selectedGameId.asStateFlow()
 
     private val _selectedPlayer = MutableStateFlow<Player?>(null)
@@ -399,7 +408,9 @@ class GameViewModel : ViewModel() {
     }
 
     init {
-        // Initialize mock games
+        val preseasonGame = PreseasonGameData.createGame()
+        _games[preseasonGame.id] = preseasonGame
+        // Retain the existing demo games in the selector.
         val game1 = MockData.createNykCleGame()
         val game2 = MockData.createLalGswGame()
         val game3 = MockData.createBosMiaGame()
@@ -445,6 +456,14 @@ class GameViewModel : ViewModel() {
     // High fidelity rule-based local sports summaries as fallback
     private fun generateLocalAnalysis(game: Game): String {
         return when (game.id) {
+            PreseasonGameData.GAME_ID -> {
+                "Brooklyn beat Philadelphia 114-108 at Barclays Center on October 8, 2026. " +
+                "Philadelphia led 58-56 at halftime, but Brooklyn won the third quarter 37-23. " +
+                "Jaylen Brown led the 76ers with 18 points; Julius Randle led the Nets with 14.\n\n" +
+                "LeBron James recorded 10 points, 4 rebounds and 5 assists in 18:04. " +
+                "Jabari Walker collected 7 rebounds, while Moe Wagner had 4 steals for Brooklyn. " +
+                "These are final preseason statistics; player ratings are unavailable."
+            }
             "nyk_cle" -> {
                 "The match ended with a dominant NYK display, clinching a 109-93 blowout victory over CLE. " +
                 "Josh Hart put on an absolute masterclass and clinched MVP honors, logging a phenomenal 7.9 rating with 19 points, 13 rebounds, and 7 critical assists that completely tore the Cavs' transition defense apart. " +
@@ -473,6 +492,7 @@ class GameViewModel : ViewModel() {
 
     fun toggleSimulation(gameId: String) {
         val game = _games[gameId] ?: return
+        if (game.id == PreseasonGameData.GAME_ID) return
         if (game.isSimulating) {
             stopSimulation(gameId)
         } else {
@@ -711,6 +731,10 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier) {
                         style = Stroke(width = 4f)
                     )
                 }
+                "PHI", "BKN" -> {
+                    drawCircle(color = team.primaryColor, radius = radius, center = center)
+                    drawCircle(color = team.secondaryColor, radius = radius, center = center, style = Stroke(width = 4f))
+                }
                 else -> {
                     // Miami Heat red flame theme
                     drawCircle(
@@ -808,7 +832,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                             fontFamily = FontFamily.SansSerif
                         )
                         Text(
-                            text = "Friday, May 22", // Reflects exact current date
+                            text = selectedGame.dateLabel ?: "Demo games",
                             color = ElegantTextSecondary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
@@ -1169,6 +1193,10 @@ fun ScoreboardHeaderPanel(game: Game) {
             .padding(vertical = 18.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
+        game.contextLabel?.let {
+            Text(text = it, color = AccentCyan, fontSize = 12.sp, textAlign = TextAlign.Center)
+            Spacer(modifier = Modifier.height(8.dp))
+        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -1187,7 +1215,7 @@ fun ScoreboardHeaderPanel(game: Game) {
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.SansSerif,
                     textAlign = TextAlign.Center,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.width(90.dp)
                 )
@@ -1233,11 +1261,27 @@ fun ScoreboardHeaderPanel(game: Game) {
                     fontWeight = FontWeight.Bold,
                     fontFamily = FontFamily.SansSerif,
                     textAlign = TextAlign.Center,
-                    maxLines = 1,
+                    maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.width(90.dp)
                 )
             }
+        }
+        game.venue?.let {
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = it, color = TextSecondary, fontSize = 11.sp)
+        }
+        if (game.awayQuarters.isNotEmpty() && game.awayQuarters.size == game.homeQuarters.size) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "     " + (1..4).joinToString("") { "Q$it".padStart(4) } + "\n" +
+                    game.awayTeam.code.padEnd(5) + game.awayQuarters.joinToString("") { it.toString().padStart(4) } + "\n" +
+                    game.homeTeam.code.padEnd(5) + game.homeQuarters.joinToString("") { it.toString().padStart(4) },
+                color = TextSecondary,
+                fontSize = 11.sp,
+                fontFamily = FontFamily.Monospace,
+                textAlign = TextAlign.Center
+            )
         }
     }
 }
@@ -1319,6 +1363,9 @@ fun SymmetricalLineplayRow(
                         )
                     }
                 }
+                if (leftPlayer.rating == null) {
+                    Text(text = "${leftPlayer.stats.points} PTS", color = AccentCyan, fontSize = 10.sp, modifier = Modifier.padding(start = 4.dp))
+                }
             }
         } else {
             Spacer(modifier = Modifier.weight(1f))
@@ -1343,6 +1390,9 @@ fun SymmetricalLineplayRow(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.End
             ) {
+                if (rightPlayer.rating == null) {
+                    Text(text = "${rightPlayer.stats.points} PTS", color = AccentCyan, fontSize = 10.sp, modifier = Modifier.padding(end = 4.dp))
+                }
                 rightPlayer.rating?.let { rating ->
                     val badgeBg = when {
                         rating >= 7.0 -> RatingGreen
@@ -1674,6 +1724,7 @@ fun PlayerDetailBottomSheet(
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = ElegantHeaderBg,
         scrimColor = Color.Black.copy(alpha = 0.7f),
         dragHandle = { BottomSheetDefaults.DragHandle(color = ElegantBorderColor) }
@@ -1681,6 +1732,7 @@ fun PlayerDetailBottomSheet(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp)
                 .padding(bottom = 36.dp)
         ) {
@@ -1691,6 +1743,7 @@ fun PlayerDetailBottomSheet(
             ) {
                 // Circular rating badge
                 val ratingCol = when {
+                    player.rating == null -> ElegantBorderColor
                     (player.rating ?: 0.0) >= 7.0 -> RatingGreen
                     (player.rating ?: 0.0) >= 6.0 -> RatingOrange
                     else -> RatingRed
@@ -1762,7 +1815,9 @@ fun PlayerDetailBottomSheet(
             TelemetryBar(label = "Assists", current = player.stats.assists, max = 15)
             TelemetryBar(label = "Steals", current = player.stats.steals, max = 6)
             TelemetryBar(label = "Blocks", current = player.stats.blocks, max = 6)
+            TelemetryBar(label = "Turnovers", current = player.stats.turnovers, max = 10)
             TelemetryBar(label = "FG % / Accuracy", current = player.stats.fgPercentage, max = 100, isPercentage = true, displayValue = "${player.stats.fgMade}/${player.stats.fgAttempted}")
+            Text(text = "Minutes played: ${player.stats.minutesDisplay}", color = TextSecondary, fontSize = 12.sp)
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -1840,6 +1895,9 @@ fun TelemetryBar(label: String, current: Int, max: Int, isPercentage: Boolean = 
 
 fun getAnalystVerdict(player: Player): String {
     if (player.rating == null || player.rating == 0.0) {
+        if (player.stats.minutes > 0 || player.stats.seconds > 0) {
+            return "${player.stats.points} points, ${player.stats.rebounds} rebounds and ${player.stats.assists} assists in ${player.stats.minutesDisplay}. Player rating unavailable."
+        }
         return "Not enough court minutes played to calculate active telemetry."
     }
     return when {

@@ -2,6 +2,14 @@
 
 A high-fidelity, mobile-first web interface for presenting basketball statistics with a modern glassmorphic aesthetic.
 
+## Current game
+
+The Android app opens to **Philadelphia 76ers at Brooklyn Nets**, the October 8, 2026 NBA preseason game at Barclays Center: **PHI 108, BKN 114 (Final)**. The web page displays the same game. Both include all 30 players who played, with points, rebounds, assists and field goals. Tap an Android player for steals, blocks, turnovers and exact minutes played. Player ratings are unavailable for this game.
+
+Quarter scores: PHI **33 / 25 / 23 / 27**, BKN **33 / 23 / 37 / 21**. Records shown on the web are preseason records (PHI 1–1, BKN 2–0).
+
+Sources: [NBA result and quarter scores](https://www.nba.com/game/phi-vs-bkn-0012600034), [RealGM player box score](https://basketball.realgm.com/nba/boxscore/2026-10-08/Philadelphia-at-Brooklyn/526643). This is a static final snapshot. Player rebounds and turnovers exclude team-only events. The Android data lives in `PreseasonGameData.kt`; web data lives in `data.js`. The existing Android demo games remain selectable; the recorded preseason game cannot be simulated.
+
 ## 🎯 Features
 
 ✨ **Instant Load Times** - Static data, zero external dependencies  
