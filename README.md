@@ -4,7 +4,7 @@ A high-fidelity, mobile-first web interface for presenting basketball statistics
 
 ## Current game
 
-The Android app opens to **Philadelphia 76ers at Brooklyn Nets**, the October 8, 2026 NBA preseason game at Barclays Center: **PHI 108, BKN 114 (Final)**. The web page displays the same game. Both include all 30 players who played, with points, rebounds, assists and field goals. Tap an Android player for steals, blocks, turnovers and exact minutes played. Player ratings are unavailable for this game.
+The Android app opens to **Philadelphia 76ers at Brooklyn Nets**, the October 8, 2026 NBA preseason game at Barclays Center: **PHI 108, BKN 114 (Final)**. The web page displays the same game. Both include all 30 players who played, with points, rebounds, assists and field goals. Each Android lineup player shows a `PTS / REB / AST / FGM / FGA` labels row with the corresponding values directly below it. Tap an Android player for steals, blocks, turnovers and exact minutes played. Player ratings are unavailable for this game.
 
 Quarter scores: PHI **33 / 25 / 23 / 27**, BKN **33 / 23 / 37 / 21**. Records shown on the web are preseason records (PHI 1–1, BKN 2–0).
 

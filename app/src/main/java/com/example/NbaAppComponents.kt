@@ -1295,164 +1295,88 @@ fun SymmetricalLineplayRow(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .height(46.dp)
             .background(SportsDarkBackground)
-            .padding(horizontal = 14.dp),
+            .padding(horizontal = 14.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        // LEFT TEAM PLAYER (Left side symmetrical alignment)
         if (leftPlayer != null) {
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .clickable { onPlayerClick(leftPlayer) }
-                    .padding(end = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Start
-            ) {
-                Text(
-                    text = leftPlayer.number,
-                    color = TextSecondary,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(22.dp)
-                )
-                Text(
-                    text = leftPlayer.flag,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(end = 6.dp)
-                )
-                Text(
-                    text = leftPlayer.name,
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    fontWeight = if (leftPlayer.isTopPerformer) FontWeight.Bold else FontWeight.Normal,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-                if (leftPlayer.isTopPerformer) {
-                    Text(
-                        text = "✨",
-                        modifier = Modifier.padding(end = 4.dp),
-                        fontSize = 11.sp
-                    )
-                }
-                
-                leftPlayer.rating?.let { rating ->
-                    val badgeBg = when {
-                        rating >= 7.0 -> RatingGreen
-                        rating >= 6.0 -> RatingOrange
-                        else -> RatingRed
-                    }
-                    Box(
-                        modifier = Modifier
-                            .padding(start = 6.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(badgeBg)
-                            .width(26.dp)
-                            .height(18.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = String.format("%.1f", rating),
-                            color = Color.Black,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                }
-                if (leftPlayer.rating == null) {
-                    Text(text = "${leftPlayer.stats.points} PTS", color = AccentCyan, fontSize = 10.sp, modifier = Modifier.padding(start = 4.dp))
-                }
-            }
+            PlayerLineupCell(leftPlayer, Modifier.weight(1f).padding(end = 8.dp), onPlayerClick)
         } else {
             Spacer(modifier = Modifier.weight(1f))
         }
-
-        // DELIMITER CENTER CHANNEL
-        Box(
-            modifier = Modifier
-                .width(1.dp)
-                .fillMaxHeight(0.6f)
-                .background(Color(0xFF142C35))
-        )
-
-        // RIGHT TEAM PLAYER (Right side symmetrical alignment)
+        Box(modifier = Modifier.width(1.dp).height(70.dp).background(Color(0xFF142C35)))
         if (rightPlayer != null) {
-            Row(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxHeight()
-                    .clickable { onPlayerClick(rightPlayer) }
-                    .padding(start = 4.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.End
-            ) {
-                if (rightPlayer.rating == null) {
-                    Text(text = "${rightPlayer.stats.points} PTS", color = AccentCyan, fontSize = 10.sp, modifier = Modifier.padding(end = 4.dp))
-                }
-                rightPlayer.rating?.let { rating ->
-                    val badgeBg = when {
-                        rating >= 7.0 -> RatingGreen
-                        rating >= 6.0 -> RatingOrange
-                        else -> RatingRed
-                    }
-                    Box(
-                        modifier = Modifier
-                            .padding(end = 6.dp)
-                            .clip(RoundedCornerShape(4.dp))
-                            .background(badgeBg)
-                            .width(26.dp)
-                            .height(18.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = String.format("%.1f", rating),
-                            color = Color.Black,
-                            fontSize = 10.sp,
-                            fontWeight = FontWeight.Black
-                        )
-                    }
-                }
-
-                if (rightPlayer.isTopPerformer) {
-                    Text(
-                        text = "✨",
-                        modifier = Modifier.padding(start = 4.dp),
-                        fontSize = 11.sp
-                    )
-                }
-
-                Text(
-                    text = rightPlayer.name,
-                    color = Color.White,
-                    fontSize = 13.sp,
-                    fontWeight = if (rightPlayer.isTopPerformer) FontWeight.Bold else FontWeight.Normal,
-                    textAlign = TextAlign.End,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f)
-                )
-
-                Text(
-                    text = rightPlayer.flag,
-                    fontSize = 12.sp,
-                    modifier = Modifier.padding(start = 6.dp)
-                )
-
-                Text(
-                    text = rightPlayer.number,
-                    color = TextSecondary,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Bold,
-                    modifier = Modifier.width(22.dp),
-                    textAlign = TextAlign.End
-                )
-            }
+            PlayerLineupCell(rightPlayer, Modifier.weight(1f).padding(start = 8.dp), onPlayerClick)
         } else {
             Spacer(modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+@Composable
+fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClick: (Player) -> Unit) {
+    Column(
+        modifier = modifier
+            .clickable { onPlayerClick(player) }
+            .testTag("lineup_player_${player.id}")
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().height(36.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
+        ) {
+            Text(text = player.number, color = TextSecondary, fontSize = 10.sp)
+            if (player.flag.isNotEmpty()) {
+                Text(text = player.flag, fontSize = 12.sp)
+            }
+            Text(
+                text = player.name,
+                color = Color.White,
+                fontSize = 12.sp,
+                lineHeight = 16.sp,
+                fontWeight = if (player.isTopPerformer) FontWeight.Bold else FontWeight.Normal,
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.weight(1f)
+            )
+            player.rating?.let { rating ->
+                Text(
+                    text = String.format("%.1f", rating),
+                    color = Color.Black,
+                    fontSize = 10.sp,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier
+                        .clip(RoundedCornerShape(4.dp))
+                        .background(if (rating >= 7.0) RatingGreen else if (rating >= 6.0) RatingOrange else RatingRed)
+                        .padding(horizontal = 3.dp, vertical = 2.dp)
+                )
+            }
+        }
+        Row(modifier = Modifier.fillMaxWidth()) {
+            listOf("PTS", "REB", "AST", "FGM", "FGA").forEach { label ->
+                Text(
+                    text = label,
+                    color = TextSecondary,
+                    fontSize = 9.sp,
+                    lineHeight = 12.sp,
+                    fontWeight = FontWeight.Medium,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+            }
+        }
+        Row(modifier = Modifier.fillMaxWidth().padding(top = 2.dp)) {
+            listOf(player.stats.points, player.stats.rebounds, player.stats.assists, player.stats.fgMade, player.stats.fgAttempted).forEach { value ->
+                Text(
+                    text = value.toString(),
+                    color = AccentCyan,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f)
+                )
+            }
         }
     }
 }
