@@ -3,11 +3,13 @@ package com.example
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.assertHeightIsEqualTo
-import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.foundation.layout.Column
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import android.graphics.BitmapFactory
 import org.junit.Assert.assertNotNull
@@ -16,6 +18,7 @@ import org.robolectric.RuntimeEnvironment
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performScrollToNode
 import com.example.ui.theme.MyApplicationTheme
 import com.github.takahirom.roborazzi.RobolectricDeviceQualifiers
 import com.github.takahirom.roborazzi.captureRoboImage
@@ -39,13 +42,16 @@ class PreseasonScreenTest {
             MyApplicationTheme { MainNbaScreen(viewModel = viewModel) }
         }
         composeTestRule.onNodeWithText("NBA Preseason").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("selected_game_date", useUnmergedTree = true).assertTextEquals("Thu, Oct 8 · Final").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("selected_game_date").assertTextEquals("Thu, Oct 8").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("108").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_score_BKN").assertTextEquals("114").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_logo_PHI").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_logo_BKN").assertIsDisplayed()
         composeTestRule.onNodeWithTag("app_logo").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("game_selector").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("game_selector").assertDoesNotExist()
+        for (label in listOf("Games", "Players", "Standings", "Settings")) {
+            composeTestRule.onNodeWithText(label).assertDoesNotExist()
+        }
         composeTestRule.onNodeWithTag("player_portrait_phi_23", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_phi_23").assertTextEquals(
             "LeBron James", "#23 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "10", "4", "5", "1", "1"
@@ -62,31 +68,61 @@ class PreseasonScreenTest {
 
     @Test
     @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
-    fun selectorSwitchesGameAndScheduledScoresDoNotPretendToBeResults() {
+    fun collapsedGamesFollowStatsAndSwitchingReturnsToScoreboard() {
         val model = GameViewModel()
         val scheduled = PreseasonGameData.createGame().copy(id = "scheduled-test", status = "SCHEDULED",
             startingAway = emptyList(), startingHome = emptyList(), substitutesAway = emptyList(), substitutesHome = emptyList(),
-            gameDate = "2026-10-10", dateLabel = "Saturday, October 10, 2026", awayQuarters = emptyList(), homeQuarters = emptyList())
+            gameDate = "2026-10-10", dateLabel = "Saturday, October 10, 2026", awayQuarters = emptyList(), homeQuarters = emptyList(),
+            tipoffUtc = "2026-10-10T00:00:00Z")
         model.applyFeed(GameFeed(PreseasonGameData.GAME_ID, listOf(PreseasonGameData.createGame(), scheduled)))
         composeTestRule.setContent { MyApplicationTheme { MainNbaScreen(model) } }
-        composeTestRule.onNodeWithTag("game_selector").performClick()
-        composeTestRule.onNodeWithText("Choose game").assertIsDisplayed()
-        composeTestRule.onNodeWithText("Thursday, October 8").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertIsSelected()
+        composeTestRule.onNodeWithTag("game_selector").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("lineup_player_phi_23").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("select_game_scheduled-test").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("game_list").performScrollToNode(androidx.compose.ui.test.hasTestTag("select_game_scheduled-test"))
+        composeTestRule.onNodeWithText("Other games").assertIsDisplayed()
         composeTestRule.onNodeWithTag("select_game_nyk_cle").assertDoesNotExist()
         composeTestRule.onNodeWithTag("select_game_lal_gsw").assertDoesNotExist()
         composeTestRule.onNodeWithTag("select_game_bos_mia").assertDoesNotExist()
-        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/game-selector-sheet.png")
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/collapsed-games.png")
         composeTestRule.onNodeWithTag("select_game_scheduled-test").performClick()
         composeTestRule.onNodeWithTag("game_picker_sheet").assertDoesNotExist()
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("—")
         composeTestRule.onNodeWithTag("team_score_BKN").assertTextEquals("—")
-        composeTestRule.onNodeWithTag("selected_game_date", useUnmergedTree = true).assertTextEquals("Sat, Oct 10 · Scheduled").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("selected_game_date").assertTextEquals("Sat, Oct 10").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Game hasn’t started").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Tipoff: 8:00 PM ET").assertIsDisplayed()
         composeTestRule.onNodeWithText("Player stats will appear when available.").assertIsDisplayed()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/scheduled-game.png")
-        composeTestRule.onNodeWithTag("game_selector").performClick()
-        composeTestRule.onNodeWithTag("close_game_selector").performClick()
-        composeTestRule.onNodeWithTag("game_picker_sheet").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("game_list").performScrollToNode(androidx.compose.ui.test.hasTestTag("select_game_${PreseasonGameData.GAME_ID}"))
+        composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").performClick()
+        composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("108").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("lineup_player_phi_23").assertIsDisplayed()
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
+    fun twoHundredPercentFontsStackPlayersAndKeepAllFiveStats() {
+        val game = PreseasonGameData.createGame()
+        composeTestRule.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, 2f)) {
+                MyApplicationTheme {
+                    SymmetricalLineplayRow(game.substitutesAway.first(), game.substitutesHome.first()) {}
+                }
+            }
+        }
+        composeTestRule.onNodeWithTag("stacked_player_pair").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("lineup_player_phi_1").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("lineup_player_bkn_14").assertIsDisplayed()
+        val left = composeTestRule.onNodeWithTag("lineup_player_phi_1").fetchSemanticsNode().boundsInRoot
+        val right = composeTestRule.onNodeWithTag("lineup_player_bkn_14").fetchSemanticsNode().boundsInRoot
+        assertTrue("Large-font player cards stack without overlap", left.bottom <= right.top)
+        composeTestRule.onNodeWithTag("lineup_player_phi_1").assertTextEquals(
+            "Kentavious Caldwell-Pope", "#1 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "2", "1", "1", "1", "3"
+        )
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-200-percent.png")
     }
 
     @Test

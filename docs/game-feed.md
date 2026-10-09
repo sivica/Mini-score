@@ -1,6 +1,6 @@
 # Update Miniscore games without rebuilding the APK
 
-Install **Miniscore 1.4 once**. Its date, game selector, scores, rosters and player stats then come from a public GitHub JSON feed (existing 1.3 installations also support feed updates):
+Install **Miniscore 1.5 once**. Its date, games, scores, rosters and player stats then come from a public GitHub JSON feed (existing 1.3 installations also support feed updates):
 
 - [Edit the live games.json](https://github.com/sivica/Mini-score/edit/game-data/games.json)
 - [View the live feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json)
@@ -13,7 +13,7 @@ The `game-data` branch is the published data source. The copy of `games.json` on
 2. Add a game to `games`, using a unique `id`. Keep earlier games to let users select them.
 3. Set `date` to the actual NBA game date (`YYYY-MM-DD`). The app derives the displayed weekday and date from this field. Changing the phone's date does not relabel yesterday's result.
 4. Set `competition`, `venue`, and the two teams. Set `defaultGameId` to the new game's `id` to open it by default.
-5. Before tipoff use `status: "SCHEDULED"`, `score: 0`, `players: []` and `quarters: []` for both teams. Optionally add `tipoffUTC`, for example `"2026-10-10T00:00:00Z"`. Version 1.4 displays that time as **8:00 PM ET** in the selector. The app displays dashes for scheduled scores and a message when stats are unavailable.
+5. Before tipoff use `status: "SCHEDULED"`, `score: 0`, `players: []` and `quarters: []` for both teams. Optionally add `tipoffUTC`, for example `"2026-10-10T00:00:00Z"`. Version 1.5 displays that time as **8:00 PM ET** in collapsed game cards and the scheduled-game state. The app displays dashes for scheduled scores and a message when stats are unavailable.
 6. When verified stats are available, add the players, scores and quarter scores; set `status` to `LIVE` or `FINISHED` as appropriate. Do not copy yesterday's player stats into a new game.
 7. Click **Commit changes** and commit directly to **game-data**. Reopen the app, tap the refresh icon, or pull down the lineup to download the published data. GitHub may take a few minutes to serve a new revision.
 

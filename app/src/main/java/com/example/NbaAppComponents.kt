@@ -13,6 +13,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -31,6 +32,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.layout.ContentScale
@@ -354,10 +356,12 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffi
         return
     }
     if (team.logoUrl != null) {
+        var imageLoaded by remember(team.logoUrl) { mutableStateOf(false) }
         Box(modifier.size(size).clip(CircleShape).background(Color.White).testTag("team_logo_${team.code}$tagSuffix"),
             contentAlignment = Alignment.Center) {
-            Text(team.code, color = Color.Black, fontSize = (size.value * 0.24f).sp)
+            if (!imageLoaded) Text(team.code, color = Color.Black, fontSize = (size.value * 0.24f).sp)
             AsyncImage(model = team.logoUrl, contentDescription = "${team.name} logo",
+                onSuccess = { imageLoaded = true }, onError = { imageLoaded = false },
                 contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize().padding(size * 0.1f))
         }
         return
@@ -512,6 +516,9 @@ fun MainNbaScreen(viewModel: GameViewModel) {
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val feedMessage by viewModel.feedMessage.collectAsState()
 
+    val listState = rememberLazyListState()
+    LaunchedEffect(selectedGame.id) { listState.scrollToItem(0) }
+
     // Retrieve API key securely via BuildConfig
     val apiKey = com.example.BuildConfig.GEMINI_API_KEY ?: ""
     val context = LocalContext.current
@@ -563,12 +570,11 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                     }
                 }
                 IconButton(onClick = { viewModel.refreshGames() }, enabled = !isRefreshing,
-                    modifier = Modifier.size(40.dp)) {
+                    modifier = Modifier.size(48.dp)) {
                     if (isRefreshing) CircularProgressIndicator(Modifier.size(20.dp), color = AccentCyan, strokeWidth = 2.dp)
                     else Icon(Icons.Default.Refresh, "Refresh games", tint = TextPrimary, modifier = Modifier.size(22.dp))
                 }
             }
-            GamePicker(games, selectedGame) { viewModel.selectGame(it) }
             feedMessage?.let {
                 Text(it, color = TextSecondary, fontSize = 11.sp,
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
@@ -580,7 +586,8 @@ fun MainNbaScreen(viewModel: GameViewModel) {
             PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = { viewModel.refreshGames() },
                 modifier = Modifier.weight(1f).fillMaxWidth()) {
                 LazyColumn(
-                    modifier = Modifier
+                    state = listState,
+                    modifier = Modifier.testTag("game_list")
                         .fillMaxSize()
                         .fillMaxWidth()
                         .background(SportsDarkBackground)
@@ -595,8 +602,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                         if (selectedGame.startingAway.isNotEmpty() || selectedGame.startingHome.isNotEmpty()) {
                             LineupSectionHeader(selectedGame, "Starting lineup")
                         } else if (selectedGame.substitutesAway.isEmpty() && selectedGame.substitutesHome.isEmpty()) {
-                            Text("Player stats will appear when available.", color = TextSecondary, fontSize = 13.sp,
-                                modifier = Modifier.fillMaxWidth().padding(20.dp), textAlign = TextAlign.Center)
+                            GameEmptyState(selectedGame)
                         }
                     }
 
@@ -631,10 +637,19 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                         )
                     }
 
-                    // 6. Advertising Space (MATCHES THE SCREENSHOT TEMU BANNER CONCEPT IN POLISHED SPORTS DESIGN)
-                    item {
-                        MockAdvertisementBanner()
+                    val otherGames = games.filterNot { it.id == selectedGame.id }
+                    if (otherGames.isNotEmpty()) {
+                        item(key = "other_games_heading") {
+                            Text("Other games", color = TextPrimary, fontSize = 16.sp, lineHeight = 22.sp,
+                                fontWeight = FontWeight.Medium,
+                                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 20.dp, bottom = 8.dp)
+                                    .testTag("other_games_heading"))
+                        }
+                        items(otherGames, key = { "collapsed_${it.id}" }) { game ->
+                            CollapsedGameCard(game) { viewModel.selectGame(game.id) }
+                        }
                     }
+                    item { MockAdvertisementBanner() }
 
                     // Bottom padding
                     item {
@@ -644,118 +659,6 @@ fun MainNbaScreen(viewModel: GameViewModel) {
 
             }
 
-            // D. ELEGANT BOTTOM BAR (MATCHES THE ELEGANT DARK HTML NAVIGATION CONCEPT)
-            Divider(color = ElegantBorderColor.copy(alpha = 0.2f), thickness = 1.dp)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(64.dp)
-                    .background(ElegantHeaderBg)
-                    .padding(vertical = 6.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceAround
-            ) {
-                // GAMES TAB (Active Tab)
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier.weight(1f)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(ElegantAccentBg2)
-                            .padding(horizontal = 20.dp, vertical = 4.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.DateRange,
-                            contentDescription = "Games",
-                            tint = ElegantAccentText2,
-                            modifier = Modifier.size(18.dp)
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "Games",
-                        color = ElegantTextPrimary,
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
-                // PLAYERS TAB
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { /* Decorative */ }
-                        .padding(vertical = 4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.AccountBox,
-                        contentDescription = "Players",
-                        tint = ElegantTextSecondary.copy(alpha = 0.6f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "Players",
-                        color = ElegantTextSecondary.copy(alpha = 0.6f),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                // STANDINGS TAB
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { /* Decorative */ }
-                        .padding(vertical = 4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.List,
-                        contentDescription = "Standings",
-                        tint = ElegantTextSecondary.copy(alpha = 0.6f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "Standings",
-                        color = ElegantTextSecondary.copy(alpha = 0.6f),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-
-                // SETTINGS TAB
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clickable { /* Decorative */ }
-                        .padding(vertical = 4.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Settings,
-                        contentDescription = "Settings",
-                        tint = ElegantTextSecondary.copy(alpha = 0.6f),
-                        modifier = Modifier.size(20.dp)
-                    )
-                    Spacer(modifier = Modifier.height(2.dp))
-                    Text(
-                        text = "Settings",
-                        color = ElegantTextSecondary.copy(alpha = 0.6f),
-                        fontSize = 11.sp,
-                        fontWeight = FontWeight.Medium
-                    )
-                }
-            }
         }
 
         // C. SELECTED PLAYER HISTORIC Telemetry DETAILS BOTTOM SHEET
@@ -780,23 +683,21 @@ fun SymmetricalLineplayRow(
     rightPlayer: Player?,
     onPlayerClick: (Player) -> Unit
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(SportsDarkBackground)
-            .padding(horizontal = 8.dp, vertical = 10.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        if (leftPlayer != null) {
-            PlayerLineupCell(leftPlayer, Modifier.weight(1f).padding(end = 5.dp), onPlayerClick)
-        } else {
-            Spacer(modifier = Modifier.weight(1f))
+    val largeText = LocalDensity.current.fontScale >= 1.5f
+    if (largeText) {
+        Column(Modifier.fillMaxWidth().background(SportsDarkBackground).padding(horizontal = 16.dp)
+            .testTag("stacked_player_pair")) {
+            leftPlayer?.let { PlayerLineupCell(it, Modifier.fillMaxWidth().padding(vertical = 10.dp), onPlayerClick) }
+            rightPlayer?.let { PlayerLineupCell(it, Modifier.fillMaxWidth().padding(vertical = 10.dp), onPlayerClick) }
         }
-        Box(modifier = Modifier.width(1.dp).height(86.dp).background(ElegantBorderColor.copy(alpha = 0.6f)))
-        if (rightPlayer != null) {
-            PlayerLineupCell(rightPlayer, Modifier.weight(1f).padding(start = 5.dp), onPlayerClick)
-        } else {
-            Spacer(modifier = Modifier.weight(1f))
+    } else {
+        Row(Modifier.fillMaxWidth().background(SportsDarkBackground).padding(horizontal = 8.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically) {
+            if (leftPlayer != null) PlayerLineupCell(leftPlayer, Modifier.weight(1f).padding(end = 5.dp), onPlayerClick)
+            else Spacer(Modifier.weight(1f))
+            Box(Modifier.width(1.dp).height(108.dp).background(ElegantBorderColor))
+            if (rightPlayer != null) PlayerLineupCell(rightPlayer, Modifier.weight(1f).padding(start = 5.dp), onPlayerClick)
+            else Spacer(Modifier.weight(1f))
         }
     }
 }
@@ -805,7 +706,7 @@ fun SymmetricalLineplayRow(
 fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClick: (Player) -> Unit) {
     Column(
         modifier = modifier
-            .clickable { onPlayerClick(player) }
+            .clickable(onClickLabel = "Open player details") { onPlayerClick(player) }
             .testTag("lineup_player_${player.id}")
     ) {
         Row(
@@ -818,8 +719,8 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                 Text(
                     text = player.name,
                     color = TextPrimary,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
+                    fontSize = 14.sp,
+                    lineHeight = 18.sp,
                     fontWeight = if (player.isTopPerformer) FontWeight.Bold else FontWeight.Normal,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -827,12 +728,12 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                 Text(
                     text = "#${player.number} · ${player.teamCode ?: player.id.substringBefore('_').uppercase()}" +
                         if (player.flag.isNotEmpty()) " ${player.flag}" else "",
-                    color = TextSecondary, fontSize = 10.sp, lineHeight = 14.sp,
+                    color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
                     modifier = Modifier.padding(top = 2.dp)
                 )
                 player.rating?.let { rating ->
                     Text(
-                        text = String.format("%.1f", rating), color = Color.Black, fontSize = 10.sp,
+                        text = String.format("%.1f", rating), color = Color.Black, fontSize = 12.sp,
                         modifier = Modifier.clip(RoundedCornerShape(3.dp))
                             .background(if (rating >= 7.0) RatingGreen else if (rating >= 6.0) RatingOrange else RatingRed)
                             .padding(horizontal = 3.dp)
@@ -845,8 +746,8 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                 Text(
                     text = label,
                     color = TextSecondary,
-                    fontSize = 10.sp,
-                    lineHeight = 14.sp,
+                    fontSize = 12.sp,
+                    lineHeight = 16.sp,
                     fontWeight = FontWeight.Medium,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
@@ -858,8 +759,8 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                 Text(
                     text = value.toString(),
                     color = AccentCyan,
-                    fontSize = 12.sp,
-                    lineHeight = 16.sp,
+                    fontSize = 14.sp,
+                    lineHeight = 18.sp,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f)
@@ -878,11 +779,13 @@ fun PlayerPortrait(player: Player, size: Dp, modifier: Modifier = Modifier) {
         Image(painterResource(portrait), contentDescription = "${player.name} photo",
             contentScale = ContentScale.Crop, modifier = portraitModifier)
     } else {
+        var imageLoaded by remember(player.portraitUrl) { mutableStateOf(false) }
         Box(portraitModifier, contentAlignment = Alignment.Center) {
-            Text(player.name.split(' ').take(2).mapNotNull { it.firstOrNull() }.joinToString(""),
+            if (!imageLoaded) Text(player.name.split(' ').take(2).mapNotNull { it.firstOrNull() }.joinToString(""),
                 color = TextPrimary, fontSize = (size.value * 0.3f).sp)
             if (player.portraitUrl != null) {
                 AsyncImage(model = player.portraitUrl, contentDescription = "${player.name} photo",
+                    onSuccess = { imageLoaded = true }, onError = { imageLoaded = false },
                     contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
             }
         }
@@ -1247,75 +1150,29 @@ fun getAnalystVerdict(player: Player): String {
 
 @Composable
 fun MockAdvertisementBanner() {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(12.dp),
-        colors = CardDefaults.cardColors(containerColor = Color(0xFF021C2B)),
-        shape = RoundedCornerShape(6.dp),
-        border = androidx.compose.foundation.BorderStroke(0.5.dp, Color(0xFF0F3647))
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 12.dp, horizontal = 16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(3.dp))
-                        .background(Color(0xFF06334D))
-                        .padding(horizontal = 5.dp, vertical = 2.dp)
-                ) {
-                    Text(
-                        text = "SPONSORED",
-                        color = AccentCyan,
-                        fontSize = 8.sp,
-                        fontWeight = FontWeight.Bold
-                    )
-                }
+    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp)
+        .border(1.dp, ElegantBorderColor, RoundedCornerShape(8.dp)).padding(12.dp)
+        .testTag("promotion"), verticalAlignment = Alignment.CenterVertically) {
+        Text("Sponsored", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
+            modifier = Modifier.weight(1f))
+        Text("TEMU", color = TextSecondary, fontSize = 14.sp, lineHeight = 18.sp)
+    }
+}
 
-                Text(
-                    text = "TEMU",
-                    color = Color(0xFFFA772C),
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Black,
-                    fontFamily = FontFamily.SansSerif
-                )
-            }
-
-            Spacer(modifier = Modifier.height(6.dp))
-
-            Text(
-                text = "Shop Like a Billionaire. Download the App for Exclusive Coupons!",
-                color = Color.White,
-                fontSize = 11.sp,
-                textAlign = TextAlign.Center,
-                fontFamily = FontFamily.SansSerif
-            )
-
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Button(
-                onClick = {},
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF5EC91F)),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(34.dp),
-                shape = RoundedCornerShape(4.dp)
-            ) {
-                Text(
-                    text = "INSTALL",
-                    color = Color.Black,
-                    fontSize = 11.sp,
-                    fontWeight = FontWeight.Black
-                )
-            }
+@Composable
+fun GameEmptyState(game: Game) {
+    Column(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 24.dp)
+        .testTag("game_empty_state"), horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(if (game.status == "SCHEDULED") "Game hasn’t started" else "Player stats unavailable",
+            color = TextPrimary, fontSize = 18.sp, lineHeight = 24.sp, fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center)
+        if (game.status == "SCHEDULED") {
+            val time = pickerStatus(game)
+            Text(if (time == "Scheduled") "Tipoff time to be confirmed" else "Tipoff: $time",
+                color = AccentCyan, fontSize = 14.sp, lineHeight = 20.sp,
+                textAlign = TextAlign.Center, modifier = Modifier.padding(top = 8.dp))
         }
+        Text("Player stats will appear when available.", color = TextSecondary, fontSize = 12.sp,
+            lineHeight = 18.sp, textAlign = TextAlign.Center, modifier = Modifier.padding(top = 8.dp))
     }
 }
