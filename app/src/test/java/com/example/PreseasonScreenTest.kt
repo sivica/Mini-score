@@ -37,12 +37,14 @@ class PreseasonScreenTest {
         composeTestRule.setContent {
             MyApplicationTheme { MainNbaScreen(viewModel = viewModel) }
         }
-        composeTestRule.onNodeWithText("NBA Preseason • October 8, 2026").assertIsDisplayed()
+        composeTestRule.onNodeWithText("NBA Preseason").assertIsDisplayed()
         composeTestRule.onNodeWithText("Thursday, October 8, 2026").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("108").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_score_BKN").assertTextEquals("114").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_logo_PHI").assertIsDisplayed()
         composeTestRule.onNodeWithTag("team_logo_BKN").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("app_logo").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("game_selector").assertIsDisplayed()
         composeTestRule.onNodeWithTag("player_portrait_phi_23", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_phi_23").assertTextEquals(
             "LeBron James", "#23 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "10", "4", "5", "1", "1"
@@ -55,6 +57,29 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithText("Minutes played: 18:04").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("Turnovers").performScrollTo().assertIsDisplayed()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-player.png")
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
+    fun selectorSwitchesGameAndScheduledScoresDoNotPretendToBeResults() {
+        val model = GameViewModel()
+        composeTestRule.setContent { MyApplicationTheme { MainNbaScreen(model) } }
+        composeTestRule.onNodeWithTag("game_selector").performClick()
+        composeTestRule.onNodeWithTag("select_game_nyk_cle").performClick()
+        composeTestRule.onNodeWithTag("team_score_NYK").assertTextEquals("109")
+        composeTestRule.onNodeWithText("Demo games").assertIsDisplayed()
+        composeTestRule.runOnIdle {
+            val game = PreseasonGameData.createGame().copy(id = "scheduled-test", status = "SCHEDULED",
+                startingAway = emptyList(), startingHome = emptyList(), substitutesAway = emptyList(), substitutesHome = emptyList(),
+                dateLabel = "Saturday, October 10, 2026", awayQuarters = emptyList(), homeQuarters = emptyList())
+            model.applyFeed(GameFeed(game.id, listOf(game)))
+            model.selectGame(game.id)
+        }
+        composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("—")
+        composeTestRule.onNodeWithTag("team_score_BKN").assertTextEquals("—")
+        composeTestRule.onNodeWithText("Saturday, October 10, 2026").assertIsDisplayed()
+        composeTestRule.onNodeWithText("Player stats will appear when available.").assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/scheduled-game.png")
     }
 
     @Test

@@ -2,15 +2,23 @@
 
 A high-fidelity, mobile-first web interface for presenting basketball statistics with a modern glassmorphic aesthetic.
 
-## Current game
+## Android: remotely updated games
 
-The Android app opens to **Philadelphia 76ers at Brooklyn Nets**, the October 8, 2026 NBA preseason game at Barclays Center: **PHI 108, BKN 114 (Final)**. The web page displays the same game. Both include all 30 players who played, with points, rebounds, assists and field goals. Android version **1.2** displays both teams side by side, with team logos above their scores and a compact 32dp lineup heading. All 30 players have bundled circular headshots beside their names. Each player shows a `PTS / REB / AST / FGM / FGA` labels row with the corresponding values directly below it. Tap a player for steals, blocks, turnovers and exact minutes played; tap the arrow beside the venue to expand the quarter breakdown. Player ratings are unavailable for this game.
+**Miniscore 1.3** loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
 
-The Android photos and team logos work offline. Their NBA source URLs and player IDs are recorded in [docs/nba-image-sources.json](docs/nba-image-sources.json). Other selectable demo games use initials when no bundled headshot is available.
+The app refreshes on opening/resuming, from the header refresh button, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The header date comes from the selected game's date. The feed is manually maintained; daily sports-API automation is not configured.
 
-Quarter scores: PHI **33 / 25 / 23 / 27**, BKN **33 / 23 / 37 / 21**. Records shown on the web are preseason records (PHI 1–1, BKN 2–0).
+The screen includes a lavender **m** app mark, a game dropdown, compact team names/logos and mirrored scores in the center. Both teams' players remain side by side, with circular portraits and a `PTS / REB / AST / FGM / FGA` labels row above the values. Tap a player for steals, blocks, turnovers and exact minutes; tap the header arrow for quarter scores. Scheduled games show dashes until play begins. Other selectable demo games are labelled **Demo** and remain isolated from real feed data.
 
-Sources: [NBA result and quarter scores](https://www.nba.com/game/phi-vs-bkn-0012600034), [RealGM player box score](https://basketball.realgm.com/nba/boxscore/2026-10-08/Philadelphia-at-Brooklyn/526643). This is a static final snapshot. Player rebounds and turnovers exclude team-only events. The Android data lives in `PreseasonGameData.kt`; web data lives in `data.js`. The existing Android demo games remain selectable; the recorded preseason game cannot be simulated.
+## Initial published game
+
+Philadelphia 76ers at Brooklyn Nets, October 8, 2026, Barclays Center: **PHI 108, BKN 114 (Final)**. All 30 participating players are included. Player ratings are unavailable. Quarter scores: PHI **33 / 25 / 23 / 27**, BKN **33 / 23 / 37 / 21**. Player rebounds and turnovers exclude team-only events.
+
+Sources: [NBA result and quarter scores](https://www.nba.com/game/phi-vs-bkn-0012600034), [RealGM player box score](https://basketball.realgm.com/nba/boxscore/2026-10-08/Philadelphia-at-Brooklyn/526643).
+
+This game's photos and logos are bundled for offline use; [NBA asset sources](docs/nba-image-sources.json). New games can use HTTPS image URLs with image caching and initials/team-code fallbacks. Real feed games cannot be simulated. `PreseasonGameData.kt` is the first-launch offline fallback, `GameFeedRepository.kt` fetches/validates/caches published games, and the development branch's `games.json` is a test fixture. The live file is on **game-data**.
+
+The separate static web demo continues to use `data.js` and shows this same final game, with preseason records PHI 1–1 / BKN 2–0. The sections below describe that web demo.
 
 ## 🎯 Features
 

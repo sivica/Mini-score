@@ -16,6 +16,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.*
@@ -25,32 +26,51 @@ fun ScoreboardHeaderPanel(game: Game) {
     var showQuarters by remember(game.id) { mutableStateOf(false) }
     val hasQuarters = game.awayQuarters.isNotEmpty() && game.awayQuarters.size == game.homeQuarters.size
     Column(
-        modifier = Modifier.fillMaxWidth().background(SportsHeaderBg).padding(top = 14.dp, bottom = 14.dp),
+        modifier = Modifier.fillMaxWidth().background(SportsHeaderBg).padding(top = 6.dp, bottom = 6.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.padding(horizontal = 12.dp)) {
-            Text(game.contextLabel ?: "NBA", color = AccentCyan, fontSize = 11.sp)
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 12.dp)) {
+            Text(game.contextLabel ?: "NBA", color = AccentCyan, fontSize = 10.sp,
+                maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f))
+            Spacer(Modifier.width(6.dp))
             Text(if (game.status == "FINISHED") "FINAL" else game.status,
-                color = if (game.status.contains("LIVE")) RatingRed else TextSecondary,
-                fontSize = 11.sp, fontWeight = FontWeight.Medium)
-        }
-        if (game.venue != null || hasQuarters) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 12.dp)) {
-                game.venue?.let { Text(it, color = TextSecondary, fontSize = 11.sp) }
-                if (hasQuarters) {
-                    IconButton(onClick = { showQuarters = !showQuarters },
-                        modifier = Modifier.size(32.dp).testTag("quarter_toggle")) {
-                        Icon(if (showQuarters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                            contentDescription = if (showQuarters) "Hide quarter scores" else "Show quarter scores",
-                            tint = AccentCyan, modifier = Modifier.size(18.dp))
-                    }
+                color = if (game.status == "LIVE") RatingRed else TextSecondary, fontSize = 10.sp)
+            if (hasQuarters) {
+                IconButton(onClick = { showQuarters = !showQuarters },
+                    modifier = Modifier.size(32.dp).testTag("quarter_toggle")) {
+                    Icon(if (showQuarters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                        contentDescription = if (showQuarters) "Hide quarter scores" else "Show quarter scores",
+                        tint = AccentCyan, modifier = Modifier.size(18.dp))
                 }
             }
         }
-        Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp, start = 12.dp, end = 12.dp)) {
-            ScoreboardTeamColumn(game.awayTeam, game.awayScore, Modifier.weight(1f))
-            ScoreboardTeamColumn(game.homeTeam, game.homeScore, Modifier.weight(1f))
+        game.venue?.let {
+            Text(it, color = TextSecondary, fontSize = 10.sp, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                modifier = Modifier.padding(horizontal = 12.dp))
+        }
+        Row(Modifier.fillMaxWidth().padding(top = 8.dp, start = 16.dp, end = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+                TeamLogoCanvas(game.awayTeam, 32.dp)
+                Spacer(Modifier.width(7.dp))
+                Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 12.sp,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+            Spacer(Modifier.width(16.dp))
+            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End) {
+                Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 12.sp,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis, modifier = Modifier.weight(1f), textAlign = TextAlign.End)
+                Spacer(Modifier.width(7.dp))
+                TeamLogoCanvas(game.homeTeam, 32.dp)
+            }
+        }
+        Row(Modifier.fillMaxWidth().padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(if (game.status == "SCHEDULED") "—" else game.awayScore.toString(),
+                color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.End,
+                modifier = Modifier.weight(1f).testTag("team_score_${game.awayTeam.code}"))
+            Text("–", color = TextSecondary, fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.width(24.dp))
+            Text(if (game.status == "SCHEDULED") "—" else game.homeScore.toString(),
+                color = TextPrimary, fontSize = 28.sp, fontWeight = FontWeight.Medium,
+                modifier = Modifier.weight(1f).testTag("team_score_${game.homeTeam.code}"))
         }
         if (showQuarters && hasQuarters) {
             Text(
@@ -64,17 +84,10 @@ fun ScoreboardHeaderPanel(game: Game) {
     }
 }
 
-@Composable
-private fun ScoreboardTeamColumn(team: Team, score: Int, modifier: Modifier) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally) {
-        TeamLogoCanvas(team, size = 56.dp)
-        Spacer(Modifier.height(7.dp))
-        Text(team.name, color = TextSecondary, fontSize = 11.sp, textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().heightIn(min = 16.dp))
-        Spacer(Modifier.height(5.dp))
-        Text(score.toString(), color = TextPrimary, fontSize = 32.sp, fontWeight = FontWeight.Medium,
-            modifier = Modifier.testTag("team_score_${team.code}"))
-    }
+private fun shortTeamName(team: Team): String = when (team.code) {
+    "PHI" -> "76ers"
+    "BKN" -> "Nets"
+    else -> team.shortName
 }
 
 @Composable

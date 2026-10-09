@@ -21,6 +21,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import coil.compose.AsyncImage
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -86,7 +88,9 @@ data class Player(
     var rating: Double?, // Rating out of 10.0, can be null
     var stats: PlayerStats = PlayerStats(),
     val isTopPerformer: Boolean = false,
-    val keyPlays: List<String> = emptyList()
+    val keyPlays: List<String> = emptyList(),
+    val portraitUrl: String? = null,
+    val teamCode: String? = null
 )
 
 data class Team(
@@ -94,7 +98,9 @@ data class Team(
     val name: String,
     val primaryColor: Color,
     val secondaryColor: Color,
-    val logoText: String
+    val logoText: String,
+    val shortName: String = name,
+    val logoUrl: String? = null
 )
 
 data class PlayLog(
@@ -124,7 +130,9 @@ data class Game(
     val dateLabel: String? = null,
     val venue: String? = null,
     val awayQuarters: List<Int> = emptyList(),
-    val homeQuarters: List<Int> = emptyList()
+    val homeQuarters: List<Int> = emptyList(),
+    val isDemo: Boolean = false,
+    val gameDate: String? = null
 )
 
 // ==========================================
@@ -391,7 +399,53 @@ class GameViewModel : ViewModel() {
     private val _games = mutableStateMapOf<String, Game>()
     
     // Convert to regular list for observing changes
-    val games: List<Game> get() = _games.values.sortedBy { if (it.id == PreseasonGameData.GAME_ID) 0 else 1 }
+    val games: List<Game> get() = _games.values.sortedWith(compareBy<Game> { it.isDemo }.thenByDescending { it.gameDate })
+    private var feedRepository: GameFeedRepository? = null
+    private var feedDefaultId: String? = null
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing = _isRefreshing.asStateFlow()
+    private val _feedMessage = MutableStateFlow<String?>(null)
+    val feedMessage = _feedMessage.asStateFlow()
+
+    fun startFeed(repository: GameFeedRepository) {
+        if (feedRepository != null) return
+        feedRepository = repository
+        refreshGames(loadCache = true)
+    }
+
+    fun refreshGames(loadCache: Boolean = false) {
+        val repository = feedRepository ?: return
+        if (_isRefreshing.value) return
+        _isRefreshing.value = true
+        viewModelScope.launch {
+            try {
+                if (loadCache) repository.cachedFeed()?.let { applyFeed(it) }
+                applyFeed(repository.refresh())
+                _feedMessage.value = null
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (_: Exception) {
+                _feedMessage.value = "Couldn’t refresh. Showing saved games."
+            } finally {
+                _isRefreshing.value = false
+            }
+        }
+    }
+
+    internal fun applyFeed(feed: GameFeed) {
+        simJob?.cancel()
+        _games.entries.filter { it.value.isDemo && it.value.isSimulating }.forEach { (id, game) ->
+            _games[id] = game.copy(isSimulating = false)
+        }
+        val oldSelection = _selectedGameId.value
+        val followDefault = feedDefaultId == null && oldSelection == PreseasonGameData.GAME_ID || oldSelection == feedDefaultId
+        _games.entries.removeAll { !it.value.isDemo }
+        feed.games.forEach { _games[it.id] = it }
+        if (followDefault || oldSelection !in _games) _selectedGameId.value = feed.defaultGameId
+        feedDefaultId = feed.defaultGameId
+        _selectedPlayer.value = null
+        _aiAnalysisState.value = AiState.Idle
+    }
 
     private val _selectedGameId = MutableStateFlow(PreseasonGameData.GAME_ID)
     val selectedGameId: StateFlow<String> = _selectedGameId.asStateFlow()
@@ -418,13 +472,15 @@ class GameViewModel : ViewModel() {
         val game2 = MockData.createLalGswGame()
         val game3 = MockData.createBosMiaGame()
         
-        _games[game1.id] = game1
-        _games[game2.id] = game2
-        _games[game3.id] = game3
+        _games[game1.id] = game1.copy(isDemo = true)
+        _games[game2.id] = game2.copy(isDemo = true)
+        _games[game3.id] = game3.copy(isDemo = true)
     }
 
     fun selectGame(id: String) {
+        if (id !in _games) return
         _selectedGameId.value = id
+        _selectedPlayer.value = null
         _aiAnalysisState.value = AiState.Idle // Reset AI state when switching games
     }
 
@@ -458,6 +514,11 @@ class GameViewModel : ViewModel() {
 
     // High fidelity rule-based local sports summaries as fallback
     private fun generateLocalAnalysis(game: Game): String {
+        if (!game.isDemo) {
+            return "${game.awayTeam.name} ${game.awayScore} – ${game.homeScore} ${game.homeTeam.name}. " +
+                "${game.dateLabel ?: ""}. ${game.status}. " +
+                "Player totals are from the selected game’s saved box score."
+        }
         return when (game.id) {
             PreseasonGameData.GAME_ID -> {
                 "Brooklyn beat Philadelphia 114-108 at Barclays Center on October 8, 2026. " +
@@ -495,7 +556,7 @@ class GameViewModel : ViewModel() {
 
     fun toggleSimulation(gameId: String) {
         val game = _games[gameId] ?: return
-        if (game.id == PreseasonGameData.GAME_ID) return
+        if (!game.isDemo) return
         if (game.isSimulating) {
             stopSimulation(gameId)
         } else {
@@ -646,6 +707,15 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier) {
         )
         return
     }
+    if (team.logoUrl != null) {
+        Box(modifier.size(size).clip(CircleShape).background(Color.White).testTag("team_logo_${team.code}"),
+            contentAlignment = Alignment.Center) {
+            Text(team.code, color = Color.Black, fontSize = (size.value * 0.24f).sp)
+            AsyncImage(model = team.logoUrl, contentDescription = "${team.name} logo",
+                contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize().padding(size * 0.1f))
+        }
+        return
+    }
     Box(
         modifier = modifier
             .size(size)
@@ -785,6 +855,7 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier) {
 // 7. MULTI-STATE APP LAYOUT COMPOSABLES
 // ==========================================
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNbaScreen(viewModel: GameViewModel) {
     val games = viewModel.games
@@ -792,6 +863,8 @@ fun MainNbaScreen(viewModel: GameViewModel) {
     val selectedGame = games.find { it.id == selectedGameId } ?: games.firstOrNull() ?: return
     val selectedPlayer by viewModel.selectedPlayer.collectAsState()
     val aiState by viewModel.aiAnalysisState.collectAsState()
+    val isRefreshing by viewModel.isRefreshing.collectAsState()
+    val feedMessage by viewModel.feedMessage.collectAsState()
 
     // Retrieve API key securely via BuildConfig
     val apiKey = com.example.BuildConfig.GEMINI_API_KEY ?: ""
@@ -817,25 +890,21 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Row(
+                    modifier = Modifier.weight(1f),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(11.dp)
                 ) {
                     Box(
                         modifier = Modifier
                             .size(40.dp)
-                            .clip(CircleShape)
+                            .clip(RoundedCornerShape(13.dp))
                             .background(ElegantAccent),
                         contentAlignment = Alignment.Center
                     ) {
-                        // Custom star or basketball representation matching logo
-                        Icon(
-                            imageVector = Icons.Default.PlayArrow,
-                            contentDescription = "NBA Center Basketball Icon",
-                            tint = ElegantCirclePurple,
-                            modifier = Modifier.size(22.dp)
-                        )
+                        Text("m", color = ElegantCirclePurple, fontSize = 33.sp,
+                            fontWeight = FontWeight.Bold, modifier = Modifier.testTag("app_logo"))
                     }
-                    Column {
+                    Column(Modifier.weight(1f)) {
                         Text(
                             text = "Miniscore",
                             color = ElegantTextPrimary,
@@ -846,6 +915,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                         )
                         Text(
                             text = selectedGame.dateLabel ?: "Demo games",
+                            maxLines = 1, overflow = TextOverflow.Ellipsis,
                             color = ElegantTextSecondary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Normal,
@@ -853,109 +923,97 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                         )
                     }
                 }
-                IconButton(
-                    onClick = { /* Decorative Search */ },
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape)
-                        .background(ElegantBorderColor.copy(alpha = 0.5f))
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search Matches",
-                        tint = Color.White,
-                        modifier = Modifier.size(20.dp)
-                    )
+                IconButton(onClick = { viewModel.refreshGames() }, enabled = !isRefreshing,
+                    modifier = Modifier.size(40.dp)) {
+                    if (isRefreshing) CircularProgressIndicator(Modifier.size(20.dp), color = AccentCyan, strokeWidth = 2.dp)
+                    else Icon(Icons.Default.Refresh, "Refresh games", tint = TextPrimary, modifier = Modifier.size(22.dp))
                 }
             }
-
-            // B. ELEGANT GAME MATCH SELECTION ROW
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 6.dp)
-            ) {
-                LazyRow(
-                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 2.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    items(games) { game ->
-                        val isSelected = game.id == selectedGameId
-                        GameMiniSelectorCard(game = game, isSelected = isSelected) {
-                            viewModel.selectGame(game.id)
-                        }
-                    }
-                }
+            GamePicker(games, selectedGame) { viewModel.selectGame(it) }
+            feedMessage?.let {
+                Text(it, color = TextSecondary, fontSize = 11.sp,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
             }
 
             Divider(color = ElegantBorderColor.copy(alpha = 0.3f), thickness = 1.dp)
 
             // C. DETAIL VIEW (SCROLLABLE LINEUPS & STATS MOCKING FLASHSCORE LOGO/SYMMETRY ACCURATELY)
-            LazyColumn(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth()
-                    .background(SportsDarkBackground)
-            ) {
-                // 1. Core Header (Scoreboard like screenshot)
-                item {
-                    ScoreboardHeaderPanel(game = selectedGame)
-                }
-
-                // 2. Client side Live Sim details pane
-                if (selectedGame.status.contains("LIVE") || selectedGame.isSimulating) {
+            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = { viewModel.refreshGames() },
+                modifier = Modifier.weight(1f).fillMaxWidth()) {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .fillMaxWidth()
+                        .background(SportsDarkBackground)
+                ) {
+                    // 1. Core Header (Scoreboard like screenshot)
                     item {
-                        LiveSimulatorControlPanel(game = selectedGame, onToggleSim = {
-                            viewModel.toggleSimulation(selectedGame.id)
-                        })
+                        ScoreboardHeaderPanel(game = selectedGame)
+                    }
+
+                    // 2. Client side Live Sim details pane
+                    if (selectedGame.isDemo && (selectedGame.status.contains("LIVE") || selectedGame.isSimulating)) {
+                        item {
+                            LiveSimulatorControlPanel(game = selectedGame, onToggleSim = {
+                                viewModel.toggleSimulation(selectedGame.id)
+                            })
+                        }
+                    }
+
+
+
+                    // 4. HEADER: STARTING LINEUPS
+                    item {
+                        if (selectedGame.startingAway.isNotEmpty() || selectedGame.startingHome.isNotEmpty()) {
+                            LineupSectionHeader(selectedGame, "Starting lineup")
+                        } else if (selectedGame.substitutesAway.isEmpty() && selectedGame.substitutesHome.isEmpty()) {
+                            Text("Player stats will appear when available.", color = TextSecondary, fontSize = 13.sp,
+                                modifier = Modifier.fillMaxWidth().padding(20.dp), textAlign = TextAlign.Center)
+                        }
+                    }
+
+                    // Starting Lineups symmetrically side-by-side
+                    val linesCount = maxOf(selectedGame.startingAway.size, selectedGame.startingHome.size)
+                    items(linesCount) { index ->
+                        val awayP = selectedGame.startingAway.getOrNull(index)
+                        val homeP = selectedGame.startingHome.getOrNull(index)
+                        SymmetricalLineplayRow(
+                            leftPlayer = awayP,
+                            rightPlayer = homeP,
+                            onPlayerClick = { player -> viewModel.selectPlayer(player) }
+                        )
+                    }
+
+                    // 5. HEADER: SUBSTITUTES
+                    item {
+                        if (selectedGame.substitutesAway.isNotEmpty() || selectedGame.substitutesHome.isNotEmpty()) {
+                            LineupSectionHeader(selectedGame, "Substitutes")
+                        }
+                    }
+
+                    // Substitute Lineups symmetrically
+                    val subsCount = maxOf(selectedGame.substitutesAway.size, selectedGame.substitutesHome.size)
+                    items(subsCount) { index ->
+                        val awayP = selectedGame.substitutesAway.getOrNull(index)
+                        val homeP = selectedGame.substitutesHome.getOrNull(index)
+                        SymmetricalLineplayRow(
+                            leftPlayer = awayP,
+                            rightPlayer = homeP,
+                            onPlayerClick = { player -> viewModel.selectPlayer(player) }
+                        )
+                    }
+
+                    // 6. Advertising Space (MATCHES THE SCREENSHOT TEMU BANNER CONCEPT IN POLISHED SPORTS DESIGN)
+                    item {
+                        MockAdvertisementBanner()
+                    }
+
+                    // Bottom padding
+                    item {
+                        Spacer(modifier = Modifier.height(24.dp))
                     }
                 }
 
-
-
-                // 4. HEADER: STARTING LINEUPS
-                item {
-                    LineupSectionHeader(selectedGame, "Starting lineup")
-                }
-
-                // Starting Lineups symmetrically side-by-side
-                val linesCount = maxOf(selectedGame.startingAway.size, selectedGame.startingHome.size)
-                items(linesCount) { index ->
-                    val awayP = selectedGame.startingAway.getOrNull(index)
-                    val homeP = selectedGame.startingHome.getOrNull(index)
-                    SymmetricalLineplayRow(
-                        leftPlayer = awayP,
-                        rightPlayer = homeP,
-                        onPlayerClick = { player -> viewModel.selectPlayer(player) }
-                    )
-                }
-
-                // 5. HEADER: SUBSTITUTES
-                item {
-                    LineupSectionHeader(selectedGame, "Substitutes")
-                }
-
-                // Substitute Lineups symmetrically
-                val subsCount = maxOf(selectedGame.substitutesAway.size, selectedGame.substitutesHome.size)
-                items(subsCount) { index ->
-                    val awayP = selectedGame.substitutesAway.getOrNull(index)
-                    val homeP = selectedGame.substitutesHome.getOrNull(index)
-                    SymmetricalLineplayRow(
-                        leftPlayer = awayP,
-                        rightPlayer = homeP,
-                        onPlayerClick = { player -> viewModel.selectPlayer(player) }
-                    )
-                }
-
-                // 6. Advertising Space (MATCHES THE SCREENSHOT TEMU BANNER CONCEPT IN POLISHED SPORTS DESIGN)
-                item {
-                    MockAdvertisementBanner()
-                }
-
-                // Bottom padding
-                item {
-                    Spacer(modifier = Modifier.height(24.dp))
-                }
             }
 
             // D. ELEGANT BOTTOM BAR (MATCHES THE ELEGANT DARK HTML NAVIGATION CONCEPT)
@@ -1218,7 +1276,7 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "#${player.number} · ${player.id.substringBefore('_').uppercase()}" +
+                    text = "#${player.number} · ${player.teamCode ?: player.id.substringBefore('_').uppercase()}" +
                         if (player.flag.isNotEmpty()) " ${player.flag}" else "",
                     color = TextSecondary, fontSize = 10.sp, lineHeight = 14.sp,
                     modifier = Modifier.padding(top = 2.dp)
@@ -1274,6 +1332,10 @@ fun PlayerPortrait(player: Player, size: Dp, modifier: Modifier = Modifier) {
         Box(portraitModifier, contentAlignment = Alignment.Center) {
             Text(player.name.split(' ').take(2).mapNotNull { it.firstOrNull() }.joinToString(""),
                 color = TextPrimary, fontSize = (size.value * 0.3f).sp)
+            if (player.portraitUrl != null) {
+                AsyncImage(model = player.portraitUrl, contentDescription = "${player.name} photo",
+                    contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
+            }
         }
     }
 }
@@ -1569,7 +1631,7 @@ fun PlayerDetailBottomSheet(
                     (player.rating ?: 0.0) >= 6.0 -> RatingOrange
                     else -> RatingRed
                 }
-                if (GameImageAssets.playerPortrait(player) != null) {
+                if (GameImageAssets.playerPortrait(player) != null || player.portraitUrl != null) {
                     PlayerPortrait(player, size = 54.dp)
                 } else Box(
                     modifier = Modifier

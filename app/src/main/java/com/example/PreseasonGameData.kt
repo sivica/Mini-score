@@ -10,8 +10,8 @@ import androidx.compose.ui.graphics.Color
  */
 object PreseasonGameData {
     const val GAME_ID = "0012600034"
-    val PHI = Team("PHI", "Philadelphia 76ers", Color(0xFF006BB6), Color(0xFFED174C), "PHI")
-    val BKN = Team("BKN", "Brooklyn Nets", Color(0xFF000000), Color(0xFFFFFFFF), "BKN")
+    val PHI = Team("PHI", "Philadelphia 76ers", Color(0xFF006BB6), Color(0xFFED174C), "PHI", shortName = "76ers")
+    val BKN = Team("BKN", "Brooklyn Nets", Color(0xFF000000), Color(0xFFFFFFFF), "BKN", shortName = "Nets")
 
     fun createGame(): Game {
         val awayStarters = listOf(
@@ -67,8 +67,9 @@ object PreseasonGameData {
             startingHome = homeStarters,
             substitutesAway = awaySubs,
             substitutesHome = homeSubs,
-            contextLabel = "NBA Preseason • October 8, 2026",
+            contextLabel = "NBA Preseason",
             dateLabel = "Thursday, October 8, 2026",
+            gameDate = "2026-10-08",
             venue = "Barclays Center, Brooklyn, NY",
             awayQuarters = listOf(33, 25, 23, 27),
             homeQuarters = listOf(33, 23, 37, 21),
