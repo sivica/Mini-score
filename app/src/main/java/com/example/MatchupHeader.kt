@@ -35,12 +35,11 @@ fun ScoreboardHeaderPanel(game: Game) {
                     GameMetadata(game, Modifier.fillMaxWidth())
                     ScorePair(game, Modifier.fillMaxWidth().padding(vertical = 6.dp))
                     Row(Modifier.fillMaxWidth()) {
-                        listOf(game.awayTeam to "away", game.homeTeam to "home").forEach { (team, side) ->
+                        listOf(game.awayTeam, game.homeTeam).forEach { team ->
                             Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
                                 Box(Modifier.size(logoSize).testTag("scoreboard_logo_${team.code}")) {
                                     TeamLogoCanvas(team, logoSize)
                                 }
-                                ScoreboardTeamName(team, Modifier.padding(top = 6.dp).testTag("scoreboard_${side}_name"))
                             }
                         }
                     }
@@ -64,10 +63,8 @@ fun ScoreboardHeaderPanel(game: Game) {
                             }
                         }
                     }
-                    Row(Modifier.fillMaxWidth()) {
-                        ScoreboardTeamName(game.awayTeam, Modifier.weight(1f).alignByBaseline().testTag("scoreboard_away_name"))
-                        GameStatusToggle(game, showQuarters, { showQuarters = !showQuarters }, Modifier.weight(2f).alignByBaseline())
-                        ScoreboardTeamName(game.homeTeam, Modifier.weight(1f).alignByBaseline().testTag("scoreboard_home_name"))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        GameStatusToggle(game, showQuarters, { showQuarters = !showQuarters })
                     }
                 }
             }
@@ -110,12 +107,6 @@ fun ScoreboardHeaderPanel(game: Game) {
             }
         }
     }
-}
-
-@Composable
-private fun ScoreboardTeamName(team: Team, modifier: Modifier) {
-    Text(shortTeamName(team), color = TextPrimary, fontSize = 14.sp, lineHeight = 20.sp,
-        textAlign = TextAlign.Center, modifier = modifier)
 }
 
 @Composable

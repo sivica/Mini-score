@@ -54,24 +54,9 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
                     TeamLogoCanvas(game.homeTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
                 }
             }
-            Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
-                Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_away_name_${game.id}"))
-                if (!largeText) {
-                    Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(2f).alignByBaseline().testTag("drawer_status_${game.id}"))
-                }
-                Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_home_name_${game.id}"))
-            }
-            if (largeText) {
-                Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
-                    textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-                        .testTag("drawer_status_${game.id}"))
-            }
+            Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+                    .testTag("drawer_status_${game.id}"))
         }
     }
 }

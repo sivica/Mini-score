@@ -72,6 +72,22 @@ class PreseasonScreenTest {
 
     @Test
     @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
+    fun originalDrawerBadgeFitsTwoHundredPercentFonts() {
+        val team = PreseasonGameData.createGame().awayTeam.copy(code = "MEM")
+        composeTestRule.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, 2f)) {
+                MyApplicationTheme { TeamLogoCanvas(team, 32.dp) }
+            }
+        }
+        val node = composeTestRule.onNodeWithText("MEM", useUnmergedTree = true).fetchSemanticsNode()
+        val layouts = mutableListOf<TextLayoutResult>()
+        assertTrue(node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
+        assertTrue("Small badge text fits at 200%: ${layoutDescription(layouts.first())}", textFits(layouts.first()))
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
     fun privacyPolicyIsAccessibleWithEmptySearchAndLargeText() {
         var openedUri: String? = null
         val uriHandler = object : UriHandler {
@@ -111,8 +127,8 @@ class PreseasonScreenTest {
         assertTrue("Logo centered in main app bar", kotlin.math.abs(logo.center.x - bar.center.x) < 1f)
         composeTestRule.onNodeWithTag("game_selector").assertDoesNotExist()
         composeTestRule.onNodeWithTag("lineup_header_Starting lineup").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("scoreboard_away_name").assertTextEquals("PHI").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("scoreboard_home_name").assertTextEquals("BKN").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("scoreboard_away_name").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("scoreboard_home_name").assertDoesNotExist()
         for (label in listOf("Games", "Players", "Standings", "Settings")) {
             composeTestRule.onNodeWithText(label).assertDoesNotExist()
         }
@@ -155,8 +171,8 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithTag("open_games_drawer").performClick()
         composeTestRule.onNodeWithTag("games_drawer").assertIsDisplayed()
         composeTestRule.onNodeWithText("Miniscore").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertTextEquals("PHI")
-        composeTestRule.onNodeWithTag("drawer_home_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertTextEquals("BKN")
+        composeTestRule.onNodeWithTag("team_logo_PHI_drawer_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("team_logo_BKN_drawer_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-matches.png")
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("no-such-team")
         composeTestRule.onNodeWithText("No games found").assertIsDisplayed()
@@ -170,28 +186,22 @@ class PreseasonScreenTest {
             .fetchSemanticsNode().boundsInRoot
         val drawerScore = composeTestRule.onNodeWithTag("drawer_score_scheduled-test", useUnmergedTree = true)
             .fetchSemanticsNode().boundsInRoot
-        val awayName = composeTestRule.onNodeWithTag("drawer_away_name_scheduled-test", useUnmergedTree = true)
-            .fetchSemanticsNode().boundsInRoot
-        val homeName = composeTestRule.onNodeWithTag("drawer_home_name_scheduled-test", useUnmergedTree = true)
-            .fetchSemanticsNode().boundsInRoot
-        assertTrue("Drawer score stays between opposing logos", awayLogo.right <= drawerScore.left && drawerScore.right <= homeLogo.left)
-        assertTrue("Drawer names sit below logos", awayName.top >= awayLogo.bottom && homeName.top >= homeLogo.bottom)
-        assertTrue("Drawer names centered below logos", kotlin.math.abs(awayName.center.x - awayLogo.center.x) < 1f &&
-            kotlin.math.abs(homeName.center.x - homeLogo.center.x) < 1f)
-        assertSameBaseline("drawer_away_name_scheduled-test", "drawer_status_scheduled-test", "drawer_home_name_scheduled-test")
+        assertTrue("Drawer score stays between opposing badges", awayLogo.right <= drawerScore.left && drawerScore.right <= homeLogo.left)
+        composeTestRule.onNodeWithTag("drawer_away_name_scheduled-test", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithTag("drawer_home_name_scheduled-test", useUnmergedTree = true).assertDoesNotExist()
         composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertDoesNotExist()
         composeTestRule.onNodeWithText("Other games").assertDoesNotExist()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer.png")
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("Thu")
         composeTestRule.runOnIdle { focusManager?.clearFocus(); fontScale.value = 2f }
         composeTestRule.onNodeWithTag("drawer_score_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("drawer_home_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("team_logo_PHI_drawer_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("team_logo_BKN_drawer_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
         val largeStatus = composeTestRule.onNodeWithTag("drawer_status_${PreseasonGameData.GAME_ID}", useUnmergedTree = true)
             .fetchSemanticsNode().boundsInRoot
-        val largeName = composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true)
+        val largeBadge = composeTestRule.onNodeWithTag("team_logo_PHI_drawer_${PreseasonGameData.GAME_ID}", useUnmergedTree = true)
             .fetchSemanticsNode().boundsInRoot
-        assertTrue("Large-font status reflows below names", largeStatus.top >= largeName.bottom)
+        assertTrue("Large-font status remains below badges", largeStatus.top >= largeBadge.bottom)
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-200-percent.png")
         fontScale.value = 1f
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("Sat")
@@ -287,13 +297,8 @@ class PreseasonScreenTest {
         val header = composeTestRule.onNodeWithTag("scoreboard_header").fetchSemanticsNode().boundsInRoot
         assertTrue("Context and date centered over score", kotlin.math.abs(metadata.center.x - header.center.x) < 1f &&
             kotlin.math.abs(date.center.x - header.center.x) < 1f)
-        for ((nameTag, logoTag) in listOf("scoreboard_away_name" to "team_logo_PHI", "scoreboard_home_name" to "team_logo_BKN")) {
-            val name = composeTestRule.onNodeWithTag(nameTag).fetchSemanticsNode().boundsInRoot
-            val teamLogo = composeTestRule.onNodeWithTag(logoTag).fetchSemanticsNode().boundsInRoot
-            assertTrue("Team name centered below enlarged logo", name.top >= teamLogo.bottom &&
-                kotlin.math.abs(name.center.x - teamLogo.center.x) < 1f)
-        }
-        assertSameBaseline("scoreboard_away_name", "game_status", "scoreboard_home_name")
+        composeTestRule.onNodeWithTag("scoreboard_away_name").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("scoreboard_home_name").assertDoesNotExist()
         composeTestRule.onNodeWithTag("quarter_scores").assertDoesNotExist()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-narrow-matchup.png")
         composeTestRule.onNodeWithTag("quarter_toggle").performClick()
@@ -331,13 +336,12 @@ class PreseasonScreenTest {
                 }
             }
         }
-        composeTestRule.onNodeWithTag("scoreboard_away_name").assertTextEquals("MEM")
-        composeTestRule.onNodeWithTag("scoreboard_home_name").assertTextEquals("CHI")
-        composeTestRule.onNodeWithTag("drawer_away_name_${game.id}", useUnmergedTree = true).assertTextEquals("MEM")
-        composeTestRule.onNodeWithTag("drawer_home_name_${game.id}", useUnmergedTree = true).assertTextEquals("CHI")
+        composeTestRule.onNodeWithTag("scoreboard_away_name").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("scoreboard_home_name").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("drawer_away_name_${game.id}", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithTag("drawer_home_name_${game.id}", useUnmergedTree = true).assertDoesNotExist()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/centered-header-200-percent.png")
-        for (tag in listOf("game_context", "selected_game_date", "team_score_MEM", "team_score_CHI", "scoreboard_away_name", "scoreboard_home_name",
-            "drawer_away_name_${game.id}", "drawer_home_name_${game.id}", "drawer_status_${game.id}")) {
+        for (tag in listOf("game_context", "selected_game_date", "team_score_MEM", "team_score_CHI", "drawer_status_${game.id}")) {
             val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode()
             val layouts = mutableListOf<TextLayoutResult>()
             assertTrue(node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
@@ -345,22 +349,11 @@ class PreseasonScreenTest {
             assertTrue("$tag fits a narrow screen", node.boundsInRoot.left >= 0 && node.boundsInRoot.right <= 640)
             assertTrue("$tag stays on one line", layouts.first().lineCount == 1)
         }
-        val name = composeTestRule.onNodeWithTag("scoreboard_away_name").fetchSemanticsNode().boundsInRoot
+        val badge = composeTestRule.onNodeWithTag("team_logo_MEM").fetchSemanticsNode().boundsInRoot
         val status = composeTestRule.onNodeWithTag("game_status", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
-        assertTrue("Large-font status reflows below names", status.top >= name.bottom)
+        assertTrue("Large-font status remains below badges", status.top >= badge.bottom)
         composeTestRule.onNodeWithTag("quarter_toggle").performClick()
         composeTestRule.onNodeWithTag("quarter_scores").assertIsDisplayed()
-    }
-
-    private fun assertSameBaseline(vararg tags: String) {
-        val baselines = tags.map { tag ->
-            val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode()
-            val layouts = mutableListOf<TextLayoutResult>()
-            assertTrue("Text layout available for $tag", node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
-            assertTrue("$tag text fits without clipping: ${layoutDescription(layouts.first())}", textFits(layouts.first()))
-            node.boundsInRoot.top + layouts.first().firstBaseline
-        }
-        assertTrue("Names and status share a baseline: $tags", baselines.all { kotlin.math.abs(it - baselines.first()) < 1f })
     }
 
     private fun layoutDescription(layout: TextLayoutResult) =

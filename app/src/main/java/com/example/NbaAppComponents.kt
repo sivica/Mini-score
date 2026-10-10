@@ -352,7 +352,8 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffi
         .testTag("team_logo_${team.code}$tagSuffix")
         .semantics(mergeDescendants = true) { contentDescription = "${team.name} team badge" },
         contentAlignment = Alignment.Center) {
-        Text(team.code, color = Color(0xFF102925), fontSize = (size.value * 0.24f).sp,
+        Text(team.code, color = Color(0xFF102925), fontSize = (size.value * 0.2f).sp,
+            lineHeight = (size.value * 0.24f).sp,
             fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center)
     }
 }
