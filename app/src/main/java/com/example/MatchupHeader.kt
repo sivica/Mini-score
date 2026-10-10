@@ -31,45 +31,44 @@ fun ScoreboardHeaderPanel(game: Game) {
         BoxWithConstraints(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
             val logoSize = if (maxWidth >= 336.dp) 72.dp else 64.dp
             Column {
-                if (largeText) GameMetadata(game, Modifier.fillMaxWidth())
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Box(Modifier.size(logoSize).testTag("scoreboard_logo_${game.awayTeam.code}")) {
-                            TeamLogoCanvas(game.awayTeam, logoSize)
+                if (largeText) {
+                    GameMetadata(game, Modifier.fillMaxWidth())
+                    ScorePair(game, Modifier.fillMaxWidth().padding(vertical = 6.dp))
+                    Row(Modifier.fillMaxWidth()) {
+                        listOf(game.awayTeam to "away", game.homeTeam to "home").forEach { (team, side) ->
+                            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
+                                Box(Modifier.size(logoSize).testTag("scoreboard_logo_${team.code}")) {
+                                    TeamLogoCanvas(team, logoSize)
+                                }
+                                ScoreboardTeamName(team, Modifier.padding(top = 6.dp).testTag("scoreboard_${side}_name"))
+                            }
                         }
                     }
-                    Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
-                        if (!largeText) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        GameStatusToggle(game, showQuarters, { showQuarters = !showQuarters })
+                    }
+                } else {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            Box(Modifier.size(logoSize).testTag("scoreboard_logo_${game.awayTeam.code}")) {
+                                TeamLogoCanvas(game.awayTeam, logoSize)
+                            }
+                        }
+                        Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
                             GameMetadata(game, Modifier.fillMaxWidth())
                             ScorePair(game, Modifier.fillMaxWidth().padding(top = 5.dp))
                         }
-                    }
-                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        Box(Modifier.size(logoSize).testTag("scoreboard_logo_${game.homeTeam.code}")) {
-                            TeamLogoCanvas(game.homeTeam, logoSize)
+                        Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                            Box(Modifier.size(logoSize).testTag("scoreboard_logo_${game.homeTeam.code}")) {
+                                TeamLogoCanvas(game.homeTeam, logoSize)
+                            }
                         }
                     }
-                }
-                // Enlarged text gets the full width for the score rather than being squeezed between logos.
-                if (largeText) ScorePair(game, Modifier.fillMaxWidth().padding(top = 6.dp))
-                Row(Modifier.fillMaxWidth()) {
-                    Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 20.sp,
-                        textAlign = TextAlign.Center, modifier = Modifier.weight(1f).alignByBaseline()
-                            .testTag("scoreboard_away_name"))
-                    TextButton(onClick = { showQuarters = !showQuarters },
-                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
-                        modifier = Modifier.weight(2f).heightIn(min = 48.dp).alignByBaseline().testTag("quarter_toggle")) {
-                        Text(when (game.status) { "FINISHED" -> "Final"; "SCHEDULED" -> "Scheduled"; else -> game.status },
-                            color = if (game.status == "LIVE") Color(0xFFFFB4AB) else TextPrimary,
-                            fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.testTag("game_status"))
-                        Spacer(Modifier.width(4.dp))
-                        Icon(if (showQuarters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                            if (showQuarters) "Hide game details" else "Show game details", tint = AccentCyan,
-                            modifier = Modifier.size(20.dp))
+                    Row(Modifier.fillMaxWidth()) {
+                        ScoreboardTeamName(game.awayTeam, Modifier.weight(1f).alignByBaseline().testTag("scoreboard_away_name"))
+                        GameStatusToggle(game, showQuarters, { showQuarters = !showQuarters }, Modifier.weight(2f).alignByBaseline())
+                        ScoreboardTeamName(game.homeTeam, Modifier.weight(1f).alignByBaseline().testTag("scoreboard_home_name"))
                     }
-                    Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 20.sp,
-                        textAlign = TextAlign.Center, modifier = Modifier.weight(1f).alignByBaseline()
-                            .testTag("scoreboard_home_name"))
                 }
             }
         }
@@ -110,6 +109,25 @@ fun ScoreboardHeaderPanel(game: Game) {
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun ScoreboardTeamName(team: Team, modifier: Modifier) {
+    Text(shortTeamName(team), color = TextPrimary, fontSize = 14.sp, lineHeight = 20.sp,
+        textAlign = TextAlign.Center, modifier = modifier)
+}
+
+@Composable
+private fun GameStatusToggle(game: Game, expanded: Boolean, onToggle: () -> Unit, modifier: Modifier = Modifier) {
+    TextButton(onClick = onToggle, contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+        modifier = modifier.heightIn(min = 48.dp).testTag("quarter_toggle")) {
+        Text(when (game.status) { "FINISHED" -> "Final"; "SCHEDULED" -> "Scheduled"; else -> game.status },
+            color = if (game.status == "LIVE") Color(0xFFFFB4AB) else TextPrimary,
+            fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.testTag("game_status"))
+        Spacer(Modifier.width(4.dp))
+        Icon(if (expanded) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+            if (expanded) "Hide game details" else "Show game details", tint = AccentCyan, modifier = Modifier.size(20.dp))
     }
 }
 

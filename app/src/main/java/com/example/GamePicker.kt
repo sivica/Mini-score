@@ -34,21 +34,19 @@ import java.util.TimeZone
 /** Compact game choices inside the searchable drawer. */
 @Composable
 fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit) {
+    val largeText = LocalDensity.current.fontScale >= 1.5f
     Card(onClick = onClick, shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = if (selected) ElegantSelectedBg else SportsDarkSurface),
         border = BorderStroke(1.dp, ElegantBorderColor),
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)
+        modifier = Modifier.fillMaxWidth().padding(horizontal = if (largeText) 12.dp else 16.dp, vertical = 4.dp)
             .testTag("select_game_${game.id}").semantics { this.selected = selected }) {
-        val largeText = LocalDensity.current.fontScale >= 1.5f
-        Column(Modifier.fillMaxWidth().padding(12.dp)) {
+        Column(Modifier.fillMaxWidth().padding(horizontal = if (largeText) 8.dp else 12.dp, vertical = 12.dp)) {
             if (largeText) DrawerScore(game, 14, Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
                     TeamLogoCanvas(game.awayTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
                 }
-                if (largeText) {
-                    Spacer(Modifier.weight(2f))
-                } else {
+                if (!largeText) {
                     DrawerScore(game, 18, Modifier.weight(2f))
                 }
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
@@ -59,12 +57,19 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
                 Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_away_name_${game.id}"))
-                Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(2f).alignByBaseline().testTag("drawer_status_${game.id}"))
+                if (!largeText) {
+                    Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.weight(2f).alignByBaseline().testTag("drawer_status_${game.id}"))
+                }
                 Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_home_name_${game.id}"))
+            }
+            if (largeText) {
+                Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
+                    textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
+                        .testTag("drawer_status_${game.id}"))
             }
         }
     }

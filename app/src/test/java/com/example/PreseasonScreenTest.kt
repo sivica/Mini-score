@@ -12,6 +12,8 @@ import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalDensity
@@ -143,8 +145,11 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithTag("drawer_score_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("drawer_home_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
-        assertSameBaseline("drawer_away_name_${PreseasonGameData.GAME_ID}", "drawer_status_${PreseasonGameData.GAME_ID}",
-            "drawer_home_name_${PreseasonGameData.GAME_ID}")
+        val largeStatus = composeTestRule.onNodeWithTag("drawer_status_${PreseasonGameData.GAME_ID}", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val largeName = composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        assertTrue("Large-font status reflows below names", largeStatus.top >= largeName.bottom)
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-200-percent.png")
         fontScale.value = 1f
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("Sat")
@@ -276,22 +281,33 @@ class PreseasonScreenTest {
     @Test
     @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
     fun centeredHeaderFitsTwoHundredPercentFonts() {
-        val game = PreseasonGameData.createGame()
+        val original = PreseasonGameData.createGame()
+        val game = original.copy(awayTeam = original.awayTeam.copy(code = "MEM", name = "Memphis Grizzlies", shortName = "Grizzlies"),
+            homeTeam = original.homeTeam.copy(code = "CHI", name = "Chicago Bulls", shortName = "Bulls"))
         composeTestRule.setContent {
             val density = LocalDensity.current
             CompositionLocalProvider(LocalDensity provides Density(density.density, 2f)) {
-                MyApplicationTheme { ScoreboardHeaderPanel(game) }
+                MyApplicationTheme {
+                    Column {
+                        ScoreboardHeaderPanel(game)
+                        Column(Modifier.width(276.dp)) { CollapsedGameCard(game, selected = true) {} }
+                    }
+                }
             }
         }
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/centered-header-200-percent.png")
-        for (tag in listOf("game_context", "selected_game_date", "team_score_PHI", "team_score_BKN")) {
+        for (tag in listOf("game_context", "selected_game_date", "team_score_MEM", "team_score_CHI", "scoreboard_away_name", "scoreboard_home_name",
+            "drawer_away_name_${game.id}", "drawer_home_name_${game.id}", "drawer_status_${game.id}")) {
             val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode()
             val layouts = mutableListOf<TextLayoutResult>()
             assertTrue(node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
             assertTrue("$tag remains readable at 200%: ${layoutDescription(layouts.first())}", textFits(layouts.first()))
             assertTrue("$tag fits a narrow screen", node.boundsInRoot.left >= 0 && node.boundsInRoot.right <= 640)
+            assertTrue("$tag stays on one line", layouts.first().lineCount == 1)
         }
-        assertSameBaseline("scoreboard_away_name", "game_status", "scoreboard_home_name")
+        val name = composeTestRule.onNodeWithTag("scoreboard_away_name").fetchSemanticsNode().boundsInRoot
+        val status = composeTestRule.onNodeWithTag("game_status", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        assertTrue("Large-font status reflows below names", status.top >= name.bottom)
         composeTestRule.onNodeWithTag("quarter_toggle").performClick()
         composeTestRule.onNodeWithTag("quarter_scores").assertIsDisplayed()
     }
