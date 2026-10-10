@@ -6,7 +6,7 @@ Miniscore uses package `com.aistudio.nbatracker.qfzwpm`. Its first signed releas
 
 Version **1.5.1**, code **7**, was uploaded manually and published to **Internal testing** on October 10, 2026. [Manage Miniscore in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/tracks/4701443907528615174?tab=releases). The source is commit `26df5f1`; bundle SHA-256 is `b8d75fbd408812791ff096e42ebb8b89c6aeae513e17606696ac316b359de194`.
 
-The approved tester list is configured and the track is **Active**. Approved accounts can install through the [join link](https://play.google.com/apps/internaltest/4701443907528615174). Manage future tester access in the track's Testers tab. Google displays a temporary package-based app name until store setup and review are complete. Production distribution is not configured.
+At the owner's request on October 10, 2026, the old app's internal test was **paused** and the track is **Inactive**. Play Console confirms that testers are not receiving the release; resuming the track would restore access. The app record has not been deleted. Production distribution was never configured. Google says the pause usually propagates within an hour, but can take longer. [App availability settings](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution).
 
 This release used the local private Miniscore upload key. No signing or Play credentials were transferred to GitHub. The workflow below is prepared for future automation and still requires owner-approved secret/environment configuration and merging to `main` before use.
 

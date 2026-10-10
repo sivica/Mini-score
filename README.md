@@ -14,7 +14,7 @@ The scoreboard uses compact team names/logos and mirrored scores in the center. 
 
 ## Play Store distribution
 
-Miniscore **1.5.1 / code 7** is published to Play **Internal testing**. The track is active for the approved tester list. Join with an approved Google account using the [test join link](https://play.google.com/apps/internaltest/4701443907528615174); manage tester access in [Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/tracks/4701443907528615174?tab=testers). A manual GitHub workflow is prepared for future approved uploads; credentials remain local. See the [release setup guide](docs/play-store.md) for signing secrets, version codes and subsequent releases.
+Miniscore **1.5.1 / code 7** was published to Play **Internal testing**. At the owner's request on October 10, 2026, the old app's internal test was **paused**; the track is **Inactive** and is no longer distributing the app to testers. The old package is `com.aistudio.nbatracker.qfzwpm`. [Manage the old app in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution). A manual GitHub workflow is prepared for future approved uploads; credentials remain local. See the [release setup guide](docs/play-store.md) for signing secrets, version codes and subsequent releases.
 
 ## Initial published game
 
