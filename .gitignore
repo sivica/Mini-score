@@ -20,3 +20,5 @@ debug.keystore
 *.jks
 *.keystore
 service-account*.json
+__pycache__/
+*.pyc

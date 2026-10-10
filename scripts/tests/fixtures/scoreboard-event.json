@@ -1,0 +1,102 @@
+{
+  "id": "401898395",
+  "date": "2026-10-09T12:00Z",
+  "season": {
+    "year": 2027,
+    "type": 1,
+    "slug": "preseason"
+  },
+  "competitions": [
+    {
+      "status": {
+        "clock": 0.0,
+        "displayClock": "0.0",
+        "period": 4,
+        "type": {
+          "id": "3",
+          "name": "STATUS_FINAL",
+          "state": "post",
+          "completed": true,
+          "description": "Final",
+          "detail": "Final",
+          "shortDetail": "Final"
+        }
+      },
+      "venue": {
+        "id": "4018",
+        "fullName": "Venetian Arena",
+        "indoor": true
+      },
+      "competitors": [
+        {
+          "homeAway": "home",
+          "team": {
+            "name": "Mavericks",
+            "abbreviation": "DAL",
+            "displayName": "Dallas Mavericks",
+            "color": "0064b1",
+            "alternateColor": "bbc4ca",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png"
+          },
+          "score": "117",
+          "linescores": [
+            {
+              "value": 19.0,
+              "displayValue": "19",
+              "period": 1
+            },
+            {
+              "value": 26.0,
+              "displayValue": "26",
+              "period": 2
+            },
+            {
+              "value": 35.0,
+              "displayValue": "35",
+              "period": 3
+            },
+            {
+              "value": 37.0,
+              "displayValue": "37",
+              "period": 4
+            }
+          ]
+        },
+        {
+          "homeAway": "away",
+          "team": {
+            "name": "Rockets",
+            "abbreviation": "HOU",
+            "displayName": "Houston Rockets",
+            "color": "ce0e2d",
+            "alternateColor": "000000",
+            "logo": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/hou.png"
+          },
+          "score": "135",
+          "linescores": [
+            {
+              "value": 27.0,
+              "displayValue": "27",
+              "period": 1
+            },
+            {
+              "value": 38.0,
+              "displayValue": "38",
+              "period": 2
+            },
+            {
+              "value": 34.0,
+              "displayValue": "34",
+              "period": 3
+            },
+            {
+              "value": 36.0,
+              "displayValue": "36",
+              "period": 4
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

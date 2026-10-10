@@ -7,6 +7,10 @@ Install **Miniscore 1.5.1 once**. Its date, games, scores, rosters and player st
 
 The `game-data` branch is the published data source. The copy of `games.json` on the app development branch is a sample and test fixture; editing that copy does not publish to installed apps. GitHub serves the JSON directly, so GitHub Pages setup is unnecessary.
 
+## Automatic morning update
+
+[Update daily NBA game feed](https://github.com/sivica/Mini-score/actions/workflows/daily-game-feed.yml) runs at **08:00 Europe/Skopje** daily, following daylight saving time. It fetches ESPN schedules and player box scores for yesterday, today and tomorrow in NBA Eastern time, keeps one week of recent games, and publishes validated changes. Source or validation failures preserve the previous JSON. The newest completed game is the default. See [the automation guide](daily-game-feed.md) for manual runs and data-source limitations. No app update or new API credentials are required.
+
 ## Tomorrow's game
 
 1. Open the live editor above. Keep `schemaVersion` at `1`.
@@ -17,7 +21,7 @@ The `game-data` branch is the published data source. The copy of `games.json` on
 6. When verified stats are available, add the players, scores and quarter scores; set `status` to `LIVE` or `FINISHED` as appropriate. Do not copy yesterday's player stats into a new game.
 7. Click **Commit changes** and commit directly to **game-data**. Reopen the app, tap the refresh icon, or pull down the lineup to download the published data. GitHub may take a few minutes to serve a new revision.
 
-You can also ask Codex to update this file with a sourced game, or use GitHub Desktop / git to commit data edits to `game-data`. The feed is manual; no sports provider or daily automation is configured.
+You can also ask Codex to update this file with a sourced game, or use GitHub Desktop / git to commit data edits to `game-data`. The next morning's automated run replaces covered games with verified provider data, so manual edits to those games are temporary overrides.
 
 ## Game fields
 

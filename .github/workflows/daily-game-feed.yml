@@ -1,0 +1,72 @@
+name: Update daily NBA game feed
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+      timezone: Europe/Skopje
+  workflow_dispatch:
+    inputs:
+      nba_date:
+        description: Optional NBA Eastern date (YYYY-MM-DD); leave empty for today
+        required: false
+        type: string
+      dry_run:
+        description: Validate the update without publishing it
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: miniscore-game-feed
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Check out updater
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Test data mapping and preservation on failure
+        run: python -m unittest discover -s scripts/tests -v
+      - name: Check out published data
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: game-data
+          path: published-feed
+      - name: Fetch and validate daily games
+        env:
+          NBA_DATE: ${{ inputs.nba_date }}
+        run: |
+          set -euo pipefail
+          args=(--feed published-feed/games.json)
+          if [[ -n "$NBA_DATE" ]]; then args+=(--date "$NBA_DATE"); fi
+          python scripts/update_game_feed.py "${args[@]}"
+      - name: Publish validated changes
+        if: ${{ inputs.dry_run != true }}
+        working-directory: published-feed
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- games.json; then
+            echo 'No data changes to publish.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add games.json
+          git commit -m 'Update daily NBA games and player stats'
+          git push origin HEAD:game-data
+          echo 'Published validated NBA games and player stats to game-data/games.json.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Summarize dry run
+        if: ${{ inputs.dry_run == true }}
+        run: echo 'Validated successfully. Dry run did not publish games.json.' >> "$GITHUB_STEP_SUMMARY"
