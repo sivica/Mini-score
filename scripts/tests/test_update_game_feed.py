@@ -148,6 +148,20 @@ class DailyFeedTest(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertEqual(expected, team_code({"abbreviation": source}))
 
+    def test_existing_alias_migrates_without_duplicate_id(self):
+        self.previous["games"][0]["away"]["code"] = "SA"
+        for c in self.event["competitions"][0]["competitors"]:
+            if c["team"]["abbreviation"] == "HOU":
+                c["team"]["abbreviation"] = "SA"
+        for c in self.summary["header"]["competitions"][0]["competitors"]:
+            if c["team"]["abbreviation"] == "HOU":
+                c["team"]["abbreviation"] = "SA"
+        self.summary["boxscore"]["players"][0]["team"]["abbreviation"] = "SA"
+        feed = build_feed(self.previous, date(2026, 10, 10), self.fetch)
+        self.assertEqual(1, len(feed["games"]))
+        self.assertEqual("SAS", feed["games"][0]["away"]["code"])
+        self.assertEqual(self.game["id"], feed["games"][0]["id"])
+
     def test_status_and_score_mismatch_preserve_published_bytes(self):
         for mismatch in ("status", "score"):
             summary = copy.deepcopy(self.summary)

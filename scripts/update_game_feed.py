@@ -259,9 +259,13 @@ def event_to_game(event, existing, fetch):
 def build_feed(previous, today, fetch=fetch_json):
     validate_feed(previous)
     cutoff = (today - timedelta(days=7)).isoformat()
-    retained = copy.deepcopy([g for g in previous["games"] if g["date"] >= cutoff])
+    normalized = copy.deepcopy(previous["games"])
+    for game in normalized:
+        for side in ("away", "home"):
+            game[side]["code"] = TEAM_CODES.get(game[side]["code"], game[side]["code"])
+    retained = [g for g in normalized if g["date"] >= cutoff]
     identity = lambda g: (g["date"], g["away"]["code"], g["home"]["code"])
-    existing = {identity(g): g for g in previous["games"]}
+    existing = {identity(g): g for g in normalized}
     games = {identity(g): g for g in retained}
     seen = set()
     for offset in (-1, 0, 1):
