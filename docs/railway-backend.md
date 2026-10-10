@@ -23,7 +23,9 @@ The browser prompts for HTTP Basic credentials over HTTPS. Railway holds `ADMIN_
 
 Corrections follow player IDs rather than roster positions and are applied after imports. **Clear corrections** restores current provider values for a game. **Make default** changes the default game. **Publication history** restores any of the ten previous publications.
 
-Stale editors receive HTTP 409 after the publication revision changes. Stale drafts are identified rather than silently applied. This first editor edits existing games and rosters; the importer adds new provider games. It does not manually create games or roster entries.
+Stale editors receive HTTP 409 after the publication revision changes. **Review saved draft** compares saved edits with current values; **Load draft edits for review** recovers them without publishing. New drafts retain their original game snapshot, so recovery applies only edited fields and preserves new provider stats, matching players by ID. Older drafts without snapshots display all differences for explicit review. Removed players' edits remain visible in the comparison but cannot be applied. Saving replaces that draft. Actions that reload the editor warn before discarding unsaved fields.
+
+This first editor edits existing games and rosters; the importer adds new provider games. It does not manually create games or roster entries. Scheduler database reads run in the thread pool so a slow database check does not block the API event loop.
 
 Integers and arrays are strict. FGM cannot exceed FGA; minutes/seconds are bounded. Final scores must equal both player points and quarter totals. Correct related values together when changing final points.
 
@@ -48,6 +50,9 @@ python -m venv .venv
 .venv/bin/pip install -r backend/requirements-dev.txt
 .venv/bin/python -m pytest backend/tests -q
 python -m unittest discover -s scripts/tests -v
+npm ci
+npx playwright install chromium
+node --test backend/tests/admin-browser.cjs
 ```
 
 For local development, set `DATABASE_URL=sqlite:///backend/local.db`, `ADMIN_USERNAME` and a random `ADMIN_PASSWORD` of at least 20 characters. Run `uvicorn backend.app:create_app --factory`. SQLite is local-only; production uses PostgreSQL transaction and advisory locks.

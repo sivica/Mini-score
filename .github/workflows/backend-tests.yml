@@ -1,10 +1,10 @@
 name: Test Miniscore backend
 on:
   pull_request:
-    paths: ['backend/**', 'scripts/**', 'Dockerfile', '.github/workflows/backend-tests.yml']
+    paths: ['backend/**', 'scripts/**', 'Dockerfile', 'package.json', 'package-lock.json', '.github/workflows/backend-tests.yml']
   push:
     branches: [main]
-    paths: ['backend/**', 'scripts/**', 'Dockerfile', '.github/workflows/backend-tests.yml']
+    paths: ['backend/**', 'scripts/**', 'Dockerfile', 'package.json', 'package-lock.json', '.github/workflows/backend-tests.yml']
 permissions:
   contents: read
 jobs:
@@ -19,3 +19,9 @@ jobs:
       - run: pip install -r backend/requirements-dev.txt
       - run: python -m pytest backend/tests -q
       - run: python -m unittest discover -s scripts/tests -v
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '24'
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: node --test backend/tests/admin-browser.cjs

@@ -50,7 +50,8 @@ def create_app(database_url=None, scheduler=True, seed=None):
         while True:
             try:
                 due = daily_date(datetime.now(LOCAL))
-                if due and store.read()["lastDailyAttempt"] != due:
+                state = await run_in_threadpool(store.read) if due else None
+                if due and state["lastDailyAttempt"] != due:
                     await run_in_threadpool(store.import_feed,
                                             lambda previous: build_feed(previous, datetime.now(EASTERN).date()), due)
             except Conflict:

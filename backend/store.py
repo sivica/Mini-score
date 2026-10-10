@@ -140,7 +140,8 @@ class Store:
             preview = copy.deepcopy(state["published"])
             preview["games"] = [game if g["id"] == game["id"] else g for g in preview["games"]]
             validate_publication(preview)
-            state["drafts"][game["id"]] = {"game": game, "revision": revision, "savedAt": stamp()}
+            state["drafts"][game["id"]] = {"game": game, "base": current,
+                                          "revision": revision, "savedAt": stamp()}
             if publish:
                 before = dict(leaves(current))
                 old_corrections = copy.deepcopy(state["corrections"])

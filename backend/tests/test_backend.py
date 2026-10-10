@@ -1,9 +1,12 @@
 import copy
+import asyncio
 import json
+import threading
 from datetime import datetime, timezone
 from pathlib import Path
 
 import pytest
+import httpx
 from fastapi.testclient import TestClient
 
 from backend.app import create_app, daily_date
@@ -99,6 +102,52 @@ def test_stale_editor_rejected_without_overwriting_import(store):
     with pytest.raises(Conflict):
         store.save_game(game, 1, publish=True)
     assert store.read()["revision"] == 2
+
+
+def test_draft_keeps_original_base_after_import(store):
+    original = finished(store)
+    edited = copy.deepcopy(original)
+    edited["venue"] = "Draft arena"
+    store.save_game(edited, 1)
+    def imported(previous):
+        game = next(g for g in previous["games"] if g["id"] == edited["id"])
+        game["venue"] = "Provider arena"
+        game["away"]["players"].reverse()
+        return previous
+    store.import_feed(imported)
+    state = store.read()
+    assert state["drafts"][edited["id"]]["game"] == edited
+    assert state["drafts"][edited["id"]]["base"] == original
+    assert state["drafts"][edited["id"]]["revision"] == 1
+    with pytest.raises(Conflict):
+        store.save_game(edited, 1, publish=True)
+
+
+def test_scheduler_database_wait_does_not_block_http(tmp_path, monkeypatch):
+    started, release, timed_out = threading.Event(), threading.Event(), threading.Event()
+    app = create_app(f"sqlite:///{tmp_path}/scheduler.db", seed=copy.deepcopy(SEED))
+    original_read = app.state.store.read
+    def slow_read():
+        started.set()
+        if not release.wait(1):
+            timed_out.set()
+        return original_read()
+    monkeypatch.setattr(app.state.store, "read", slow_read)
+    monkeypatch.setattr("backend.app.daily_date", lambda now: "2026-10-10")
+    async def check():
+        async with app.router.lifespan_context(app):
+            app.state.store.mutate(lambda state: state.update(lastDailyAttempt="2026-10-10"))
+            try:
+                async with asyncio.timeout(2):
+                    while not started.is_set():
+                        await asyncio.sleep(0.01)
+                    async with httpx.AsyncClient(transport=httpx.ASGITransport(app=app), base_url="http://testserver") as client:
+                        response = await client.get("/admin")
+                    assert response.status_code == 401
+                    assert not timed_out.is_set(), "Database read blocked the API event loop"
+            finally:
+                release.set()
+    asyncio.run(check())
 
 
 def test_failed_provider_call_and_duplicate_daily_run(store):
