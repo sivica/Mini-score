@@ -66,7 +66,7 @@ def test_draft_is_not_public_and_restore_clears_correction(store):
     game["venue"] = "Corrected arena"
     store.save_game(game, 1)
     assert store.read()["published"] == before["published"]
-    store.save_game(game, 1, publish=True)
+    store.save_game(game, 1, publish=True, draft_version=1)
     assert store.read()["revision"] == 2
     store.restore(1, 2)
     assert store.read()["published"] == before["published"]
@@ -121,6 +121,46 @@ def test_draft_keeps_original_base_after_import(store):
     assert state["drafts"][edited["id"]]["revision"] == 1
     with pytest.raises(Conflict):
         store.save_game(edited, 1, publish=True)
+
+
+@pytest.mark.parametrize("publish", [False, True])
+def test_concurrent_draft_editor_cannot_overwrite_saved_work(store, publish):
+    game = finished(store)
+    first = copy.deepcopy(game)
+    first["venue"] = "First saved draft"
+    store.save_game(first, 1, draft_version=0)
+    before = store.read()
+    game["venue"] = "Stale tab edit"
+    with pytest.raises(Conflict, match="saved draft changed"):
+        store.save_game(game, 1, publish=publish, draft_version=0)
+    assert store.read() == before
+    assert before["revision"] == 1
+    assert before["draftVersions"][game["id"]] == 1
+    store.save_game(game, 1, publish=publish, draft_version=1)
+    after = store.read()
+    assert after["draftVersions"][game["id"]] == 2
+    assert after["revision"] == (2 if publish else 1)
+
+
+def test_existing_drafts_receive_versions_on_upgrade_without_changing_data(store):
+    game = finished(store)
+    store.save_game(game, 1)
+    store.mutate(lambda state: state.pop("draftVersions"))
+    before = store.read()
+    store.initialize(copy.deepcopy(SEED))
+    after = store.read()
+    assert after.pop("draftVersions") == {game["id"]: 1}
+    assert after == before
+    with pytest.raises(Conflict, match="saved draft changed"):
+        store.save_game(game, 1, draft_version=0)
+
+
+def test_draft_versions_are_independent_per_game(store):
+    games = copy.deepcopy(store.read()["published"]["games"][:2])
+    assert len(games) == 2
+    for game in games:
+        store.save_game(game, 1, draft_version=0)
+    assert store.read()["draftVersions"] == {game["id"]: 1 for game in games}
 
 
 def test_scheduler_database_wait_does_not_block_http(tmp_path, monkeypatch):
@@ -238,3 +278,24 @@ def test_api_rejects_invalid_json_instead_of_server_error(client):
     assert client.post("/admin/game", auth=auth, content="{", headers=headers).status_code == 422
     assert client.post("/admin/game", auth=auth, json={"game": {}, "revision": 1}, headers=headers).status_code == 422
     assert client.get("/games").json() == SEED
+
+
+def test_api_draft_conflict_preserves_publication_and_first_draft(client):
+    auth = ("owner", "a-long-local-test-password")
+    headers = {"X-Miniscore-Admin": "1"}
+    state = client.get("/admin/state", auth=auth).json()
+    game = copy.deepcopy(state["published"]["games"][0])
+    game["venue"] = "First tab"
+    request = {"game": game, "revision": state["revision"], "draftVersion": 0}
+    assert client.post("/admin/game", auth=auth, headers=headers, json=request).status_code == 200
+    before = client.get("/admin/state", auth=auth).json()
+    for publish in (False, True):
+        game["venue"] = "Other tab"
+        request["publish"] = publish
+        response = client.post("/admin/game", auth=auth, headers=headers, json=request)
+        assert response.status_code == 409
+        assert client.get("/admin/state", auth=auth).json() == before
+    for version in (None, True, -1, "1", 1.0):
+        request["draftVersion"] = version
+        assert client.post("/admin/game", auth=auth, headers=headers, json=request).status_code == 422
+    assert client.get("/games").json() == state["published"]

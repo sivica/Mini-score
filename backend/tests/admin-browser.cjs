@@ -141,6 +141,31 @@ test('legacy drafts are recoverable and accidental replacement can be cancelled'
   await page.click('#publish');await waitMessage('Published.');
 });
 
+test('two editor tabs cannot overwrite a draft and the rejected tab keeps its edits', async t => {
+  const {page,state,waitMessage,url}=await fixture(t);
+  const other=await page.context().newPage();
+  await other.goto(`${url}/admin`);
+  await other.waitForFunction(() => document.querySelector('#message').textContent.startsWith('Ready.'));
+  await page.locator('#field-venue').fill('First saved venue');
+  await other.locator('#field-venue').fill('Other unsaved venue');
+  await page.click('#save');await waitMessage('Draft saved.');
+  const before=await state();
+  for(const action of ['save','publish']) {
+    await other.click('#'+action);
+    await other.waitForFunction(() => document.querySelector('#message').textContent.includes('saved draft changed'));
+    await other.waitForFunction(() => !document.querySelector('#save').disabled);
+    assert.equal(await other.locator('#field-venue').inputValue(),'Other unsaved venue');
+    assert.deepEqual(await state(),before);
+  }
+  await other.reload();
+  await other.waitForFunction(() => !document.querySelector('#save').disabled);
+  assert.equal(await other.locator('#field-venue').inputValue(),'First saved venue');
+  await other.locator('#field-venue').fill('Reviewed new venue');
+  await other.click('#save');
+  await other.waitForFunction(() => document.querySelector('#message').textContent.startsWith('Draft saved.'));
+  assert.equal((await state()).drafts[before.published.defaultGameId].game.venue,'Reviewed new venue');
+});
+
 test('recovery reports removed players and retains new roster members', async t => {
   const {page,state}=await fixture(t), initial=await state();
   const current=structuredClone(initial.published.games.find(g=>g.id===initial.published.defaultGameId));

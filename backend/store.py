@@ -81,7 +81,7 @@ class Store:
             if conn.execute(select(self.table.c.id)).first() is None:
                 conn.execute(self.table.insert().values(id=1, state={
                     "raw": seed, "published": seed, "corrections": {}, "defaultOverride": None,
-                    "drafts": {}, "history": [], "revision": 1, "updatedAt": stamp(),
+                    "drafts": {}, "draftVersions": {}, "history": [], "revision": 1, "updatedAt": stamp(),
                     "lastImport": None, "lastDailyAttempt": None, "importError": None,
                     "source": "bootstrap snapshot", "importing": False}))
             else:
@@ -89,12 +89,13 @@ class Store:
                 # in-progress flag without disturbing an old deployment still importing.
                 state = copy.deepcopy(conn.execute(select(self.table.c.state).where(self.table.c.id == 1)
                                                    .with_for_update()).scalar_one())
+                state.setdefault("draftVersions", {gid: 1 for gid in state["drafts"]})
                 unlocked = (self.engine.dialect.name != "postgresql" or
                             conn.exec_driver_sql("SELECT pg_try_advisory_xact_lock(760012)").scalar())
                 if state["importing"] and unlocked:
                     state["importing"] = False
                     state["importError"] = "Previous import was interrupted. The last publication was preserved."
-                    conn.execute(update(self.table).where(self.table.c.id == 1).values(state=state))
+                conn.execute(update(self.table).where(self.table.c.id == 1).values(state=state))
 
     def read(self):
         with self.engine.connect() as conn:
@@ -128,9 +129,13 @@ class Store:
         state["updatedAt"] = stamp()
         state["source"] = source
 
-    def save_game(self, game, revision, publish=False):
+    def save_game(self, game, revision, publish=False, draft_version=0):
         def action(state):
             self.check_revision(state, revision)
+            require(type(draft_version) is int and draft_version >= 0, "draftVersion must be a non-negative integer")
+            versions = state["draftVersions"]
+            if draft_version != versions.get(game["id"], 0):
+                raise Conflict("This game's saved draft changed in another editor. Reload before saving or publishing. Your unsaved edits are still in this tab.")
             current = next(g for g in state["published"]["games"] if g["id"] == game["id"])
             require(game["id"] == current["id"], "Game ID cannot change")
             for side in ("away", "home"):
@@ -142,6 +147,7 @@ class Store:
             validate_publication(preview)
             state["drafts"][game["id"]] = {"game": game, "base": current,
                                           "revision": revision, "savedAt": stamp()}
+            versions[game["id"]] = draft_version + 1
             if publish:
                 before = dict(leaves(current))
                 old_corrections = copy.deepcopy(state["corrections"])

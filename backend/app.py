@@ -184,7 +184,8 @@ def create_app(database_url=None, scheduler=True, seed=None):
         if type(data.get("publish", False)) is not bool or type(data.get("game")) is not dict:
             raise HTTPException(422, "Expected game object and boolean publish")
         try:
-            revision = await run_in_threadpool(store.save_game, data["game"], data.get("revision"), data.get("publish", False))
+            revision = await run_in_threadpool(store.save_game, data["game"], data.get("revision"),
+                                               data.get("publish", False), data.get("draftVersion"))
         except (KeyError, TypeError, StopIteration) as exc:
             raise HTTPException(422, "Missing or invalid game fields") from exc
         return {"revision": revision}

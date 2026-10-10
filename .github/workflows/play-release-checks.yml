@@ -1,24 +1,13 @@
 name: Validate Play release automation
 on:
   pull_request:
-    paths:
-      - .github/workflows/play-internal-release.yml
-      - .github/workflows/play-release-checks.yml
-      - scripts/play_release_version.py
-      - scripts/tests/test_play_release_version.py
-      - app/build.gradle.kts
   push:
     branches: [main]
-    paths:
-      - .github/workflows/play-internal-release.yml
-      - .github/workflows/play-release-checks.yml
-      - scripts/play_release_version.py
-      - scripts/tests/test_play_release_version.py
-      - app/build.gradle.kts
 permissions:
   contents: read
 jobs:
   validate:
+    name: Release workflow checks
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -40,4 +29,4 @@ jobs:
           tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
           # GitHub supports queue:max; the pinned linter predates that syntax.
           # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
-          "$RUNNER_TEMP/actionlint" -ignore 'unexpected key "queue" for "concurrency" section' .github/workflows/play-internal-release.yml .github/workflows/play-release-checks.yml
+          "$RUNNER_TEMP/actionlint" -ignore 'unexpected key "queue" for "concurrency" section' .github/workflows/*.yml

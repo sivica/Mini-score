@@ -50,6 +50,10 @@ python -m unittest scripts.tests.test_play_release_version -v
 python scripts/play_release_version.py --run-number 1
 ```
 
+`main` requires a pull request, up-to-date successful **Android PR checks**, **Backend checks** and **Release workflow checks** from GitHub Actions, plus resolution of review conversations. Administrators are included; force pushes and branch deletion are blocked. No additional collaborator approval is required, so the owner can review and merge their own PR after the checks pass. There are no bypass actors. The Internal testing workflow still publishes automatically after that merge.
+
+All three checks run on every PR, without path filters that could leave required checks pending. Android PR CI uses only the public debug key and runs unit tests, a debug APK build and release vital lint. Signing/publishing secrets remain restricted to the post-merge workflow. Backend CI includes real PostgreSQL transaction/advisory-lock and backup restore tests, importer tests and dashboard browser regressions.
+
 ## Initial Console upload
 
 The replacement **Miniscore** app uses English (United States), app category, free, and package `com.ivicastojanoski.miniscore`. The owner confirmed Google's Developer Program Policies and export-law declarations before creation. The signed version 1.7.0 / code 13 AAB was uploaded, reviewed and published to Internal testing. Tester access is managed separately in the track's Testers tab. The new tester join link is https://play.google.com/apps/internaltest/4701569367017935626; it requires an enabled tester list and opt-in by an eligible account.

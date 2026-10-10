@@ -268,8 +268,13 @@ def build_feed(previous, today, fetch=fetch_json):
     existing = {identity(g): g for g in normalized}
     games = {identity(g): g for g in retained}
     seen = set()
-    for offset in (-1, 0, 1):
-        day = today + timedelta(days=offset)
+    # Catch up retained games after a missed daily run, including legacy IDs
+    # which cannot be used directly with ESPN's summary endpoint.
+    days = {today + timedelta(days=offset) for offset in (-1, 0, 1)}
+    days.update(date.fromisoformat(g["date"]) for g in retained
+                if g["status"] in ("SCHEDULED", "LIVE", "POSTPONED")
+                and g["date"] < today.isoformat())
+    for day in sorted(days):
         scoreboard = fetch(API + "scoreboard?" + urlencode({"dates": day.strftime("%Y%m%d"), "limit": 100}))
         for event in array(scoreboard["events"], 100):
             if event["id"] in seen:

@@ -1,5 +1,5 @@
 "use strict";
-let state, selected, editing, baseRevision, editorSnapshot, recoveredDraft=false;
+let state, selected, editing, baseRevision, baseDraftVersion, editorSnapshot, recoveredDraft=false;
 const $ = id => document.getElementById(id);
 const stats = {points:"PTS", rebounds:"REB", assists:"AST", fgMade:"FGM", fgAttempted:"FGA", minutes:"MIN", seconds:"SEC", steals:"STL", blocks:"BLK", turnovers:"TO"};
 const copy = value => structuredClone(value);
@@ -41,6 +41,7 @@ function input(label,value,path,type="text",wide=false) {
 }
 function openGame(id, recovered) {
   selected=id; const current=state.published.games.find(g=>g.id===id); const draft=state.drafts[id];
+  baseDraftVersion=state.draftVersions[id] || 0;
   const validDraft=draft && draft.revision===state.revision;
   editing=copy(recovered || (validDraft ? draft.game : current));baseRevision=state.revision;recoveredDraft=!!recovered; $("editor").hidden=false;
   $("title").textContent=`${current.away.shortName || current.away.name} at ${current.home.shortName || current.home.name}`;
@@ -131,7 +132,7 @@ $("search").oninput=renderGames;
 $("fields").onsubmit=event=>event.preventDefault();
 $("preview").onclick=()=>{try{preview();}catch(error){message(error.message,true);}};
 $("close-preview").onclick=()=>$("preview-dialog").close();
-for(const id of ["save","publish"]){$(id).onclick=()=>busy(async()=>{const game=collect(),draft=state.drafts[selected];if(draft && draft.revision!==state.revision && !recoveredDraft && !confirm("Replace the older saved draft with these values? Cancel to review and recover it first."))return;await api("/admin/game",{game,revision:baseRevision,publish:id==="publish"});await load();message(id==="publish"?"Published. The app will receive these stats on its next refresh.":"Draft saved. Published stats have not changed.");});}
+for(const id of ["save","publish"]){$(id).onclick=()=>busy(async()=>{const game=collect(),draft=state.drafts[selected];if(draft && draft.revision!==state.revision && !recoveredDraft && !confirm("Replace the older saved draft with these values? Cancel to review and recover it first."))return;await api("/admin/game",{game,revision:baseRevision,draftVersion:baseDraftVersion,publish:id==="publish"});await load();message(id==="publish"?"Published. The app will receive these stats on its next refresh.":"Draft saved. Published stats have not changed.");});}
 $("default").onclick=()=>busy(async()=>{if(!confirmDiscard("Changing the default reloads the editor. Discard unsaved changes?"))return;await api("/admin/default",{gameId:selected,revision:state.revision});await load();message("Default game updated.");});
 $("clear").onclick=()=>busy(async()=>{if(!confirm("Clear manual corrections for this game?"+(state.drafts[selected]?" This also deletes this game's saved draft.":"")+(hasUnsavedChanges()?" Unsaved edits will be discarded.":"")))return;await api("/admin/corrections/clear",{gameId:selected,revision:state.revision});await load();message("Provider stats restored for this game.");});
 $("import").onclick=()=>busy(async()=>{if(!confirmDiscard("Importing reloads the editor. Discard unsaved changes?"))return;message("Fetching and validating game stats…");await api("/admin/import",{});await load();message("Stats imported. Manual corrections were preserved.");});
