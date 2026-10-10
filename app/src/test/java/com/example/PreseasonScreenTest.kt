@@ -4,15 +4,25 @@ import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertTextEquals
-import androidx.compose.ui.test.assertHeightIsEqualTo
+import androidx.compose.ui.test.assertWidthIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.width
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.semantics.SemanticsActions
+import androidx.compose.ui.text.TextLayoutResult
 import android.graphics.BitmapFactory
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -60,6 +70,9 @@ class PreseasonScreenTest {
         val bar = composeTestRule.onNodeWithTag("main_app_bar").fetchSemanticsNode().boundsInRoot
         assertTrue("Logo centered in main app bar", kotlin.math.abs(logo.center.x - bar.center.x) < 1f)
         composeTestRule.onNodeWithTag("game_selector").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("lineup_header_Starting lineup").assertDoesNotExist()
+        composeTestRule.onNodeWithTag("scoreboard_away_name").assertTextEquals("PHI").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("scoreboard_home_name").assertTextEquals("BKN").assertIsDisplayed()
         for (label in listOf("Games", "Players", "Standings", "Settings")) {
             composeTestRule.onNodeWithText(label).assertDoesNotExist()
         }
@@ -86,7 +99,15 @@ class PreseasonScreenTest {
             gameDate = "2026-10-10", dateLabel = "Saturday, October 10, 2026", awayQuarters = emptyList(), homeQuarters = emptyList(),
             tipoffUtc = "2026-10-10T00:00:00Z")
         model.applyFeed(GameFeed(PreseasonGameData.GAME_ID, listOf(PreseasonGameData.createGame(), scheduled)))
-        composeTestRule.setContent { MyApplicationTheme { MainNbaScreen(model) } }
+        val fontScale = mutableStateOf(1f)
+        var focusManager: FocusManager? = null
+        composeTestRule.setContent {
+            val density = LocalDensity.current
+            focusManager = LocalFocusManager.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale.value)) {
+                MyApplicationTheme { MainNbaScreen(model) }
+            }
+        }
         composeTestRule.onNodeWithTag("game_selector").assertDoesNotExist()
         composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertIsNotDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_phi_23").assertIsDisplayed()
@@ -94,13 +115,46 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithTag("open_games_drawer").performClick()
         composeTestRule.onNodeWithTag("games_drawer").assertIsDisplayed()
         composeTestRule.onNodeWithText("Miniscore").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertTextEquals("PHI")
+        composeTestRule.onNodeWithTag("drawer_home_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertTextEquals("BKN")
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-matches.png")
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("no-such-team")
         composeTestRule.onNodeWithText("No games found").assertIsDisplayed()
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("Sat")
         composeTestRule.onNodeWithTag("select_game_scheduled-test").assertIsDisplayed()
+        composeTestRule.onNode(hasContentDescription("Show game details") and
+            hasAnyAncestor(hasTestTag("drawer_game_list")), useUnmergedTree = true).assertDoesNotExist()
+        val awayLogo = composeTestRule.onNodeWithTag("team_logo_PHI_drawer_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val homeLogo = composeTestRule.onNodeWithTag("team_logo_BKN_drawer_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val drawerScore = composeTestRule.onNodeWithTag("drawer_score_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val awayName = composeTestRule.onNodeWithTag("drawer_away_name_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val homeName = composeTestRule.onNodeWithTag("drawer_home_name_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        assertTrue("Drawer score stays between opposing logos", awayLogo.right <= drawerScore.left && drawerScore.right <= homeLogo.left)
+        assertTrue("Drawer names sit below logos", awayName.top >= awayLogo.bottom && homeName.top >= homeLogo.bottom)
+        assertTrue("Drawer names centered below logos", kotlin.math.abs(awayName.center.x - awayLogo.center.x) < 1f &&
+            kotlin.math.abs(homeName.center.x - homeLogo.center.x) < 1f)
+        assertSameBaseline("drawer_away_name_scheduled-test", "drawer_status_scheduled-test", "drawer_home_name_scheduled-test")
         composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertDoesNotExist()
         composeTestRule.onNodeWithText("Other games").assertDoesNotExist()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer.png")
+        composeTestRule.onNodeWithTag("game_search").performTextReplacement("Thu")
+        composeTestRule.runOnIdle { focusManager?.clearFocus(); fontScale.value = 2f }
+        composeTestRule.onNodeWithTag("drawer_score_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("drawer_home_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        val largeStatus = composeTestRule.onNodeWithTag("drawer_status_${PreseasonGameData.GAME_ID}", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val largeName = composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        assertTrue("Large-font status reflows below names", largeStatus.top >= largeName.bottom)
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-200-percent.png")
+        fontScale.value = 1f
+        composeTestRule.onNodeWithTag("game_search").performTextReplacement("Sat")
         composeTestRule.onNodeWithTag("select_game_scheduled-test").performClick()
         composeTestRule.onNodeWithTag("games_drawer").assertIsNotDisplayed()
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("—")
@@ -175,7 +229,6 @@ class PreseasonScreenTest {
             MyApplicationTheme {
                 Column {
                     ScoreboardHeaderPanel(game)
-                    LineupSectionHeader(game, "Starting lineup")
                     SymmetricalLineplayRow(game.startingAway.first(), game.startingHome.first()) {}
                 }
             }
@@ -185,13 +238,28 @@ class PreseasonScreenTest {
             val score = composeTestRule.onNodeWithTag("team_score_$team").fetchSemanticsNode().boundsInRoot
             assertTrue("$team logo shares the score row", logo.top < score.bottom && score.top < logo.bottom)
             assertTrue("$team score fits 320dp", score.left >= 0 && score.right <= 640)
+            val status = composeTestRule.onNodeWithTag("game_status", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+            assertTrue("Status and details control are below the score", status.top >= score.bottom)
         }
         val leftMinutes = composeTestRule.onNodeWithTag("player_minutes_phi_23", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
         val rightMinutes = composeTestRule.onNodeWithTag("player_minutes_bkn_30", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
         assertTrue("Mirrored minutes share a baseline", kotlin.math.abs(leftMinutes.top - rightMinutes.top) < 1f)
         val leftName = composeTestRule.onNodeWithTag("player_name_phi_23", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
         assertTrue("Name stays above minutes", leftName.bottom <= leftMinutes.top)
-        composeTestRule.onNodeWithTag("lineup_header_Starting lineup").assertHeightIsEqualTo(32.dp)
+        composeTestRule.onNodeWithTag("scoreboard_logo_PHI", useUnmergedTree = true).assertWidthIsEqualTo(64.dp)
+        composeTestRule.onNodeWithTag("lineup_header_Starting lineup").assertDoesNotExist()
+        val metadata = composeTestRule.onNodeWithTag("game_context").fetchSemanticsNode().boundsInRoot
+        val date = composeTestRule.onNodeWithTag("selected_game_date").fetchSemanticsNode().boundsInRoot
+        val header = composeTestRule.onNodeWithTag("scoreboard_header").fetchSemanticsNode().boundsInRoot
+        assertTrue("Context and date centered over score", kotlin.math.abs(metadata.center.x - header.center.x) < 1f &&
+            kotlin.math.abs(date.center.x - header.center.x) < 1f)
+        for ((nameTag, logoTag) in listOf("scoreboard_away_name" to "team_logo_PHI", "scoreboard_home_name" to "team_logo_BKN")) {
+            val name = composeTestRule.onNodeWithTag(nameTag).fetchSemanticsNode().boundsInRoot
+            val teamLogo = composeTestRule.onNodeWithTag(logoTag).fetchSemanticsNode().boundsInRoot
+            assertTrue("Team name centered below enlarged logo", name.top >= teamLogo.bottom &&
+                kotlin.math.abs(name.center.x - teamLogo.center.x) < 1f)
+        }
+        assertSameBaseline("scoreboard_away_name", "game_status", "scoreboard_home_name")
         composeTestRule.onNodeWithTag("quarter_scores").assertDoesNotExist()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-narrow-matchup.png")
         composeTestRule.onNodeWithTag("quarter_toggle").performClick()
@@ -211,4 +279,62 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("108").assertIsDisplayed()
         assertTrue("Pull refresh preserves selected game", model.selectedGameId.value == PreseasonGameData.GAME_ID)
     }
+
+    @Test
+    @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
+    fun centeredHeaderFitsTwoHundredPercentFonts() {
+        val original = PreseasonGameData.createGame()
+        val game = original.copy(awayTeam = original.awayTeam.copy(code = "MEM", name = "Memphis Grizzlies", shortName = "Grizzlies"),
+            homeTeam = original.homeTeam.copy(code = "CHI", name = "Chicago Bulls", shortName = "Bulls"))
+        composeTestRule.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, 2f)) {
+                MyApplicationTheme {
+                    Column {
+                        ScoreboardHeaderPanel(game)
+                        Column(Modifier.width(276.dp)) { CollapsedGameCard(game, selected = true) {} }
+                    }
+                }
+            }
+        }
+        composeTestRule.onNodeWithTag("scoreboard_away_name").assertTextEquals("MEM")
+        composeTestRule.onNodeWithTag("scoreboard_home_name").assertTextEquals("CHI")
+        composeTestRule.onNodeWithTag("drawer_away_name_${game.id}", useUnmergedTree = true).assertTextEquals("MEM")
+        composeTestRule.onNodeWithTag("drawer_home_name_${game.id}", useUnmergedTree = true).assertTextEquals("CHI")
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/centered-header-200-percent.png")
+        for (tag in listOf("game_context", "selected_game_date", "team_score_MEM", "team_score_CHI", "scoreboard_away_name", "scoreboard_home_name",
+            "drawer_away_name_${game.id}", "drawer_home_name_${game.id}", "drawer_status_${game.id}")) {
+            val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode()
+            val layouts = mutableListOf<TextLayoutResult>()
+            assertTrue(node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
+            assertTrue("$tag remains readable at 200%: ${layoutDescription(layouts.first())}", textFits(layouts.first()))
+            assertTrue("$tag fits a narrow screen", node.boundsInRoot.left >= 0 && node.boundsInRoot.right <= 640)
+            assertTrue("$tag stays on one line", layouts.first().lineCount == 1)
+        }
+        val name = composeTestRule.onNodeWithTag("scoreboard_away_name").fetchSemanticsNode().boundsInRoot
+        val status = composeTestRule.onNodeWithTag("game_status", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+        assertTrue("Large-font status reflows below names", status.top >= name.bottom)
+        composeTestRule.onNodeWithTag("quarter_toggle").performClick()
+        composeTestRule.onNodeWithTag("quarter_scores").assertIsDisplayed()
+    }
+
+    private fun assertSameBaseline(vararg tags: String) {
+        val baselines = tags.map { tag ->
+            val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode()
+            val layouts = mutableListOf<TextLayoutResult>()
+            assertTrue("Text layout available for $tag", node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
+            assertTrue("$tag text fits without clipping: ${layoutDescription(layouts.first())}", textFits(layouts.first()))
+            node.boundsInRoot.top + layouts.first().firstBaseline
+        }
+        assertTrue("Names and status share a baseline: $tags", baselines.all { kotlin.math.abs(it - baselines.first()) < 1f })
+    }
+
+    private fun layoutDescription(layout: TextLayoutResult) =
+        "size=${layout.size}, widthOverflow=${layout.didOverflowWidth}, heightOverflow=${layout.didOverflowHeight}, " +
+            "lines=${layout.lineCount}, paragraphWidth=${layout.multiParagraph.width}, paragraphHeight=${layout.multiParagraph.height}"
+
+    // Paragraph width includes unused constraints for centered text; check rendered lines instead.
+    private fun textFits(layout: TextLayoutResult) = !layout.multiParagraph.didExceedMaxLines &&
+        (0 until layout.lineCount).all { layout.getLineRight(it) - layout.getLineLeft(it) <= layout.size.width + 1f } &&
+        layout.multiParagraph.height <= layout.size.height + 1f
 }
