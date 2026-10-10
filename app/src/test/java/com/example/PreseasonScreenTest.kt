@@ -18,13 +18,13 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.text.TextLayoutResult
-import android.graphics.BitmapFactory
-import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.robolectric.RuntimeEnvironment
 import androidx.compose.ui.test.onRoot
@@ -50,6 +50,46 @@ import org.robolectric.annotation.GraphicsMode
 @Config(qualifiers = RobolectricDeviceQualifiers.Pixel8, sdk = [36])
 class PreseasonScreenTest {
     @get:Rule val composeTestRule = createComposeRule()
+
+    @Test
+    fun originalBadgesAndAvatarsAreUsedForGamesWithRemoteImageUrls() {
+        val game = PreseasonGameData.createGame()
+        val team = game.awayTeam.copy(logoUrl = "https://127.0.0.1:9/unlicensed-logo.png")
+        val player = game.startingAway.first().copy(portraitUrl = "https://127.0.0.1:9/unlicensed-photo.png")
+        composeTestRule.setContent {
+            MyApplicationTheme {
+                Column {
+                    TeamLogoCanvas(team, 72.dp)
+                    PlayerPortrait(player, 48.dp)
+                }
+            }
+        }
+        composeTestRule.onNodeWithContentDescription("${team.name} team badge").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("${player.name} avatar").assertIsDisplayed()
+        composeTestRule.onNodeWithContentDescription("${team.name} logo").assertDoesNotExist()
+        composeTestRule.onNodeWithContentDescription("${player.name} photo").assertDoesNotExist()
+    }
+
+    @Test
+    @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
+    fun privacyPolicyIsAccessibleWithEmptySearchAndLargeText() {
+        var openedUri: String? = null
+        val uriHandler = object : UriHandler {
+            override fun openUri(uri: String) { openedUri = uri }
+        }
+        val game = PreseasonGameData.createGame()
+        composeTestRule.setContent {
+            val density = LocalDensity.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, 2f),
+                LocalUriHandler provides uriHandler) {
+                MyApplicationTheme { GamesDrawer(listOf(game), game.id, onClose = {}, onSelect = {}) }
+            }
+        }
+        composeTestRule.onNodeWithTag("game_search").performTextReplacement("no such team")
+        composeTestRule.onNodeWithText("No games found").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("privacy_policy").assertIsDisplayed().performClick()
+        assertTrue(openedUri == "https://sivica.github.io/Mini-score/privacy/")
+    }
 
     @Test
     fun opensRecordedGameAndShowsPlayerDetails() {
@@ -219,12 +259,6 @@ class PreseasonScreenTest {
     @Config(qualifiers = "w320dp-h640dp-xhdpi", sdk = [36])
     fun compactScoreboardAndMirroredMinutesStayAligned() {
         val game = PreseasonGameData.createGame()
-        val resources = RuntimeEnvironment.getApplication().resources
-        (game.startingAway + game.startingHome + game.substitutesAway + game.substitutesHome).forEach { player ->
-            val resource = GameImageAssets.playerPortrait(player)
-            assertNotNull("Bundled portrait for ${player.name}", resource)
-            assertNotNull("Decodable portrait for ${player.name}", BitmapFactory.decodeResource(resources, resource!!))
-        }
         composeTestRule.setContent {
             MyApplicationTheme {
                 Column {
