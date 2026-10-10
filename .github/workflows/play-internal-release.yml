@@ -59,6 +59,9 @@ jobs:
           gradle-version: "9.6.1"
       - name: Install Android SDK packages
         uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
       - name: Install target platform and build tools
         run: sdkmanager "platforms;android-36.1" "build-tools;36.0.0"
       - name: Restore Android signing keys
