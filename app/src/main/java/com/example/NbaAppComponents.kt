@@ -34,6 +34,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.CustomAccessibilityAction
+import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -508,169 +511,93 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffi
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainNbaScreen(viewModel: GameViewModel) {
-    val games = viewModel.games
+fun MainNbaScreen(viewModel: GameViewModel, onRefresh: () -> Unit = { viewModel.refreshGames() }) {
+    val games = viewModel.games.filterNot { it.isDemo }
     val selectedGameId by viewModel.selectedGameId.collectAsState()
     val selectedGame = games.find { it.id == selectedGameId } ?: games.firstOrNull() ?: return
     val selectedPlayer by viewModel.selectedPlayer.collectAsState()
-    val aiState by viewModel.aiAnalysisState.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val feedMessage by viewModel.feedMessage.collectAsState()
-
     val listState = rememberLazyListState()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val scope = rememberCoroutineScope()
     LaunchedEffect(selectedGame.id) { listState.scrollToItem(0) }
 
-    // Retrieve API key securely via BuildConfig
-    val apiKey = com.example.BuildConfig.GEMINI_API_KEY ?: ""
-    val context = LocalContext.current
-
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(SportsDarkBackground),
-        color = SportsDarkBackground
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .windowInsetsPadding(WindowInsets.safeDrawing)
+    Surface(Modifier.fillMaxSize(), color = SportsDarkBackground) {
+        ModalNavigationDrawer(
+            drawerState = drawerState,
+            drawerContent = {
+                GamesDrawer(games, selectedGame.id, onClose = { scope.launch { drawerState.close() } }) { game ->
+                    viewModel.selectGame(game.id)
+                    scope.launch { drawerState.close() }
+                }
+            }
         ) {
-            // A. ELEGANT HEADER (MATCHES THE ELEGANT DARK HTML DESIGN CONCEPT)
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 12.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Row(
-                    modifier = Modifier.weight(1f),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(11.dp)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .size(40.dp)
-                            .clip(RoundedCornerShape(13.dp))
-                            .background(colorResource(R.color.miniscore_logo_background)),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Image(painterResource(R.drawable.miniscore_mark), contentDescription = "Miniscore logo",
-                            modifier = Modifier.fillMaxSize().testTag("app_logo"))
+            Column(Modifier.fillMaxSize().windowInsetsPadding(WindowInsets.safeDrawing)) {
+                Box(Modifier.fillMaxWidth().height(56.dp).padding(horizontal = 8.dp).testTag("main_app_bar")) {
+                    IconButton(onClick = { scope.launch { drawerState.open() } },
+                        modifier = Modifier.align(Alignment.CenterStart).size(48.dp).testTag("open_games_drawer")) {
+                        Icon(Icons.Default.Menu, "Open games drawer", tint = AccentCyan)
                     }
-                    Column(Modifier.weight(1f)) {
-                        Text(
-                            text = "Miniscore",
-                            color = ElegantTextPrimary,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Medium,
-                            letterSpacing = (-0.5).sp,
-                            fontFamily = FontFamily.SansSerif
-                        )
-
+                    MiniscoreLogo(32.dp, Modifier.align(Alignment.Center).testTag("app_logo"))
+                }
+                feedMessage?.let {
+                    Text(it, color = TextSecondary, fontSize = 12.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+                }
+                PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = onRefresh,
+                    modifier = Modifier.weight(1f).fillMaxWidth().testTag("pull_to_refresh")) {
+                    LazyColumn(state = listState, modifier = Modifier.fillMaxSize().testTag("game_list")
+                        .semantics {
+                            customActions = listOf(CustomAccessibilityAction("Refresh games") {
+                                onRefresh(); true
+                            })
+                        }) {
+                        item { ScoreboardHeaderPanel(selectedGame) }
+                        item {
+                            if (selectedGame.startingAway.isNotEmpty() || selectedGame.startingHome.isNotEmpty()) {
+                                LineupSectionHeader(selectedGame, "Starting lineup")
+                            } else if (selectedGame.substitutesAway.isEmpty() && selectedGame.substitutesHome.isEmpty()) {
+                                GameEmptyState(selectedGame)
+                            }
+                        }
+                        items(maxOf(selectedGame.startingAway.size, selectedGame.startingHome.size)) { index ->
+                            SymmetricalLineplayRow(selectedGame.startingAway.getOrNull(index),
+                                selectedGame.startingHome.getOrNull(index)) { viewModel.selectPlayer(it) }
+                        }
+                        val awayBench = substitutesByMinutes(selectedGame.substitutesAway)
+                        val homeBench = substitutesByMinutes(selectedGame.substitutesHome)
+                        if (awayBench.isNotEmpty() || homeBench.isNotEmpty()) {
+                            item { LineupSectionHeader(selectedGame, "Substitutes") }
+                        }
+                        items(maxOf(awayBench.size, homeBench.size)) { index ->
+                            SymmetricalLineplayRow(awayBench.getOrNull(index), homeBench.getOrNull(index)) {
+                                viewModel.selectPlayer(it)
+                            }
+                        }
+                        item { MockAdvertisementBanner() }
+                        item { Spacer(Modifier.height(24.dp)) }
                     }
                 }
-                IconButton(onClick = { viewModel.refreshGames() }, enabled = !isRefreshing,
-                    modifier = Modifier.size(48.dp)) {
-                    if (isRefreshing) CircularProgressIndicator(Modifier.size(20.dp), color = AccentCyan, strokeWidth = 2.dp)
-                    else Icon(Icons.Default.Refresh, "Refresh games", tint = TextPrimary, modifier = Modifier.size(22.dp))
-                }
             }
-            feedMessage?.let {
-                Text(it, color = TextSecondary, fontSize = 11.sp,
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
-            }
-
-            Divider(color = ElegantBorderColor.copy(alpha = 0.3f), thickness = 1.dp)
-
-            // C. DETAIL VIEW (SCROLLABLE LINEUPS & STATS MOCKING FLASHSCORE LOGO/SYMMETRY ACCURATELY)
-            PullToRefreshBox(isRefreshing = isRefreshing, onRefresh = { viewModel.refreshGames() },
-                modifier = Modifier.weight(1f).fillMaxWidth()) {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.testTag("game_list")
-                        .fillMaxSize()
-                        .fillMaxWidth()
-                        .background(SportsDarkBackground)
-                ) {
-                    // 1. Core Header (Scoreboard like screenshot)
-                    item {
-                        ScoreboardHeaderPanel(game = selectedGame)
-                    }
-
-                    // 4. HEADER: STARTING LINEUPS
-                    item {
-                        if (selectedGame.startingAway.isNotEmpty() || selectedGame.startingHome.isNotEmpty()) {
-                            LineupSectionHeader(selectedGame, "Starting lineup")
-                        } else if (selectedGame.substitutesAway.isEmpty() && selectedGame.substitutesHome.isEmpty()) {
-                            GameEmptyState(selectedGame)
-                        }
-                    }
-
-                    // Starting Lineups symmetrically side-by-side
-                    val linesCount = maxOf(selectedGame.startingAway.size, selectedGame.startingHome.size)
-                    items(linesCount) { index ->
-                        val awayP = selectedGame.startingAway.getOrNull(index)
-                        val homeP = selectedGame.startingHome.getOrNull(index)
-                        SymmetricalLineplayRow(
-                            leftPlayer = awayP,
-                            rightPlayer = homeP,
-                            onPlayerClick = { player -> viewModel.selectPlayer(player) }
-                        )
-                    }
-
-                    // 5. HEADER: SUBSTITUTES
-                    item {
-                        if (selectedGame.substitutesAway.isNotEmpty() || selectedGame.substitutesHome.isNotEmpty()) {
-                            LineupSectionHeader(selectedGame, "Substitutes")
-                        }
-                    }
-
-                    // Substitute Lineups symmetrically
-                    val subsCount = maxOf(selectedGame.substitutesAway.size, selectedGame.substitutesHome.size)
-                    items(subsCount) { index ->
-                        val awayP = selectedGame.substitutesAway.getOrNull(index)
-                        val homeP = selectedGame.substitutesHome.getOrNull(index)
-                        SymmetricalLineplayRow(
-                            leftPlayer = awayP,
-                            rightPlayer = homeP,
-                            onPlayerClick = { player -> viewModel.selectPlayer(player) }
-                        )
-                    }
-
-                    val otherGames = games.filterNot { it.id == selectedGame.id }
-                    if (otherGames.isNotEmpty()) {
-                        item(key = "other_games_heading") {
-                            Text("Other games", color = TextPrimary, fontSize = 16.sp, lineHeight = 22.sp,
-                                fontWeight = FontWeight.Medium,
-                                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 20.dp, bottom = 8.dp)
-                                    .testTag("other_games_heading"))
-                        }
-                        items(otherGames, key = { "collapsed_${it.id}" }) { game ->
-                            CollapsedGameCard(game) { viewModel.selectGame(game.id) }
-                        }
-                    }
-                    item { MockAdvertisementBanner() }
-
-                    // Bottom padding
-                    item {
-                        Spacer(modifier = Modifier.height(24.dp))
-                    }
-                }
-
-            }
-
         }
-
-        // C. SELECTED PLAYER HISTORIC Telemetry DETAILS BOTTOM SHEET
-        if (selectedPlayer != null) {
-            PlayerDetailBottomSheet(
-                player = selectedPlayer!!,
-                teamName = if (selectedPlayer!!.isLeftTeam) selectedGame.awayTeam.name else selectedGame.homeTeam.name,
-                teamColor = if (selectedPlayer!!.isLeftTeam) selectedGame.awayTeam.primaryColor else selectedGame.homeTeam.primaryColor,
-                onDismiss = { viewModel.selectPlayer(null) }
-            )
+        selectedPlayer?.let { player ->
+            PlayerDetailBottomSheet(player,
+                if (player.isLeftTeam) selectedGame.awayTeam.name else selectedGame.homeTeam.name,
+                if (player.isLeftTeam) selectedGame.awayTeam.primaryColor else selectedGame.homeTeam.primaryColor
+            ) { viewModel.selectPlayer(null) }
         }
+    }
+}
+
+internal fun substitutesByMinutes(players: List<Player>): List<Player> =
+    players.sortedWith(compareByDescending<Player> { it.stats.minutes }.thenByDescending { it.stats.seconds })
+
+@Composable
+fun MiniscoreLogo(size: Dp, modifier: Modifier = Modifier) {
+    Box(modifier.size(size).clip(RoundedCornerShape(size * 0.3f))
+        .background(colorResource(R.color.miniscore_logo_background))) {
+        Image(painterResource(R.drawable.miniscore_mark), "Miniscore logo", Modifier.fillMaxSize())
     }
 }
 
@@ -696,7 +623,7 @@ fun SymmetricalLineplayRow(
             verticalAlignment = Alignment.CenterVertically) {
             if (leftPlayer != null) PlayerLineupCell(leftPlayer, Modifier.weight(1f).padding(end = 5.dp), onPlayerClick)
             else Spacer(Modifier.weight(1f))
-            Box(Modifier.width(1.dp).height(108.dp).background(ElegantBorderColor))
+            Box(Modifier.width(1.dp).height(82.dp).background(ElegantBorderColor))
             if (rightPlayer != null) PlayerLineupCell(rightPlayer, Modifier.weight(1f).padding(start = 5.dp), onPlayerClick)
             else Spacer(Modifier.weight(1f))
         }
@@ -710,37 +637,29 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
             .clickable(onClickLabel = "Open player details") { onPlayerClick(player) }
             .testTag("lineup_player_${player.id}")
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth().heightIn(min = 50.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(7.dp)
-        ) {
-            PlayerPortrait(player, size = 38.dp)
-            Column(modifier = Modifier.weight(1f)) {
-                Text(
-                    text = player.name,
-                    color = TextPrimary,
-                    fontSize = 14.sp,
-                    lineHeight = 18.sp,
-                    fontWeight = if (player.isTopPerformer) FontWeight.Bold else FontWeight.Normal,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
-                Text(
-                    text = "#${player.number}" +
-                        if (player.flag.isNotEmpty()) " ${player.flag}" else "",
-                    color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
-                    modifier = Modifier.padding(top = 2.dp)
-                )
-                player.rating?.let { rating ->
-                    Text(
-                        text = String.format("%.1f", rating), color = Color.Black, fontSize = 12.sp,
-                        modifier = Modifier.clip(RoundedCornerShape(3.dp))
-                            .background(if (rating >= 7.0) RatingGreen else if (rating >= 6.0) RatingOrange else RatingRed)
-                            .padding(horizontal = 3.dp)
-                    )
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            if (player.isLeftTeam) PlayerPortrait(player, size = 28.dp)
+            Column(Modifier.weight(1f)) {
+                Text(player.name, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
+                    maxLines = 1, overflow = TextOverflow.Ellipsis,
+                    textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
+                    modifier = Modifier.fillMaxWidth().testTag("player_name_${player.id}"))
+                Row(Modifier.fillMaxWidth().padding(top = 3.dp), verticalAlignment = Alignment.CenterVertically) {
+                    if (!player.isLeftTeam) {
+                        PlayerMinutes(player, Modifier.alignByBaseline())
+                        Spacer(Modifier.width(6.dp))
+                    }
+                    Text("#${player.number}", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
+                        textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
+                        maxLines = 1, modifier = Modifier.weight(1f).alignByBaseline())
+                    if (player.isLeftTeam) {
+                        Spacer(Modifier.width(6.dp))
+                        PlayerMinutes(player, Modifier.alignByBaseline())
+                    }
                 }
             }
+            if (!player.isLeftTeam) PlayerPortrait(player, size = 28.dp)
         }
         Row(modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
             listOf("PTS", "REB", "AST", "FGM", "FGA").forEach { label ->
@@ -769,6 +688,13 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
             }
         }
     }
+}
+
+@Composable
+private fun PlayerMinutes(player: Player, modifier: Modifier = Modifier) {
+    Text(player.stats.minutesDisplay, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
+        fontFamily = FontFamily.Monospace, maxLines = 1,
+        modifier = modifier.testTag("player_minutes_${player.id}"))
 }
 
 @Composable

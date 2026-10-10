@@ -26,73 +26,50 @@ import com.example.ui.theme.*
 fun ScoreboardHeaderPanel(game: Game) {
     var showQuarters by remember(game.id) { mutableStateOf(false) }
     val hasQuarters = game.awayQuarters.isNotEmpty() && game.awayQuarters.size == game.homeQuarters.size
-    Column(
-        modifier = Modifier.fillMaxWidth().background(SportsHeaderBg).padding(top = 6.dp, bottom = 6.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 12.dp)) {
-            Text(game.contextLabel ?: "NBA", color = AccentCyan, fontSize = 12.sp, lineHeight = 16.sp,
-                modifier = Modifier.weight(1f))
+    val largeText = LocalDensity.current.fontScale >= 1.5f
+    Column(Modifier.fillMaxWidth().background(SportsHeaderBg)) {
+        Row(Modifier.fillMaxWidth().padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Column(Modifier.weight(1f)) {
+                if (largeText) {
+                    Text(game.contextLabel ?: "NBA", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp)
+                    Text(pickerDate(game, compact = true), color = TextSecondary, fontSize = 12.sp,
+                        lineHeight = 16.sp, modifier = Modifier.testTag("selected_game_date"))
+                } else {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(game.contextLabel ?: "NBA", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp)
+                        Text(" · ", color = TextSecondary, fontSize = 12.sp)
+                        Text(pickerDate(game, compact = true), color = TextSecondary, fontSize = 12.sp,
+                            lineHeight = 16.sp, modifier = Modifier.testTag("selected_game_date"))
+                    }
+                }
+            }
             Spacer(Modifier.width(6.dp))
-            Text(if (game.status == "FINISHED") "FINAL" else game.status,
-                color = if (game.status == "LIVE") Color(0xFFFFB4AB) else TextSecondary,
+            Text(when (game.status) { "FINISHED" -> "Final"; "SCHEDULED" -> "Scheduled"; else -> game.status },
+                color = if (game.status == "LIVE") Color(0xFFFFB4AB) else TextPrimary,
                 fontSize = 12.sp, lineHeight = 16.sp)
-            if (hasQuarters) {
-                IconButton(onClick = { showQuarters = !showQuarters },
-                    modifier = Modifier.size(48.dp).testTag("quarter_toggle")) {
-                    Icon(if (showQuarters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                        contentDescription = if (showQuarters) "Hide quarter scores" else "Show quarter scores",
-                        tint = AccentCyan, modifier = Modifier.size(18.dp))
-                }
+            IconButton(onClick = { showQuarters = !showQuarters },
+                modifier = Modifier.size(48.dp).testTag("quarter_toggle")) {
+                Icon(if (showQuarters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    if (showQuarters) "Hide game details" else "Show game details", tint = AccentCyan)
             }
         }
-        Text(pickerDate(game, compact = true), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
-            modifier = Modifier.testTag("selected_game_date").padding(horizontal = 12.dp, vertical = 2.dp))
-        game.venue?.let {
-            Text(it, color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
-                modifier = Modifier.padding(horizontal = 12.dp))
-        }
-        BoxWithConstraints(Modifier.fillMaxWidth()) {
-          if (LocalDensity.current.fontScale >= 1.5f && maxWidth < 360.dp) {
-            Row(Modifier.fillMaxWidth().padding(top = 8.dp, start = 16.dp, end = 16.dp)) {
-                Column(Modifier.weight(1f)) {
-                    TeamLogoCanvas(game.awayTeam, 32.dp)
-                    Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                        modifier = Modifier.padding(top = 4.dp))
-                }
-                Spacer(Modifier.width(16.dp))
-                Column(Modifier.weight(1f), horizontalAlignment = Alignment.End) {
-                    TeamLogoCanvas(game.homeTeam, 32.dp)
-                    Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                        textAlign = TextAlign.End, modifier = Modifier.padding(top = 4.dp))
-                }
-            }
-          } else {
-            Row(Modifier.fillMaxWidth().padding(top = 8.dp, start = 16.dp, end = 16.dp), verticalAlignment = Alignment.CenterVertically) {
-            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
+        if (largeText) {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
                 TeamLogoCanvas(game.awayTeam, 32.dp)
-                Spacer(Modifier.width(7.dp))
-                Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    modifier = Modifier.weight(1f))
-            }
-            Spacer(Modifier.width(16.dp))
-            Row(Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.End) {
-                Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    modifier = Modifier.weight(1f), textAlign = TextAlign.End)
-                Spacer(Modifier.width(7.dp))
                 TeamLogoCanvas(game.homeTeam, 32.dp)
             }
+            ScorePair(game, Modifier.fillMaxWidth().padding(vertical = 6.dp))
+        } else {
+            Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 10.dp),
+                verticalAlignment = Alignment.CenterVertically) {
+                TeamLogoCanvas(game.awayTeam, 32.dp)
+                ScorePair(game, Modifier.weight(1f).padding(horizontal = 8.dp))
+                TeamLogoCanvas(game.homeTeam, 32.dp)
             }
-          }
         }
-        Row(Modifier.fillMaxWidth().padding(top = 2.dp), verticalAlignment = Alignment.CenterVertically) {
-            Text(if (game.status == "SCHEDULED") "—" else game.awayScore.toString(),
-                color = TextPrimary, fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.End,
-                modifier = Modifier.weight(1f).testTag("team_score_${game.awayTeam.code}"))
-            Text("–", color = TextSecondary, fontSize = 16.sp, textAlign = TextAlign.Center, modifier = Modifier.width(24.dp))
-            Text(if (game.status == "SCHEDULED") "—" else game.homeScore.toString(),
-                color = TextPrimary, fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Medium,
-                modifier = Modifier.weight(1f).testTag("team_score_${game.homeTeam.code}"))
+        if (showQuarters) game.venue?.let {
+            Text(it, color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp))
         }
         if (showQuarters && hasQuarters) {
             val awayName = shortTeamName(game.awayTeam)
@@ -130,6 +107,20 @@ fun ScoreboardHeaderPanel(game: Game) {
     }
 }
 
+@Composable
+private fun ScorePair(game: Game, modifier: Modifier = Modifier) {
+    Row(modifier, verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Center) {
+        Text(if (game.status == "SCHEDULED") "—" else game.awayScore.toString(),
+            color = TextPrimary, fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.End, modifier = Modifier.testTag("team_score_${game.awayTeam.code}"))
+        Text("–", color = TextSecondary, fontSize = 16.sp,
+            modifier = Modifier.padding(horizontal = 8.dp))
+        Text(if (game.status == "SCHEDULED") "—" else game.homeScore.toString(),
+            color = TextPrimary, fontSize = 28.sp, lineHeight = 34.sp, fontWeight = FontWeight.Medium,
+            modifier = Modifier.testTag("team_score_${game.homeTeam.code}"))
+    }
+}
+
 internal fun shortTeamName(team: Team): String = when (team.code) {
     "PHI" -> "76ers"
     "BKN" -> "Nets"
@@ -138,14 +129,18 @@ internal fun shortTeamName(team: Team): String = when (team.code) {
 
 @Composable
 fun LineupSectionHeader(game: Game, title: String) {
-    Row(
-        modifier = Modifier.fillMaxWidth().heightIn(min = 32.dp).background(SportsHeaderBg)
-            .testTag("lineup_header_$title").padding(horizontal = 16.dp, vertical = 6.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Text(shortTeamName(game.awayTeam), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.weight(1f))
-        Text(title, color = TextPrimary, fontSize = 12.sp, lineHeight = 16.sp, fontWeight = FontWeight.Medium)
-        Text(shortTeamName(game.homeTeam), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp, textAlign = TextAlign.End,
-            modifier = Modifier.weight(1f))
+    Column(Modifier.fillMaxWidth().heightIn(min = 32.dp).background(SportsHeaderBg)
+        .testTag("lineup_header_$title").padding(horizontal = 10.dp, vertical = 6.dp)) {
+        val largeText = LocalDensity.current.fontScale >= 1.5f
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(shortTeamName(game.awayTeam), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
+                modifier = Modifier.weight(1f))
+            if (!largeText) Text(title, color = TextPrimary, fontSize = 12.sp, lineHeight = 16.sp,
+                fontWeight = FontWeight.Medium, textAlign = TextAlign.Center)
+            Text(shortTeamName(game.homeTeam), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
+                textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+        }
+        if (largeText) Text(title, color = TextPrimary, fontSize = 12.sp, lineHeight = 16.sp,
+            fontWeight = FontWeight.Medium, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
     }
 }
