@@ -1,0 +1,43 @@
+name: Validate Play release automation
+on:
+  pull_request:
+    paths:
+      - .github/workflows/play-internal-release.yml
+      - .github/workflows/play-release-checks.yml
+      - scripts/play_release_version.py
+      - scripts/tests/test_play_release_version.py
+      - app/build.gradle.kts
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/play-internal-release.yml
+      - .github/workflows/play-release-checks.yml
+      - scripts/play_release_version.py
+      - scripts/tests/test_play_release_version.py
+      - app/build.gradle.kts
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - name: Test automatic version allocation
+        run: |
+          python -m unittest scripts.tests.test_play_release_version -v
+          python scripts/play_release_version.py --run-number 1
+      - name: Validate release workflow
+        run: |
+          set -euo pipefail
+          curl -fsSL https://github.com/rhysd/actionlint/releases/download/v1.7.12/actionlint_1.7.12_linux_amd64.tar.gz -o "$RUNNER_TEMP/actionlint.tar.gz"
+          echo "8aca8db96f1b94770f1b0d72b6dddcb1ebb8123cb3712530b08cc387b349a3d8  $RUNNER_TEMP/actionlint.tar.gz" | sha256sum --check
+          tar -xzf "$RUNNER_TEMP/actionlint.tar.gz" -C "$RUNNER_TEMP" actionlint
+          # GitHub supports queue:max; the pinned linter predates that syntax.
+          # https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/control-workflow-concurrency
+          "$RUNNER_TEMP/actionlint" -ignore 'unexpected key "queue" for "concurrency" section' .github/workflows/play-internal-release.yml .github/workflows/play-release-checks.yml

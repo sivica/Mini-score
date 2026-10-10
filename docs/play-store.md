@@ -12,7 +12,7 @@ At the owner's request on October 10, 2026, the old app's internal test was paus
 
 The package `com.aistudio.nbatracker.qfzwpm` belongs to the deleted app and must not be used to create a replacement Play app. The replacement uses `com.ivicastojanoski.miniscore`; it installs separately from the old app and has its own local cache. The build and publishing instructions below target the replacement. The registration transaction ID is private and is not stored in this repository.
 
-This release used the local private Miniscore upload key. No signing or Play credentials were transferred to GitHub. The workflow below is prepared for future automation and still requires owner-approved secret/environment configuration and merging to `main` before use.
+The deleted app's release used the local private Miniscore upload key. The replacement keeps the existing Miniscore signing key. On October 10, the owner requested automatic uploads after merge and reuse of the SampleApp publishing account. All four signing secrets and the existing `sampleapp-play-publisher` credential are configured in GitHub, with `google-play-internal` restricted to `main` and no required reviewer. Credential contents remain private. The API credential was verified against SampleApp; Miniscore currently returns `Package not found`. The remaining prerequisites are merging to `main`, creating the replacement app, its initial Console upload, and granting the reused account access to this app if needed.
 
 ## Local release build
 
@@ -26,18 +26,27 @@ The bundle is `app/build/outputs/bundle/release/app-release.aab`. Upload keys an
 
 ## GitHub workflow
 
-`.github/workflows/play-internal-release.yml` follows SampleApp's build-then-publish workflow. It runs manually, builds and tests an AAB, saves it as an artifact, then publishes to **Internal testing** through `google-play-internal`. It does not publish to Production.
+`.github/workflows/play-internal-release.yml` follows SampleApp's build-then-publish workflow. Every push to `main`, including a merged PR, tests the Android app, runs release lint, builds a signed AAB, saves it as an artifact, then automatically publishes to **Internal testing** through `google-play-internal`. Direct pushes to `main` also release. Daily stats updates on Railway or the legacy `game-data` branch do not trigger an APK release. It does not publish to Production. A manual run on `main` remains available, with an optional version name.
 
-Before enabling automated uploads, configure the environment with `sivica` as required reviewer and restrict deployment to `main`. Configure repository signing secrets:
+Restrict the `google-play-internal` environment to `main`, without a required reviewer, so merged releases upload automatically as requested. Configure repository signing secrets:
 
 - `ANDROID_UPLOAD_KEYSTORE_BASE64`
 - `ANDROID_UPLOAD_KEYSTORE_PASSWORD`
 - `ANDROID_UPLOAD_KEY_ALIAS`
 - `ANDROID_UPLOAD_KEY_PASSWORD`
 
-Configure `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` as a secret of the approval-gated `google-play-internal` environment. The service account must already have permission to publish this app to testing tracks. Credential transfer and access changes require the owner's approval.
+Configure `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON` as a secret of `google-play-internal`. The service account must have permission to publish `com.ivicastojanoski.miniscore` to testing tracks. GitHub cannot export the encrypted credential from SampleApp; reusing that account needs its original private credential file or a newly generated key for the same account. No private credential belongs in the repository.
 
-Merge the workflow and app changes to `main`. From Actions, run **Build and publish Play internal release** on `main`, supplying the desired version name and a fresh integer version code higher than every previous Play upload. After tests and signing succeed, inspect the AAB artifact and approve the pending publish job. Retry a failed publish using the same workflow run when appropriate; do not reuse an already uploaded version code for a different bundle.
+Merge the workflow and app changes to `main`. Each release uses version code **1000 + GitHub workflow run number**, starting above the existing code 13. Default version names append the run number to the app version, such as `1.7.0.1`. The optional repository variable `PLAY_VERSION_CODE_OFFSET` changes the offset; never lower it, and raise it before releasing if a manual Play upload used a higher code. The allocator validates Android's 2100000000 limit and rejects invalid inputs.
+
+The whole release workflow queues up to 100 runs and never cancels an active upload. Re-running a workflow keeps its version code. If publishing fails before the bundle is uploaded, retry the failed publish job to reuse the stored AAB. After a later release or an ambiguous/partly completed upload, inspect Play Console and start a fresh workflow run if another bundle is needed; do not reuse an uploaded code for a different bundle. Signed artifacts are retained for 14 days.
+
+Pull requests run `.github/workflows/play-release-checks.yml` to validate release syntax and version allocation without signing or Play secrets. Local checks:
+
+```sh
+python -m unittest scripts.tests.test_play_release_version -v
+python scripts/play_release_version.py --run-number 1
+```
 
 ## Initial Console upload
 
