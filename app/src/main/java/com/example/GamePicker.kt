@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -12,6 +11,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -22,6 +22,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.*
@@ -37,29 +39,32 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
         border = BorderStroke(1.dp, ElegantBorderColor),
         modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 4.dp)
             .testTag("select_game_${game.id}").semantics { this.selected = selected }) {
-        Column(Modifier.padding(12.dp)) {
-            CollapsedTeamRow(game.awayTeam, if (game.status == "SCHEDULED") "—" else game.awayScore.toString())
-            Spacer(Modifier.height(6.dp))
-            CollapsedTeamRow(game.homeTeam, if (game.status == "SCHEDULED") "—" else game.homeScore.toString())
-            Row(Modifier.fillMaxWidth().padding(top = 8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text("${pickerDate(game, compact = true)} · ${pickerStatus(game)}",
-                    color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.weight(1f))
-                Spacer(Modifier.width(8.dp))
-                Icon(Icons.Default.KeyboardArrowDown, "Show game details", tint = AccentCyan, modifier = Modifier.size(20.dp))
+        val largeText = LocalDensity.current.fontScale >= 1.5f
+        Column(Modifier.fillMaxWidth().padding(12.dp)) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                TeamLogoCanvas(game.awayTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
+                Row(Modifier.weight(1f).padding(horizontal = 6.dp).testTag("drawer_score_${game.id}"),
+                    horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+                    val scoreSize = if (largeText) 14.sp else 18.sp
+                    Text(if (game.status == "SCHEDULED") "—" else game.awayScore.toString(),
+                        color = TextPrimary, fontSize = scoreSize, fontWeight = FontWeight.Medium)
+                    Text("–", color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(horizontal = 4.dp))
+                    Text(if (game.status == "SCHEDULED") "—" else game.homeScore.toString(),
+                        color = TextPrimary, fontSize = scoreSize, fontWeight = FontWeight.Medium)
+                }
+                TeamLogoCanvas(game.homeTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
             }
+            Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
+                    maxLines = if (largeText) 2 else 1, overflow = TextOverflow.Ellipsis,
+                    modifier = Modifier.weight(1f).testTag("drawer_away_name_${game.id}"))
+                Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
+                    maxLines = if (largeText) 2 else 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End,
+                    modifier = Modifier.weight(1f).testTag("drawer_home_name_${game.id}"))
+            }
+            Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
         }
-    }
-}
-
-@Composable
-private fun CollapsedTeamRow(team: Team, score: String) {
-    Row(Modifier.fillMaxWidth().heightIn(min = 28.dp), verticalAlignment = Alignment.CenterVertically) {
-        TeamLogoCanvas(team, 24.dp, tagSuffix = "_collapsed")
-        Spacer(Modifier.width(10.dp))
-        Text(team.shortName, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-            modifier = Modifier.weight(1f))
-        Spacer(Modifier.width(12.dp))
-        Text(score, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp, fontWeight = FontWeight.Medium)
     }
 }
 

@@ -4,7 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -28,7 +28,7 @@ fun ScoreboardHeaderPanel(game: Game) {
     val hasQuarters = game.awayQuarters.isNotEmpty() && game.awayQuarters.size == game.homeQuarters.size
     val largeText = LocalDensity.current.fontScale >= 1.5f
     Column(Modifier.fillMaxWidth().background(SportsHeaderBg)) {
-        Row(Modifier.fillMaxWidth().padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 6.dp), verticalAlignment = Alignment.CenterVertically) {
             Column(Modifier.weight(1f)) {
                 if (largeText) {
                     Text(game.contextLabel ?: "NBA", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp)
@@ -43,15 +43,6 @@ fun ScoreboardHeaderPanel(game: Game) {
                     }
                 }
             }
-            Spacer(Modifier.width(6.dp))
-            Text(when (game.status) { "FINISHED" -> "Final"; "SCHEDULED" -> "Scheduled"; else -> game.status },
-                color = if (game.status == "LIVE") Color(0xFFFFB4AB) else TextPrimary,
-                fontSize = 12.sp, lineHeight = 16.sp)
-            IconButton(onClick = { showQuarters = !showQuarters },
-                modifier = Modifier.size(48.dp).testTag("quarter_toggle")) {
-                Icon(if (showQuarters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
-                    if (showQuarters) "Hide game details" else "Show game details", tint = AccentCyan)
-            }
         }
         if (largeText) {
             Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp), horizontalArrangement = Arrangement.SpaceBetween) {
@@ -60,11 +51,23 @@ fun ScoreboardHeaderPanel(game: Game) {
             }
             ScorePair(game, Modifier.fillMaxWidth().padding(vertical = 6.dp))
         } else {
-            Row(Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp, bottom = 10.dp),
+            Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically) {
                 TeamLogoCanvas(game.awayTeam, 32.dp)
                 ScorePair(game, Modifier.weight(1f).padding(horizontal = 8.dp))
                 TeamLogoCanvas(game.homeTeam, 32.dp)
+            }
+        }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+            TextButton(onClick = { showQuarters = !showQuarters },
+                modifier = Modifier.heightIn(min = 48.dp).testTag("quarter_toggle")) {
+                Text(when (game.status) { "FINISHED" -> "Final"; "SCHEDULED" -> "Scheduled"; else -> game.status },
+                    color = if (game.status == "LIVE") Color(0xFFFFB4AB) else TextPrimary,
+                    fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.testTag("game_status"))
+                Spacer(Modifier.width(4.dp))
+                Icon(if (showQuarters) Icons.Default.KeyboardArrowUp else Icons.Default.KeyboardArrowDown,
+                    if (showQuarters) "Hide game details" else "Show game details", tint = AccentCyan,
+                    modifier = Modifier.size(20.dp))
             }
         }
         if (showQuarters) game.venue?.let {

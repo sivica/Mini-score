@@ -8,9 +8,15 @@ import androidx.compose.ui.test.assertHeightIsEqualTo
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onNodeWithTag
+import androidx.compose.ui.test.hasAnyAncestor
+import androidx.compose.ui.test.hasContentDescription
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.foundation.layout.Column
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
 import android.graphics.BitmapFactory
@@ -86,7 +92,15 @@ class PreseasonScreenTest {
             gameDate = "2026-10-10", dateLabel = "Saturday, October 10, 2026", awayQuarters = emptyList(), homeQuarters = emptyList(),
             tipoffUtc = "2026-10-10T00:00:00Z")
         model.applyFeed(GameFeed(PreseasonGameData.GAME_ID, listOf(PreseasonGameData.createGame(), scheduled)))
-        composeTestRule.setContent { MyApplicationTheme { MainNbaScreen(model) } }
+        val fontScale = mutableStateOf(1f)
+        var focusManager: FocusManager? = null
+        composeTestRule.setContent {
+            val density = LocalDensity.current
+            focusManager = LocalFocusManager.current
+            CompositionLocalProvider(LocalDensity provides Density(density.density, fontScale.value)) {
+                MyApplicationTheme { MainNbaScreen(model) }
+            }
+        }
         composeTestRule.onNodeWithTag("game_selector").assertDoesNotExist()
         composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertIsNotDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_phi_23").assertIsDisplayed()
@@ -94,13 +108,36 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithTag("open_games_drawer").performClick()
         composeTestRule.onNodeWithTag("games_drawer").assertIsDisplayed()
         composeTestRule.onNodeWithText("Miniscore").assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-matches.png")
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("no-such-team")
         composeTestRule.onNodeWithText("No games found").assertIsDisplayed()
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("Sat")
         composeTestRule.onNodeWithTag("select_game_scheduled-test").assertIsDisplayed()
+        composeTestRule.onNode(hasContentDescription("Show game details") and
+            hasAnyAncestor(hasTestTag("drawer_game_list")), useUnmergedTree = true).assertDoesNotExist()
+        val awayLogo = composeTestRule.onNodeWithTag("team_logo_PHI_drawer_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val homeLogo = composeTestRule.onNodeWithTag("team_logo_BKN_drawer_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val drawerScore = composeTestRule.onNodeWithTag("drawer_score_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val awayName = composeTestRule.onNodeWithTag("drawer_away_name_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        val homeName = composeTestRule.onNodeWithTag("drawer_home_name_scheduled-test", useUnmergedTree = true)
+            .fetchSemanticsNode().boundsInRoot
+        assertTrue("Drawer score stays between opposing logos", awayLogo.right <= drawerScore.left && drawerScore.right <= homeLogo.left)
+        assertTrue("Drawer names sit below logos", awayName.top >= awayLogo.bottom && homeName.top >= homeLogo.bottom)
         composeTestRule.onNodeWithTag("select_game_${PreseasonGameData.GAME_ID}").assertDoesNotExist()
         composeTestRule.onNodeWithText("Other games").assertDoesNotExist()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer.png")
+        composeTestRule.onNodeWithTag("game_search").performTextReplacement("Thu")
+        composeTestRule.runOnIdle { focusManager?.clearFocus(); fontScale.value = 2f }
+        composeTestRule.onNodeWithTag("drawer_score_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("drawer_home_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-200-percent.png")
+        fontScale.value = 1f
+        composeTestRule.onNodeWithTag("game_search").performTextReplacement("Sat")
         composeTestRule.onNodeWithTag("select_game_scheduled-test").performClick()
         composeTestRule.onNodeWithTag("games_drawer").assertIsNotDisplayed()
         composeTestRule.onNodeWithTag("team_score_PHI").assertTextEquals("—")
@@ -185,6 +222,8 @@ class PreseasonScreenTest {
             val score = composeTestRule.onNodeWithTag("team_score_$team").fetchSemanticsNode().boundsInRoot
             assertTrue("$team logo shares the score row", logo.top < score.bottom && score.top < logo.bottom)
             assertTrue("$team score fits 320dp", score.left >= 0 && score.right <= 640)
+            val status = composeTestRule.onNodeWithTag("game_status", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
+            assertTrue("Status and details control are below the score", status.top >= score.bottom)
         }
         val leftMinutes = composeTestRule.onNodeWithTag("player_minutes_phi_23", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot
         val rightMinutes = composeTestRule.onNodeWithTag("player_minutes_bkn_30", useUnmergedTree = true).fetchSemanticsNode().boundsInRoot

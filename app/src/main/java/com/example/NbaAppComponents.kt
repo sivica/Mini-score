@@ -575,7 +575,6 @@ fun MainNbaScreen(viewModel: GameViewModel, onRefresh: () -> Unit = { viewModel.
                                 viewModel.selectPlayer(it)
                             }
                         }
-                        item { MockAdvertisementBanner() }
                         item { Spacer(Modifier.height(24.dp)) }
                     }
                 }
@@ -1068,21 +1067,6 @@ fun getAnalystVerdict(player: Player): String {
         else -> {
             "${player.name} experienced shooting struggles. Troubled with floor turnovers and isolated mismatch coverage that reduced final rated stats."
         }
-    }
-}
-
-// ==========================================
-// 12. MOCK ADVERTISEMENT BANNER
-// ==========================================
-
-@Composable
-fun MockAdvertisementBanner() {
-    Row(Modifier.fillMaxWidth().padding(horizontal = 16.dp, vertical = 16.dp)
-        .border(1.dp, ElegantBorderColor, RoundedCornerShape(8.dp)).padding(12.dp)
-        .testTag("promotion"), verticalAlignment = Alignment.CenterVertically) {
-        Text("Sponsored", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
-            modifier = Modifier.weight(1f))
-        Text("TEMU", color = TextSecondary, fontSize = 14.sp, lineHeight = 18.sp)
     }
 }
 
