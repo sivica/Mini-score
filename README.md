@@ -2,6 +2,30 @@
 
 A high-fidelity, mobile-first web interface for presenting basketball statistics with a modern glassmorphic aesthetic.
 
+## Android: remotely updated games
+
+**Miniscore 1.7.0**, package `com.ivicastojanoski.miniscore`, loads games and stats from the [Railway API](https://miniscore-api-production.up.railway.app/games), backed by PostgreSQL. Install this APK once; later stat updates do not require a new APK. The private [owner dashboard](https://miniscore-api-production.up.railway.app/admin) supports drafts, previews, corrections, publishing and rollback. Read the [backend guide](docs/railway-backend.md).
+
+The app refreshes on opening/resuming, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The scoreboard date comes from the selected game's date. Railway imports ESPN game stats daily at **08:00 Europe/Skopje**, preserving manual corrections. Older APKs through 1.6.0 retain the [legacy GitHub feed](docs/game-feed.md) and its daily publisher.
+
+The main screen centers the mint-teal **Score pair** mark. Open the left drawer for the **Miniscore** name, game search and dated game cards with logos, scores and tipoff times. Selecting a game closes the drawer and returns its box score to the top. Refreshes of the same game preserve the scroll position. The unfinished bottom navigation and game-selector sheet have been removed. The app includes only published games and the real offline fallback.
+
+The compact scoreboard shows team logos around mirrored scores, with names only in the lineup headings. Lineup and quarter headings show team names such as 76ers and Nets instead of PHI/BKN codes. Player names stay on one line above the jersey number and mirrored minutes/seconds; tap a player for their full name and details. Substitutes sort by minutes and seconds played, highest first for each team. Both teams' players remain side by side at normal text sizes, with circular portraits and a `PTS / REB / AST / FGM / FGA` labels row above the values. Player names and values use 14sp; labels and metadata use 12sp. At font scales of 150% or greater, player cards stack vertically and grow with the text. Main screen text colors have contrast above 4.5:1 against their surfaces. Tap a player for steals, blocks, turnovers and minutes; tap the header arrow for venue and quarter scores. ESPN sometimes reports only whole minutes. Scheduled games emphasize **Game hasn’t started** and their Eastern tipoff time. The promotion is a small muted footer below other games.
+
+## Play Store distribution
+
+The replacement build is **1.7.0 / code 13**, package `com.ivicastojanoski.miniscore`, and requires a new Play Console app. Miniscore **1.5.1 / code 7** was published to Play **Internal testing** under the old package `com.aistudio.nbatracker.qfzwpm`. At the owner's request on October 10, 2026, that old Play app was **deleted**. Google confirms a recovery deadline of **October 17, 2026**. [Old app deletion status in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution). A manual GitHub publishing workflow targets the replacement package, but credentials remain local. See the [release setup guide](docs/play-store.md).
+
+## Initial published game
+
+Philadelphia 76ers at Brooklyn Nets, October 8, 2026, Barclays Center: **PHI 108, BKN 114 (Final)**. All 30 participating players are included. Player ratings are unavailable. Quarter scores: PHI **33 / 25 / 23 / 27**, BKN **33 / 23 / 37 / 21**. Player rebounds and turnovers exclude team-only events.
+
+Sources: [NBA result and quarter scores](https://www.nba.com/game/phi-vs-bkn-0012600034), [RealGM player box score](https://basketball.realgm.com/nba/boxscore/2026-10-08/Philadelphia-at-Brooklyn/526643).
+
+This game's photos and logos are bundled for offline use; [NBA asset sources](docs/nba-image-sources.json). New games can use HTTPS image URLs with image caching and initials/team-code fallbacks. `PreseasonGameData.kt` is the first-launch offline fallback, `GameFeedRepository.kt` fetches/validates/caches published games, and the development branch's `games.json` is a test fixture. The current API uses PostgreSQL; **game-data** serves older APKs.
+
+The separate static web demo continues to use `data.js` and shows this same final game, with preseason records PHI 1–1 / BKN 2–0. The sections below describe that web demo.
+
 ## 🎯 Features
 
 ✨ **Instant Load Times** - Static data, zero external dependencies  

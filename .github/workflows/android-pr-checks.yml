@@ -1,0 +1,47 @@
+name: Check Android before merge
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: android-checks-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  android:
+    name: Android PR checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check out source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Set up Java
+        uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21' # Robolectric's Android 36 runtime requires Java 21.
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+        with:
+          gradle-version: '9.6.1'
+      - name: Install Android SDK packages
+        uses: android-actions/setup-android@9fc6c4e9069bf8d3d10b2204b1fb8f6ef7065407 # v3
+        with:
+          packages: platform-tools
+          log-accepted-android-sdk-licenses: false
+      - name: Install target platform and build tools
+        run: sdkmanager "platforms;android-36.1" "build-tools;36.0.0"
+      - name: Restore public debug key
+        run: base64 --decode debug.keystore.base64 > debug.keystore
+      - name: Test, build and lint Android
+        run: gradle --no-daemon --no-configuration-cache testDebugUnitTest assembleDebug lintVitalRelease
+      - name: Remove debug key
+        if: always()
+        run: rm -f debug.keystore

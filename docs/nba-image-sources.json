@@ -1,0 +1,230 @@
+{
+  "description": "NBA image assets bundled for the October 8, 2026 Philadelphia–Brooklyn final snapshot. Logos are rasterized from the source SVGs; headshots are original PNGs.",
+  "retrieved": "2026-10-09",
+  "teams": [
+    {
+      "code": "PHI",
+      "nbaTeamId": 1610612755,
+      "resource": "team_phi.png",
+      "source": "https://cdn.nba.com/logos/nba/1610612755/primary/L/logo.svg"
+    },
+    {
+      "code": "BKN",
+      "nbaTeamId": 1610612751,
+      "resource": "team_bkn.png",
+      "source": "https://cdn.nba.com/logos/nba/1610612751/primary/L/logo.svg"
+    }
+  ],
+  "players": [
+    {
+      "id": "phi_23",
+      "nbaPlayerId": 2544,
+      "resource": "player_phi_23.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/2544.png",
+      "profile": "https://www.nba.com/player/2544"
+    },
+    {
+      "id": "phi_21",
+      "nbaPlayerId": 203954,
+      "resource": "player_phi_21.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/203954.png",
+      "profile": "https://www.nba.com/player/203954"
+    },
+    {
+      "id": "phi_7",
+      "nbaPlayerId": 1627759,
+      "resource": "player_phi_7.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1627759.png",
+      "profile": "https://www.nba.com/player/1627759"
+    },
+    {
+      "id": "phi_0",
+      "nbaPlayerId": 1630178,
+      "resource": "player_phi_0.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1630178.png",
+      "profile": "https://www.nba.com/player/1630178"
+    },
+    {
+      "id": "phi_77",
+      "nbaPlayerId": 1642845,
+      "resource": "player_phi_77.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642845.png",
+      "profile": "https://www.nba.com/player/1642845"
+    },
+    {
+      "id": "phi_1",
+      "nbaPlayerId": 203484,
+      "resource": "player_phi_1.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/203484.png",
+      "profile": "https://www.nba.com/player/203484"
+    },
+    {
+      "id": "phi_45",
+      "nbaPlayerId": 1629731,
+      "resource": "player_phi_45.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1629731.png",
+      "profile": "https://www.nba.com/player/1629731"
+    },
+    {
+      "id": "phi_14",
+      "nbaPlayerId": 1642392,
+      "resource": "player_phi_14.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642392.png",
+      "profile": "https://www.nba.com/player/1642392"
+    },
+    {
+      "id": "phi_35",
+      "nbaPlayerId": 1641794,
+      "resource": "player_phi_35.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1641794.png",
+      "profile": "https://www.nba.com/player/1641794"
+    },
+    {
+      "id": "phi_8",
+      "nbaPlayerId": 1631126,
+      "resource": "player_phi_8.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1631126.png",
+      "profile": "https://www.nba.com/player/1631126"
+    },
+    {
+      "id": "phi_12",
+      "nbaPlayerId": 1641712,
+      "resource": "player_phi_12.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1641712.png",
+      "profile": "https://www.nba.com/player/1641712"
+    },
+    {
+      "id": "phi_33",
+      "nbaPlayerId": 1631133,
+      "resource": "player_phi_33.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1631133.png",
+      "profile": "https://www.nba.com/player/1631133"
+    },
+    {
+      "id": "phi_11",
+      "nbaPlayerId": 1642348,
+      "resource": "player_phi_11.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642348.png",
+      "profile": "https://www.nba.com/player/1642348"
+    },
+    {
+      "id": "phi_19",
+      "nbaPlayerId": 1643148,
+      "resource": "player_phi_19.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1643148.png",
+      "profile": "https://www.nba.com/player/1643148"
+    },
+    {
+      "id": "phi_00",
+      "nbaPlayerId": 1642889,
+      "resource": "player_phi_00.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642889.png",
+      "profile": "https://www.nba.com/player/1642889"
+    },
+    {
+      "id": "bkn_30",
+      "nbaPlayerId": 203944,
+      "resource": "player_bkn_30.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/203944.png",
+      "profile": "https://www.nba.com/player/203944"
+    },
+    {
+      "id": "bkn_13",
+      "nbaPlayerId": 1629021,
+      "resource": "player_bkn_13.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1629021.png",
+      "profile": "https://www.nba.com/player/1629021"
+    },
+    {
+      "id": "bkn_1",
+      "nbaPlayerId": 1631165,
+      "resource": "player_bkn_1.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1631165.png",
+      "profile": "https://www.nba.com/player/1631165"
+    },
+    {
+      "id": "bkn_21",
+      "nbaPlayerId": 1641730,
+      "resource": "player_bkn_21.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1641730.png",
+      "profile": "https://www.nba.com/player/1641730"
+    },
+    {
+      "id": "bkn_8",
+      "nbaPlayerId": 1642856,
+      "resource": "player_bkn_8.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642856.png",
+      "profile": "https://www.nba.com/player/1642856"
+    },
+    {
+      "id": "bkn_14",
+      "nbaPlayerId": 1629611,
+      "resource": "player_bkn_14.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1629611.png",
+      "profile": "https://www.nba.com/player/1629611"
+    },
+    {
+      "id": "bkn_16",
+      "nbaPlayerId": 1641761,
+      "resource": "player_bkn_16.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1641761.png",
+      "profile": "https://www.nba.com/player/1641761"
+    },
+    {
+      "id": "bkn_12",
+      "nbaPlayerId": 1643750,
+      "resource": "player_bkn_12.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1643750.png",
+      "profile": "https://www.nba.com/player/1643750"
+    },
+    {
+      "id": "bkn_31",
+      "nbaPlayerId": 1643052,
+      "resource": "player_bkn_31.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1643052.png",
+      "profile": "https://www.nba.com/player/1643052"
+    },
+    {
+      "id": "bkn_00",
+      "nbaPlayerId": 1631169,
+      "resource": "player_bkn_00.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1631169.png",
+      "profile": "https://www.nba.com/player/1631169"
+    },
+    {
+      "id": "bkn_2",
+      "nbaPlayerId": 1642874,
+      "resource": "player_bkn_2.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642874.png",
+      "profile": "https://www.nba.com/player/1642874"
+    },
+    {
+      "id": "bkn_77",
+      "nbaPlayerId": 1642879,
+      "resource": "player_bkn_77.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642879.png",
+      "profile": "https://www.nba.com/player/1642879"
+    },
+    {
+      "id": "bkn_10",
+      "nbaPlayerId": 1642849,
+      "resource": "player_bkn_10.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642849.png",
+      "profile": "https://www.nba.com/player/1642849"
+    },
+    {
+      "id": "bkn_34",
+      "nbaPlayerId": 1643548,
+      "resource": "player_bkn_34.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1643548.png",
+      "profile": "https://www.nba.com/player/1643548"
+    },
+    {
+      "id": "bkn_4",
+      "nbaPlayerId": 1642962,
+      "resource": "player_bkn_4.png",
+      "source": "https://cdn.nba.com/headshots/nba/latest/260x190/1642962.png",
+      "profile": "https://www.nba.com/player/1642962"
+    }
+  ]
+}

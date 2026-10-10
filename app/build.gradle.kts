@@ -11,11 +11,17 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-    applicationId = "com.aistudio.nbatracker.qfzwpm"
+    applicationId = "com.ivicastojanoski.miniscore"
     minSdk = 24
     targetSdk = 36
-    versionCode = 1
-    versionName = "1.0"
+    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 13
+    versionName = providers.gradleProperty("versionName").orNull ?: "1.7.0"
+    val gameFeedUrl = providers.gradleProperty("gameFeedUrl").orNull
+      ?: "https://miniscore-api-production.up.railway.app/games"
+    require(gameFeedUrl.startsWith("https://") && !gameFeedUrl.contains('"') && !gameFeedUrl.contains('\\')) {
+      "gameFeedUrl must be an HTTPS URL"
+    }
+    buildConfigField("String", "GAME_FEED_URL", "\"$gameFeedUrl\"")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -25,7 +31,7 @@ android {
       val keystorePath = System.getenv("KEYSTORE_PATH") ?: "${rootDir}/my-upload-key.jks"
       storeFile = file(keystorePath)
       storePassword = System.getenv("STORE_PASSWORD")
-      keyAlias = "upload"
+      keyAlias = System.getenv("KEY_ALIAS") ?: "upload"
       keyPassword = System.getenv("KEY_PASSWORD")
     }
     create("debugConfig") {
@@ -90,7 +96,7 @@ dependencies {
   // implementation(libs.androidx.navigation.compose)
   implementation(libs.androidx.room.ktx)
   implementation(libs.androidx.room.runtime)
-  // implementation(libs.coil.compose)
+  implementation(libs.coil.compose)
   implementation(libs.converter.moshi)
   // implementation(libs.firebase.ai)
   implementation(libs.kotlinx.coroutines.android)

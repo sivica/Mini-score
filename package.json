@@ -1,0 +1,8 @@
+{
+  "name": "miniscore-deployment-tools",
+  "private": true,
+  "devDependencies": {
+    "playwright": "1.62.1",
+    "railway": "3.13.1"
+  }
+}

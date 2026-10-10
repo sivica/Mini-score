@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Neural Expressive NBA Box Score</title>
+    <title>Miniscore — 76ers at Nets, October 8, 2026</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,7 +11,8 @@
         <!-- Header -->
         <header class="header">
             <h1 class="header-title">NBA Box Score</h1>
-            <p class="header-subtitle">Live Game Statistics</p>
+            <p class="header-subtitle">NBA Preseason · Final · October 8, 2026</p>
+            <p id="gameVenue">Barclays Center, Brooklyn, NY</p>
         </header>
 
         <!-- Game Container -->
@@ -20,17 +21,18 @@
             <section class="team-section team-home" id="homeTeam">
                 <div class="team-header">
                     <div class="team-logo-wrapper">
-                        <img src="https://via.placeholder.com/80?text=LAL" alt="Home Team Logo" class="team-logo">
+                        <div class="team-logo" aria-hidden="true">BKN</div>
                     </div>
                     <div class="team-info">
-                        <h2 class="team-name">Los Angeles Lakers</h2>
-                        <p class="team-record">22-8</p>
+                        <h2 class="team-name">Brooklyn Nets</h2>
+                        <p class="team-record">2-0 · Preseason · Home</p>
                     </div>
                     <div class="team-score-display">
-                        <span class="team-total-score" id="homeScore">118</span>
+                        <span class="team-total-score" id="homeScore">114</span>
                     </div>
                 </div>
 
+                <p class="quarter-scores">Q1 · Q2 · Q3 · Q4: <span id="homeQuarters">33 · 23 · 37 · 21</span></p>
                 <div class="stats-header">
                     <div class="stat-col stat-player">Player</div>
                     <div class="stat-col stat-pts">PTS</div>
@@ -46,17 +48,18 @@
             <section class="team-section team-away" id="awayTeam">
                 <div class="team-header">
                     <div class="team-logo-wrapper">
-                        <img src="https://via.placeholder.com/80?text=BOS" alt="Away Team Logo" class="team-logo">
+                        <div class="team-logo" aria-hidden="true">PHI</div>
                     </div>
                     <div class="team-info">
-                        <h2 class="team-name">Boston Celtics</h2>
-                        <p class="team-record">24-6</p>
+                        <h2 class="team-name">Philadelphia 76ers</h2>
+                        <p class="team-record">1-1 · Preseason · Away</p>
                     </div>
                     <div class="team-score-display">
-                        <span class="team-total-score" id="awayScore">124</span>
+                        <span class="team-total-score" id="awayScore">108</span>
                     </div>
                 </div>
 
+                <p class="quarter-scores">Q1 · Q2 · Q3 · Q4: <span id="awayQuarters">33 · 25 · 23 · 27</span></p>
                 <div class="stats-header">
                     <div class="stat-col stat-player">Player</div>
                     <div class="stat-col stat-pts">PTS</div>
@@ -71,7 +74,8 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p class="footer-text">Last updated: <span id="lastUpdated">Just now</span></p>
+            <p class="footer-text">Final box score · October 8, 2026</p>
+            <p class="footer-text">Sources: <a href="https://www.nba.com/game/phi-vs-bkn-0012600034">NBA game result</a> · <a href="https://basketball.realgm.com/nba/boxscore/2026-10-08/Philadelphia-at-Brooklyn/526643">RealGM player stats</a></p>
         </footer>
     </div>
 

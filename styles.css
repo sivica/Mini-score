@@ -139,6 +139,10 @@ body {
 }
 
 .team-logo {
+    display: grid;
+    place-items: center;
+    background: var(--color-card);
+    font-weight: 800;
     width: 64px;
     height: 64px;
     border-radius: 12px;
@@ -147,12 +151,21 @@ body {
     transition: var(--transition);
 }
 
+.quarter-scores {
+    padding: 0.75rem 1.5rem;
+    color: var(--color-text-secondary);
+    font-size: 0.875rem;
+}
+
+.footer a { color: var(--color-accent-light); }
+
 .team-logo:hover {
     opacity: 1;
 }
 
 .team-info {
     flex: 1;
+    min-width: 0;
 }
 
 .team-name {
@@ -180,6 +193,15 @@ body {
     font-weight: 800;
     line-height: 1;
     letter-spacing: -0.03em;
+}
+
+@media (max-width: 480px) {
+    .team-header { gap: 0.75rem; padding: 1rem; }
+    .team-logo { width: 40px; height: 40px; font-size: 0.8rem; }
+    .team-name { font-size: 1.1rem; }
+    .team-total-score { font-size: 2.5rem; }
+    .players-list { padding: 0.75rem; }
+    .player-name { overflow-wrap: anywhere; }
 }
 
 /* Stats Header (Column Labels) */
@@ -371,6 +393,9 @@ body {
         --color-text-secondary: #424245;
         --color-text-tertiary: #86868b;
         --color-border: rgba(0, 0, 0, 0.1);
+    }
+    body {
+        background: linear-gradient(135deg, var(--color-bg), var(--color-bg-secondary));
     }
 }
 

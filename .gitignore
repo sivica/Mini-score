@@ -16,5 +16,14 @@
 local.properties
 .env
 debug.keystore
+.play-release/
+*.jks
+*.keystore
+service-account*.json
 __pycache__/
 *.pyc
+.railway-release/
+.pytest_cache/
+backend/*.db
+node_modules/
+.venv/

@@ -60,6 +60,55 @@ class DailyFeedTest(unittest.TestCase):
         feed = build_feed(self.previous, date(2026, 10, 10), lambda url: {"events": []})
         self.assertEqual(self.previous, feed)
 
+    def test_missed_import_refetches_retained_unfinished_dates(self):
+        for status in ("LIVE", "SCHEDULED", "POSTPONED"):
+            with self.subTest(status=status):
+                previous = copy.deepcopy(self.previous)
+                previous["games"][0].update(status=status, id="legacy-game")
+                previous["defaultGameId"] = "legacy-game"
+                requests = []
+                def fetch(url):
+                    requests.append(url)
+                    return self.fetch(url)
+                result = build_feed(previous, date(2026, 10, 12), fetch)
+                self.assertEqual("FINISHED", result["games"][0]["status"])
+                self.assertEqual("legacy-game", result["games"][0]["id"])
+                self.assertEqual(135, result["games"][0]["away"]["score"])
+                self.assertEqual(1, sum("dates=20261009" in url for url in requests))
+
+    def test_catch_up_dates_are_deduplicated_and_exclude_final_or_expired_games(self):
+        previous = copy.deepcopy(self.previous)
+        previous["games"][0]["status"] = "LIVE"
+        another = copy.deepcopy(self.game)
+        another.update(id="another", status="POSTPONED")
+        another["away"]["code"] = "PHI"
+        previous["games"].append(another)
+        for gid, day, status in (("expired", "2026-10-01", "LIVE"), ("final", "2026-10-08", "FINISHED")):
+            game = copy.deepcopy(self.game)
+            game.update(id=gid, date=day, status=status)
+            previous["games"].append(game)
+        requests = []
+        result = build_feed(previous, date(2026, 10, 12), lambda url: requests.append(url) or {"events": []})
+        self.assertEqual(4, len(requests))
+        self.assertEqual(1, sum("dates=20261009" in url for url in requests))
+        self.assertFalse(any("dates=20261001" in url or "dates=20261008" in url for url in requests))
+        self.assertNotIn("expired", [g["id"] for g in result["games"]])
+
+    def test_failed_catch_up_preserves_exact_cache(self):
+        self.previous["games"][0]["status"] = "LIVE"
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "games.json"
+            original = json.dumps(self.previous, indent=3).encode()
+            path.write_bytes(original)
+            def fetch(url):
+                if "dates=20261009" in url:
+                    raise TimeoutError("Catch-up unavailable")
+                return {"events": []}
+            with self.assertRaises(TimeoutError):
+                update_file(path, date(2026, 10, 12), fetch)
+            self.assertEqual(original, path.read_bytes())
+            self.assertEqual([path], list(path.parent.iterdir()))
+
     def test_history_expires_after_one_week(self):
         old = copy.deepcopy(self.game)
         old.update(id="old", date="2026-10-01")

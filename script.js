@@ -7,13 +7,11 @@ class NBABoxScore {
     constructor(homeTeam, awayTeam) {
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
-        this.lastUpdate = new Date();
         this.init();
     }
 
     init() {
         this.render();
-        this.startTimeUpdate();
         console.log('✨ Neural Expressive NBA Box Score initialized');
         console.log('Debug methods available:', {
             updateScore: 'nbaBoxScore.updateScore(team, points)',
@@ -84,6 +82,10 @@ class NBABoxScore {
     renderTeam(team, containerId) {
         const container = document.getElementById(containerId);
         const sortedPlayers = this.sortPlayersByPoints(team);
+        const section = container.closest('.team-section');
+        section.querySelector('.team-name').textContent = team.name;
+        section.querySelector('.team-record').textContent = `${team.record} · Preseason · ${containerId === 'homePlayers' ? 'Home' : 'Away'}`;
+        section.querySelector('.team-logo').textContent = team.code;
         
         // Clear existing players
         container.innerHTML = '';
@@ -101,26 +103,14 @@ class NBABoxScore {
     }
 
     render() {
+        document.querySelector('.header-subtitle').textContent = `${GAME_DATA.competition} · ${GAME_DATA.status} · ${GAME_DATA.dateLabel}`;
+        document.getElementById('gameVenue').textContent = GAME_DATA.venue;
+        document.getElementById('homeQuarters').textContent = this.homeTeam.quarters.join(' · ');
+        document.getElementById('awayQuarters').textContent = this.awayTeam.quarters.join(' · ');
         this.renderTeam(this.homeTeam, 'homePlayers');
         this.renderTeam(this.awayTeam, 'awayPlayers');
         this.updateScoreDisplay(this.homeTeam, 'homeScore');
         this.updateScoreDisplay(this.awayTeam, 'awayScore');
-    }
-
-    startTimeUpdate() {
-        setInterval(() => {
-            const now = new Date();
-            const lastUpdated = document.getElementById('lastUpdated');
-            const diff = Math.floor((now - this.lastUpdate) / 1000);
-            
-            if (diff < 60) {
-                lastUpdated.textContent = 'Just now';
-            } else if (diff < 3600) {
-                lastUpdated.textContent = `${Math.floor(diff / 60)} min ago`;
-            } else {
-                lastUpdated.textContent = `${Math.floor(diff / 3600)} hour ago`;
-            }
-        }, 30000);
     }
 
     // Public API methods for dynamic updates
@@ -130,15 +120,13 @@ class NBABoxScore {
         const diff = points - stats.points;
         team.players[0].points += diff;
         this.render();
-        this.lastUpdate = new Date();
         return stats.points;
     }
 
     updatePlayerStat(team, playerIdx, stat, value) {
-        if (playerIdx < team.players.length) {
+        if (playerIdx >= 0 && playerIdx < team.players.length) {
             team.players[playerIdx][stat] = value;
             this.render();
-            this.lastUpdate = new Date();
         }
     }
 
