@@ -360,7 +360,7 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffi
         var imageLoaded by remember(team.logoUrl) { mutableStateOf(false) }
         Box(modifier.size(size).clip(CircleShape).background(Color.White).testTag("team_logo_${team.code}$tagSuffix"),
             contentAlignment = Alignment.Center) {
-            if (!imageLoaded) Text(team.code, color = Color.Black, fontSize = (size.value * 0.24f).sp)
+            if (!imageLoaded) Text(shortTeamName(team).take(1), color = Color.Black, fontSize = (size.value * 0.24f).sp)
             AsyncImage(model = team.logoUrl, contentDescription = "${team.name} logo",
                 onSuccess = { imageLoaded = true }, onError = { imageLoaded = false },
                 contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize().padding(size * 0.1f))
@@ -486,7 +486,7 @@ fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffi
             }
         }
         Text(
-            text = team.logoText,
+            text = shortTeamName(team).take(1),
             color = Color.White,
             fontSize = (size.value * 0.28).sp,
             fontWeight = FontWeight.Black,
@@ -727,7 +727,7 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                     overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = "#${player.number} · ${player.teamCode ?: player.id.substringBefore('_').uppercase()}" +
+                    text = "#${player.number}" +
                         if (player.flag.isNotEmpty()) " ${player.flag}" else "",
                     color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
                     modifier = Modifier.padding(top = 2.dp)

@@ -54,10 +54,10 @@ class PreseasonScreenTest {
         }
         composeTestRule.onNodeWithTag("player_portrait_phi_23", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_phi_23").assertTextEquals(
-            "LeBron James", "#23 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "10", "4", "5", "1", "1"
+            "LeBron James", "#23", "PTS", "REB", "AST", "FGM", "FGA", "10", "4", "5", "1", "1"
         )
         composeTestRule.onNodeWithTag("lineup_player_bkn_30").assertTextEquals(
-            "Julius Randle", "#30 · BKN", "PTS", "REB", "AST", "FGM", "FGA", "14", "6", "2", "4", "11"
+            "Julius Randle", "#30", "PTS", "REB", "AST", "FGM", "FGA", "14", "6", "2", "4", "11"
         )
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-game.png")
         composeTestRule.onNodeWithText("LeBron James").performClick()
@@ -120,7 +120,7 @@ class PreseasonScreenTest {
         val right = composeTestRule.onNodeWithTag("lineup_player_bkn_14").fetchSemanticsNode().boundsInRoot
         assertTrue("Large-font player cards stack without overlap", left.bottom <= right.top)
         composeTestRule.onNodeWithTag("lineup_player_phi_1").assertTextEquals(
-            "Kentavious Caldwell-Pope", "#1 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "2", "1", "1", "1", "3"
+            "Kentavious Caldwell-Pope", "#1", "PTS", "REB", "AST", "FGM", "FGA", "2", "1", "1", "1", "3"
         )
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-200-percent.png")
     }
@@ -137,10 +137,10 @@ class PreseasonScreenTest {
             }
         }
         composeTestRule.onNodeWithTag("lineup_player_phi_1").assertTextEquals(
-            "Kentavious Caldwell-Pope", "#1 · PHI", "PTS", "REB", "AST", "FGM", "FGA", "2", "1", "1", "1", "3"
+            "Kentavious Caldwell-Pope", "#1", "PTS", "REB", "AST", "FGM", "FGA", "2", "1", "1", "1", "3"
         ).assertIsDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_bkn_14").assertTextEquals(
-            "Terance Mann", "#14 · BKN", "PTS", "REB", "AST", "FGM", "FGA", "0", "2", "1", "0", "4"
+            "Terance Mann", "#14", "PTS", "REB", "AST", "FGM", "FGA", "0", "2", "1", "0", "4"
         ).assertIsDisplayed()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-narrow-stats.png")
     }

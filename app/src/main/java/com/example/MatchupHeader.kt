@@ -95,18 +95,42 @@ fun ScoreboardHeaderPanel(game: Game) {
                 modifier = Modifier.weight(1f).testTag("team_score_${game.homeTeam.code}"))
         }
         if (showQuarters && hasQuarters) {
-            Text(
-                text = "     " + game.awayQuarters.indices.joinToString("") { "Q${it + 1}".padStart(4) } + "\n" +
-                    game.awayTeam.code.padEnd(5) + game.awayQuarters.joinToString("") { it.toString().padStart(4) } + "\n" +
-                    game.homeTeam.code.padEnd(5) + game.homeQuarters.joinToString("") { it.toString().padStart(4) },
-                color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp, fontFamily = FontFamily.Monospace,
-                textAlign = TextAlign.Center, modifier = Modifier.testTag("quarter_scores").padding(top = 8.dp)
-            )
+            val awayName = shortTeamName(game.awayTeam)
+            val homeName = shortTeamName(game.homeTeam)
+            Column(Modifier.fillMaxWidth().testTag("quarter_scores").padding(horizontal = 12.dp, vertical = 8.dp)) {
+                game.awayQuarters.indices.toList().chunked(4).forEach { quarters ->
+                    Row(Modifier.fillMaxWidth()) {
+                        Spacer(Modifier.weight(2f))
+                        quarters.forEach { index ->
+                            Text("Q${index + 1}", color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
+                                textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                        }
+                    }
+                    listOf(awayName to game.awayQuarters, homeName to game.homeQuarters).forEach { (name, scores) ->
+                        if (LocalDensity.current.fontScale >= 1.5f) {
+                            Text(name, color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp)
+                        }
+                        Row(Modifier.fillMaxWidth()) {
+                            if (LocalDensity.current.fontScale < 1.5f) {
+                                Text(name, color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
+                                    modifier = Modifier.weight(2f))
+                            } else {
+                                Spacer(Modifier.weight(2f))
+                            }
+                            quarters.forEach { index ->
+                                Text(scores[index].toString(), color = TextSecondary, fontSize = 12.sp,
+                                    lineHeight = 18.sp, fontFamily = FontFamily.Monospace,
+                                    textAlign = TextAlign.Center, modifier = Modifier.weight(1f))
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
-private fun shortTeamName(team: Team): String = when (team.code) {
+internal fun shortTeamName(team: Team): String = when (team.code) {
     "PHI" -> "76ers"
     "BKN" -> "Nets"
     else -> team.shortName
@@ -119,9 +143,9 @@ fun LineupSectionHeader(game: Game, title: String) {
             .testTag("lineup_header_$title").padding(horizontal = 16.dp, vertical = 6.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(game.awayTeam.code, color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.weight(1f))
+        Text(shortTeamName(game.awayTeam), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp, modifier = Modifier.weight(1f))
         Text(title, color = TextPrimary, fontSize = 12.sp, lineHeight = 16.sp, fontWeight = FontWeight.Medium)
-        Text(game.homeTeam.code, color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp, textAlign = TextAlign.End,
+        Text(shortTeamName(game.homeTeam), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp, textAlign = TextAlign.End,
             modifier = Modifier.weight(1f))
     }
 }
