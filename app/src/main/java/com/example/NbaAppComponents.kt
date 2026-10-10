@@ -555,9 +555,8 @@ fun MainNbaScreen(viewModel: GameViewModel, onRefresh: () -> Unit = { viewModel.
                         }) {
                         item { ScoreboardHeaderPanel(selectedGame) }
                         item {
-                            if (selectedGame.startingAway.isNotEmpty() || selectedGame.startingHome.isNotEmpty()) {
-                                LineupSectionHeader(selectedGame, "Starting lineup")
-                            } else if (selectedGame.substitutesAway.isEmpty() && selectedGame.substitutesHome.isEmpty()) {
+                            if (selectedGame.startingAway.isEmpty() && selectedGame.startingHome.isEmpty() &&
+                                selectedGame.substitutesAway.isEmpty() && selectedGame.substitutesHome.isEmpty()) {
                                 GameEmptyState(selectedGame)
                             }
                         }

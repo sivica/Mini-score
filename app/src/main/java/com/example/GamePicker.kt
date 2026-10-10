@@ -41,30 +41,44 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
             .testTag("select_game_${game.id}").semantics { this.selected = selected }) {
         val largeText = LocalDensity.current.fontScale >= 1.5f
         Column(Modifier.fillMaxWidth().padding(12.dp)) {
+            if (largeText) DrawerScore(game, 14, Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                TeamLogoCanvas(game.awayTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
-                Row(Modifier.weight(1f).padding(horizontal = 6.dp).testTag("drawer_score_${game.id}"),
-                    horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
-                    val scoreSize = if (largeText) 14.sp else 18.sp
-                    Text(if (game.status == "SCHEDULED") "—" else game.awayScore.toString(),
-                        color = TextPrimary, fontSize = scoreSize, fontWeight = FontWeight.Medium)
-                    Text("–", color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(horizontal = 4.dp))
-                    Text(if (game.status == "SCHEDULED") "—" else game.homeScore.toString(),
-                        color = TextPrimary, fontSize = scoreSize, fontWeight = FontWeight.Medium)
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    TeamLogoCanvas(game.awayTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
                 }
-                TeamLogoCanvas(game.homeTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
+                if (largeText) {
+                    Spacer(Modifier.weight(2f))
+                } else {
+                    DrawerScore(game, 18, Modifier.weight(2f))
+                }
+                Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                    TeamLogoCanvas(game.homeTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
+                }
             }
-            Row(Modifier.fillMaxWidth().padding(top = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
                 Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    maxLines = if (largeText) 2 else 1, overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.weight(1f).testTag("drawer_away_name_${game.id}"))
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_away_name_${game.id}"))
+                Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(2f).alignByBaseline().testTag("drawer_status_${game.id}"))
                 Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    maxLines = if (largeText) 2 else 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.End,
-                    modifier = Modifier.weight(1f).testTag("drawer_home_name_${game.id}"))
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_home_name_${game.id}"))
             }
-            Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
-                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 4.dp))
         }
+    }
+}
+
+@Composable
+private fun DrawerScore(game: Game, fontSize: Int, modifier: Modifier) {
+    Row(modifier.testTag("drawer_score_${game.id}"), horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically) {
+        Text(if (game.status == "SCHEDULED") "—" else game.awayScore.toString(),
+            color = TextPrimary, fontSize = fontSize.sp, fontWeight = FontWeight.Medium)
+        Text("–", color = TextSecondary, fontSize = 14.sp, modifier = Modifier.padding(horizontal = 4.dp))
+        Text(if (game.status == "SCHEDULED") "—" else game.homeScore.toString(),
+            color = TextPrimary, fontSize = fontSize.sp, fontWeight = FontWeight.Medium)
     }
 }
 
