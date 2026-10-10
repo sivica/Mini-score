@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -116,6 +117,7 @@ internal fun pickerStatus(game: Game): String = when (game.status) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesDrawer(games: List<Game>, selectedId: String, onClose: () -> Unit, onSelect: (Game) -> Unit) {
+    val uriHandler = LocalUriHandler.current
     var query by rememberSaveable { mutableStateOf("") }
     val visible = games.filter { matchesGameSearch(it, query) }
     val width = (LocalConfiguration.current.screenWidthDp - 44).coerceAtMost(320).dp
@@ -152,6 +154,10 @@ fun GamesDrawer(games: List<Game>, selectedId: String, onClose: () -> Unit, onSe
                         CollapsedGameCard(game, selected = game.id == selectedId) { onSelect(game) }
                     }
                 }
+            }
+            TextButton(onClick = { uriHandler.openUri("https://sivica.github.io/Mini-score/privacy/") },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("privacy_policy")) {
+                Text("Privacy policy", color = AccentCyan, fontSize = 14.sp)
             }
         }
     }
