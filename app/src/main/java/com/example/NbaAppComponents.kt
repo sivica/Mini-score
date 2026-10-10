@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ui.theme.*
 import androidx.compose.animation.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -23,22 +22,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import coil.compose.AsyncImage
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.CustomAccessibilityAction
 import androidx.compose.ui.semantics.customActions
+import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontFamily
@@ -344,165 +340,15 @@ class GameViewModel : ViewModel() {
 }
 
 // ==========================================
-// 6. VECTOR CUSTOM GRAPHICS FOR TEAM LOGOS
+// 6. TEAM NAMES
 // ==========================================
 
+/** Text-only team identity. Feed logo URLs are deliberately never loaded. */
 @Composable
-fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffix: String = "") {
-    GameImageAssets.teamLogo(team)?.let { logo ->
-        Image(
-            painter = painterResource(logo),
-            contentDescription = "${team.name} logo",
-            contentScale = ContentScale.Fit,
-            modifier = modifier.size(size).clip(CircleShape).background(Color.White)
-                .padding(size * 0.13f).testTag("team_logo_${team.code}$tagSuffix")
-        )
-        return
-    }
-    if (team.logoUrl != null) {
-        var imageLoaded by remember(team.logoUrl) { mutableStateOf(false) }
-        Box(modifier.size(size).clip(CircleShape).background(Color.White).testTag("team_logo_${team.code}$tagSuffix"),
-            contentAlignment = Alignment.Center) {
-            if (!imageLoaded) Text(shortTeamName(team).take(1), color = Color.Black, fontSize = (size.value * 0.24f).sp)
-            AsyncImage(model = team.logoUrl, contentDescription = "${team.name} logo",
-                onSuccess = { imageLoaded = true }, onError = { imageLoaded = false },
-                contentScale = ContentScale.Fit, modifier = Modifier.fillMaxSize().padding(size * 0.1f))
-        }
-        return
-    }
-    Box(
-        modifier = modifier
-            .size(size)
-            .padding(2.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        Canvas(modifier = Modifier.fillMaxSize()) {
-            val center = Offset(size.toPx() / 2, size.toPx() / 2)
-            val radius = size.toPx() / 2 - 4f
-
-            // Clean radial styling depending on team
-            when (team.code) {
-                "NYK" -> {
-                    // Basketball theme
-                    drawCircle(
-                        color = Color(0xFFF58426), // Orange inner
-                        radius = radius,
-                        center = center
-                    )
-                    drawCircle(
-                        color = Color(0xFF006BB6), // Blue Ring
-                        radius = radius,
-                        center = center,
-                        style = Stroke(width = 6f)
-                    )
-                    // Ball lines
-                    drawLine(
-                        color = Color(0xFF006BB6),
-                        start = Offset(center.x - radius, center.y),
-                        end = Offset(center.x + radius, center.y),
-                        strokeWidth = 3f
-                    )
-                    drawLine(
-                        color = Color(0xFF006BB6),
-                        start = Offset(center.x, center.y - radius),
-                        end = Offset(center.x, center.y + radius),
-                        strokeWidth = 3f
-                    )
-                }
-                "CLE" -> {
-                    // Shield/Crest theme
-                    drawCircle(
-                        color = Color(0xFF860038), // Wine background
-                        radius = radius,
-                        center = center
-                    )
-                    drawCircle(
-                        color = Color(0xFFFDBB30), // Gold ring
-                        radius = radius,
-                        center = center,
-                        style = Stroke(width = 4f)
-                    )
-                }
-                "LAL" -> {
-                    // Purple & gold streak
-                    drawCircle(
-                        color = Color(0xFF552583), // Purple
-                        radius = radius,
-                        center = center
-                    )
-                    drawCircle(
-                        color = Color(0xFFFDB927), // Gold core
-                        radius = radius * 0.7f,
-                        center = center
-                    )
-                }
-                "GSW" -> {
-                    // Bridge motif circle
-                    drawCircle(
-                        color = Color(0xFF1D428A), // Blue
-                        radius = radius,
-                        center = center
-                    )
-                    // Drawn golden gate vector arc placeholder
-                    drawArc(
-                        color = Color(0xFFFFC72C),
-                        startAngle = 180f,
-                        sweepAngle = 180f,
-                        useCenter = false,
-                        topLeft = Offset(center.x - radius * 0.7f, center.y - radius * 0.3f),
-                        size = androidx.compose.ui.geometry.Size(radius * 1.4f, radius * 1.4f),
-                        style = Stroke(width = 4f)
-                    )
-                }
-                "BOS" -> {
-                    // Shamrock green
-                    drawCircle(
-                        color = Color(0xFF007A33),
-                        radius = radius,
-                        center = center
-                    )
-                    drawCircle(
-                        color = Color(0xFFBA9653),
-                        radius = radius * 0.8f,
-                        center = center,
-                        style = Stroke(width = 4f)
-                    )
-                }
-                "PHI", "BKN" -> {
-                    drawCircle(color = team.primaryColor, radius = radius, center = center)
-                    drawCircle(color = team.secondaryColor, radius = radius, center = center, style = Stroke(width = 4f))
-                }
-                else -> {
-                    // Miami Heat red flame theme
-                    drawCircle(
-                        color = Color(0xFF98002E),
-                        radius = radius,
-                        center = center
-                    )
-                    drawCircle(
-                        color = Color(0xFFF9A01B),
-                        radius = radius,
-                        center = center,
-                        style = Stroke(width = 5f)
-                    )
-                }
-            }
-        }
-        Text(
-            text = shortTeamName(team).take(1),
-            color = Color.White,
-            fontSize = (size.value * 0.28).sp,
-            fontWeight = FontWeight.Black,
-            fontFamily = FontFamily.SansSerif,
-            style = LocalTextStyle.current.copy(
-                shadow = androidx.compose.ui.graphics.Shadow(
-                    color = Color.Black,
-                    offset = Offset(2f, 2f),
-                    blurRadius = 4f
-                )
-            )
-        )
-    }
+fun TeamNameText(team: Team, modifier: Modifier = Modifier) {
+    Text(team.code, color = TextPrimary, fontSize = 14.sp,
+        lineHeight = 18.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center,
+        maxLines = 1, modifier = modifier.semantics { contentDescription = team.name })
 }
 
 // ==========================================
@@ -635,29 +481,24 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
             .clickable(onClickLabel = "Open player details") { onPlayerClick(player) }
             .testTag("lineup_player_${player.id}")
     ) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            if (player.isLeftTeam) PlayerPortrait(player, size = 28.dp)
-            Column(Modifier.weight(1f)) {
-                Text(player.name, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    maxLines = 1, overflow = TextOverflow.Ellipsis,
+        Column(Modifier.fillMaxWidth()) {
+            Text(player.name, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
+                maxLines = 1, overflow = TextOverflow.Ellipsis,
+                textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
+                modifier = Modifier.fillMaxWidth().testTag("player_name_${player.id}"))
+            Row(Modifier.fillMaxWidth().padding(top = 3.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (!player.isLeftTeam) {
+                    PlayerMinutes(player, Modifier.alignByBaseline())
+                    Spacer(Modifier.width(6.dp))
+                }
+                Text("#${player.number}", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
                     textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
-                    modifier = Modifier.fillMaxWidth().testTag("player_name_${player.id}"))
-                Row(Modifier.fillMaxWidth().padding(top = 3.dp), verticalAlignment = Alignment.CenterVertically) {
-                    if (!player.isLeftTeam) {
-                        PlayerMinutes(player, Modifier.alignByBaseline())
-                        Spacer(Modifier.width(6.dp))
-                    }
-                    Text("#${player.number}", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
-                        textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
-                        maxLines = 1, modifier = Modifier.weight(1f).alignByBaseline())
-                    if (player.isLeftTeam) {
-                        Spacer(Modifier.width(6.dp))
-                        PlayerMinutes(player, Modifier.alignByBaseline())
-                    }
+                    maxLines = 1, modifier = Modifier.weight(1f).alignByBaseline())
+                if (player.isLeftTeam) {
+                    Spacer(Modifier.width(6.dp))
+                    PlayerMinutes(player, Modifier.alignByBaseline())
                 }
             }
-            if (!player.isLeftTeam) PlayerPortrait(player, size = 28.dp)
         }
         Row(modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
             listOf("PTS", "REB", "AST", "FGM", "FGA").forEach { label ->
@@ -693,28 +534,6 @@ private fun PlayerMinutes(player: Player, modifier: Modifier = Modifier) {
     Text(player.stats.minutesDisplay, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
         fontFamily = FontFamily.Monospace, maxLines = 1,
         modifier = modifier.testTag("player_minutes_${player.id}"))
-}
-
-@Composable
-fun PlayerPortrait(player: Player, size: Dp, modifier: Modifier = Modifier) {
-    val portrait = GameImageAssets.playerPortrait(player)
-    val portraitModifier = modifier.size(size).clip(CircleShape).background(ElegantBorderColor)
-        .testTag("player_portrait_${player.id}")
-    if (portrait != null) {
-        Image(painterResource(portrait), contentDescription = "${player.name} photo",
-            contentScale = ContentScale.Crop, modifier = portraitModifier)
-    } else {
-        var imageLoaded by remember(player.portraitUrl) { mutableStateOf(false) }
-        Box(portraitModifier, contentAlignment = Alignment.Center) {
-            if (!imageLoaded) Text(player.name.split(' ').take(2).mapNotNull { it.firstOrNull() }.joinToString(""),
-                color = TextPrimary, fontSize = (size.value * 0.3f).sp)
-            if (player.portraitUrl != null) {
-                AsyncImage(model = player.portraitUrl, contentDescription = "${player.name} photo",
-                    onSuccess = { imageLoaded = true }, onError = { imageLoaded = false },
-                    contentScale = ContentScale.Crop, modifier = Modifier.fillMaxSize())
-            }
-        }
-    }
 }
 
 // ==========================================
@@ -889,32 +708,6 @@ fun PlayerDetailBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Circular rating badge
-                val ratingCol = when {
-                    player.rating == null -> ElegantBorderColor
-                    (player.rating ?: 0.0) >= 7.0 -> RatingGreen
-                    (player.rating ?: 0.0) >= 6.0 -> RatingOrange
-                    else -> RatingRed
-                }
-                if (GameImageAssets.playerPortrait(player) != null || player.portraitUrl != null) {
-                    PlayerPortrait(player, size = 54.dp)
-                } else Box(
-                    modifier = Modifier
-                        .size(54.dp)
-                        .clip(CircleShape)
-                        .background(ratingCol),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = player.rating?.let { String.format("%.1f", it) } ?: "-",
-                        color = Color.Black,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Black
-                    )
-                }
-
-                Spacer(modifier = Modifier.width(16.dp))
-
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(

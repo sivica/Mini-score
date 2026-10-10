@@ -12,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.semantics.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -23,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.*
@@ -44,33 +44,18 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
             if (largeText) DrawerScore(game, 14, Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamLogoCanvas(game.awayTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
+                    TeamNameText(game.awayTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.awayTeam.code}_${game.id}"))
                 }
                 if (!largeText) {
-                    DrawerScore(game, 18, Modifier.weight(2f))
+                    DrawerScore(game, 18, Modifier.weight(1.25f))
                 }
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamLogoCanvas(game.homeTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
+                    TeamNameText(game.homeTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.homeTeam.code}_${game.id}"))
                 }
             }
-            Row(Modifier.fillMaxWidth().padding(top = 6.dp)) {
-                Text(shortTeamName(game.awayTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_away_name_${game.id}"))
-                if (!largeText) {
-                    Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.weight(2f).alignByBaseline().testTag("drawer_status_${game.id}"))
-                }
-                Text(shortTeamName(game.homeTeam), color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.weight(1f).alignByBaseline().testTag("drawer_home_name_${game.id}"))
-            }
-            if (largeText) {
-                Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
-                    textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 4.dp)
-                        .testTag("drawer_status_${game.id}"))
-            }
+            Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
+                textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(top = 6.dp)
+                    .testTag("drawer_status_${game.id}"))
         }
     }
 }
@@ -116,6 +101,7 @@ internal fun pickerStatus(game: Game): String = when (game.status) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GamesDrawer(games: List<Game>, selectedId: String, onClose: () -> Unit, onSelect: (Game) -> Unit) {
+    val uriHandler = LocalUriHandler.current
     var query by rememberSaveable { mutableStateOf("") }
     val visible = games.filter { matchesGameSearch(it, query) }
     val width = (LocalConfiguration.current.screenWidthDp - 44).coerceAtMost(320).dp
@@ -152,6 +138,10 @@ fun GamesDrawer(games: List<Game>, selectedId: String, onClose: () -> Unit, onSe
                         CollapsedGameCard(game, selected = game.id == selectedId) { onSelect(game) }
                     }
                 }
+            }
+            TextButton(onClick = { uriHandler.openUri("https://sivica.github.io/Mini-score/privacy/") },
+                modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp).testTag("privacy_policy")) {
+                Text("Privacy policy", color = AccentCyan, fontSize = 14.sp)
             }
         }
     }

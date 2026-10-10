@@ -17,7 +17,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.*
@@ -28,20 +27,15 @@ fun ScoreboardHeaderPanel(game: Game) {
     val hasQuarters = game.awayQuarters.isNotEmpty() && game.awayQuarters.size == game.homeQuarters.size
     val largeText = LocalDensity.current.fontScale >= 1.5f
     Column(Modifier.fillMaxWidth().background(SportsHeaderBg).testTag("scoreboard_header")) {
-        BoxWithConstraints(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
-            val logoSize = if (maxWidth >= 336.dp) 72.dp else 64.dp
+        Box(Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
             Column {
                 if (largeText) {
                     GameMetadata(game, Modifier.fillMaxWidth())
                     ScorePair(game, Modifier.fillMaxWidth().padding(vertical = 6.dp))
                     Row(Modifier.fillMaxWidth()) {
-                        listOf(game.awayTeam to "away", game.homeTeam to "home").forEach { (team, side) ->
-                            Column(Modifier.weight(1f), horizontalAlignment = Alignment.CenterHorizontally) {
-                                Box(Modifier.size(logoSize).testTag("scoreboard_logo_${team.code}")) {
-                                    TeamLogoCanvas(team, logoSize)
-                                }
-                                ScoreboardTeamName(team, Modifier.padding(top = 6.dp).testTag("scoreboard_${side}_name"))
-                            }
+                        listOf(game.awayTeam, game.homeTeam).forEach { team ->
+                            TeamNameText(team, Modifier.weight(1f).padding(horizontal = 4.dp)
+                                .testTag("scoreboard_team_${team.code}"))
                         }
                     }
                     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
@@ -50,24 +44,20 @@ fun ScoreboardHeaderPanel(game: Game) {
                 } else {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            Box(Modifier.size(logoSize).testTag("scoreboard_logo_${game.awayTeam.code}")) {
-                                TeamLogoCanvas(game.awayTeam, logoSize)
-                            }
+                            TeamNameText(game.awayTeam, Modifier.fillMaxWidth()
+                                .testTag("scoreboard_team_${game.awayTeam.code}"))
                         }
                         Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
                             GameMetadata(game, Modifier.fillMaxWidth())
                             ScorePair(game, Modifier.fillMaxWidth().padding(top = 5.dp))
                         }
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            Box(Modifier.size(logoSize).testTag("scoreboard_logo_${game.homeTeam.code}")) {
-                                TeamLogoCanvas(game.homeTeam, logoSize)
-                            }
+                            TeamNameText(game.homeTeam, Modifier.fillMaxWidth()
+                                .testTag("scoreboard_team_${game.homeTeam.code}"))
                         }
                     }
-                    Row(Modifier.fillMaxWidth()) {
-                        ScoreboardTeamName(game.awayTeam, Modifier.weight(1f).alignByBaseline().testTag("scoreboard_away_name"))
-                        GameStatusToggle(game, showQuarters, { showQuarters = !showQuarters }, Modifier.weight(2f).alignByBaseline())
-                        ScoreboardTeamName(game.homeTeam, Modifier.weight(1f).alignByBaseline().testTag("scoreboard_home_name"))
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                        GameStatusToggle(game, showQuarters, { showQuarters = !showQuarters })
                     }
                 }
             }
@@ -110,12 +100,6 @@ fun ScoreboardHeaderPanel(game: Game) {
             }
         }
     }
-}
-
-@Composable
-private fun ScoreboardTeamName(team: Team, modifier: Modifier) {
-    Text(shortTeamName(team), color = TextPrimary, fontSize = 14.sp, lineHeight = 20.sp,
-        textAlign = TextAlign.Center, modifier = modifier)
 }
 
 @Composable
