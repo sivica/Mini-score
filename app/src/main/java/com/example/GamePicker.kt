@@ -36,6 +36,7 @@ import java.util.TimeZone
 @Composable
 fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit) {
     val largeText = LocalDensity.current.fontScale >= 1.5f
+    val badgeSize = if (largeText) 64.dp else 48.dp
     Card(onClick = onClick, shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = if (selected) ElegantSelectedBg else SportsDarkSurface),
         border = BorderStroke(1.dp, ElegantBorderColor),
@@ -45,13 +46,13 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
             if (largeText) DrawerScore(game, 14, Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamLogoCanvas(game.awayTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
+                    TeamLogoCanvas(game.awayTeam, badgeSize, tagSuffix = "_drawer_${game.id}", labelFontSize = 12.sp)
                 }
                 if (!largeText) {
                     DrawerScore(game, 18, Modifier.weight(2f))
                 }
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamLogoCanvas(game.homeTeam, 32.dp, tagSuffix = "_drawer_${game.id}")
+                    TeamLogoCanvas(game.homeTeam, badgeSize, tagSuffix = "_drawer_${game.id}", labelFontSize = 12.sp)
                 }
             }
             Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,

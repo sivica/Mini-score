@@ -44,6 +44,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
@@ -347,13 +348,14 @@ class GameViewModel : ViewModel() {
 
 /** App-owned code badge. Feed logo URLs are deliberately never loaded. */
 @Composable
-fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffix: String = "") {
+fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffix: String = "",
+    labelFontSize: TextUnit = (size.value * 0.2f).sp) {
     Box(modifier.size(size).clip(CircleShape).background(colorResource(R.color.miniscore_logo_background))
         .testTag("team_logo_${team.code}$tagSuffix")
         .semantics(mergeDescendants = true) { contentDescription = "${team.name} team badge" },
         contentAlignment = Alignment.Center) {
-        Text(team.code, color = Color(0xFF102925), fontSize = (size.value * 0.2f).sp,
-            lineHeight = (size.value * 0.24f).sp,
+        Text(team.code, color = Color(0xFF102925), fontSize = labelFontSize,
+            lineHeight = labelFontSize * 1.2f,
             fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center)
     }
 }

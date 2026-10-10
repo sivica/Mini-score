@@ -23,6 +23,7 @@ import androidx.compose.ui.platform.UriHandler
 import androidx.compose.ui.focus.FocusManager
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.semantics.SemanticsActions
 import androidx.compose.ui.text.TextLayoutResult
 import org.junit.Assert.assertTrue
@@ -77,7 +78,7 @@ class PreseasonScreenTest {
         composeTestRule.setContent {
             val density = LocalDensity.current
             CompositionLocalProvider(LocalDensity provides Density(density.density, 2f)) {
-                MyApplicationTheme { TeamLogoCanvas(team, 32.dp) }
+                MyApplicationTheme { TeamLogoCanvas(team, 64.dp, labelFontSize = 12.sp) }
             }
         }
         val node = composeTestRule.onNodeWithText("MEM", useUnmergedTree = true).fetchSemanticsNode()
