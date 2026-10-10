@@ -14,8 +14,8 @@ android {
     applicationId = "com.ivicastojanoski.miniscore"
     minSdk = 24
     targetSdk = 36
-    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 9
-    versionName = providers.gradleProperty("versionName").orNull ?: "1.5.3"
+    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 10
+    versionName = providers.gradleProperty("versionName").orNull ?: "1.5.4"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }

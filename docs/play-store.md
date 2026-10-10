@@ -1,8 +1,8 @@
 # Play Internal testing releases
 
-Miniscore now uses the owner-approved package `com.ivicastojanoski.miniscore`, version **1.5.3**, version code **9**. This identity requires a new app in Play Console; its initial bundle must be uploaded manually before the publishing API can be used. The name remains **Miniscore**, with the approved lavender **Score pair** launcher icon. The daily JSON feed continues to use the same URL.
+Miniscore now uses the owner-approved package `com.ivicastojanoski.miniscore`, version **1.5.4**, version code **10**. This identity requires a new app in Play Console; its initial bundle must be uploaded manually before the publishing API can be used. The name remains **Miniscore**, with the approved mint-teal **Score pair** launcher icon. The daily JSON feed continues to use the same URL.
 
-The selected logo is a deep-purple scoreboard with lavender `0:0` cutouts. It is used in the app header, adaptive and legacy launcher icons, and the prepared [512px Play Store icon](branding/miniscore-play-icon.png). The [SVG source](branding/miniscore-score-pair.svg) has a full-square background. A separate monochrome drawable preserves the digit and colon cutouts for Android themed icons.
+The selected logo is a white scoreboard with mint-teal `0:0` cutouts on a mint-teal background (`#62BEAF`), inspired by the owner’s reference logo. It is used in the app header, adaptive and legacy launcher icons, and the prepared [512px Play Store icon](branding/miniscore-play-icon.png). The [SVG source](branding/miniscore-score-pair.svg) has a full-square background. A separate monochrome drawable preserves the digit and colon cutouts for Android themed icons.
 
 ## First release published
 

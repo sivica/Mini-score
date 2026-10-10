@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -551,7 +552,7 @@ fun MainNbaScreen(viewModel: GameViewModel) {
                         modifier = Modifier
                             .size(40.dp)
                             .clip(RoundedCornerShape(13.dp))
-                            .background(ElegantAccent),
+                            .background(colorResource(R.color.miniscore_logo_background)),
                         contentAlignment = Alignment.Center
                     ) {
                         Image(painterResource(R.drawable.miniscore_mark), contentDescription = "Miniscore logo",

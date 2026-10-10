@@ -2,7 +2,7 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="64dp" android:height="64dp"
     android:viewportWidth="512" android:viewportHeight="512">
-    <path android:fillColor="#D0BCFF" android:pathData="M0,256A256,256 0,1 0,512,256A256,256 0,1 0,0,256Z" />
-    <path android:fillColor="#381E72" android:fillType="evenOdd"
+    <path android:fillColor="@color/miniscore_logo_background" android:pathData="M0,256A256,256 0,1 0,512,256A256,256 0,1 0,0,256Z" />
+    <path android:fillColor="@color/miniscore_logo_foreground" android:fillType="evenOdd"
         android:pathData="M153,168H359A32,32 0,0 1,391,200V312A32,32 0,0 1,359,344H153A32,32 0,0 1,121,312V200A32,32 0,0 1,153,168Z M175,197H192A25,25 0,0 1,217,222V290A25,25 0,0 1,192,315H175A25,25 0,0 1,150,290V222A25,25 0,0 1,175,197Z M183.5,219H183.5A11.5,11.5 0,0 1,195,230.5V281.5A11.5,11.5 0,0 1,183.5,293H183.5A11.5,11.5 0,0 1,172,281.5V230.5A11.5,11.5 0,0 1,183.5,219Z M320,197H337A25,25 0,0 1,362,222V290A25,25 0,0 1,337,315H320A25,25 0,0 1,295,290V222A25,25 0,0 1,320,197Z M328.5,219H328.5A11.5,11.5 0,0 1,340,230.5V281.5A11.5,11.5 0,0 1,328.5,293H328.5A11.5,11.5 0,0 1,317,281.5V230.5A11.5,11.5 0,0 1,328.5,219Z M245,231A11,11 0,1 0,267,231A11,11 0,1 0,245,231Z M245,281A11,11 0,1 0,267,281A11,11 0,1 0,245,281Z" />
 </vector>
