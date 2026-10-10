@@ -14,7 +14,7 @@ The scoreboard uses compact team names/logos and mirrored scores in the center. 
 
 ## Play Store distribution
 
-A signed AAB and a manual, approval-gated GitHub workflow support Play **Internal testing**. See the [release setup guide](docs/play-store.md) for the first Console upload, signing secrets, version codes and subsequent releases.
+Miniscore **1.5.1 / code 7** is published to Play **Internal testing**. Select testers in [Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/tracks/4701443907528615174?tab=testers) to enable installation through the [test join link](https://play.google.com/apps/internaltest/4701443907528615174). A manual GitHub workflow is prepared for future approved uploads; credentials remain local. See the [release setup guide](docs/play-store.md) for signing secrets, version codes and subsequent releases.
 
 ## Initial published game
 

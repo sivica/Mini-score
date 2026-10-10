@@ -2,6 +2,14 @@
 
 Miniscore uses package `com.aistudio.nbatracker.qfzwpm`. Its first signed release is version **1.5.1**, version code **7**. The initial bundle must be uploaded manually to a new Miniscore app in Play Console before the publishing API can be used.
 
+## First release published
+
+Version **1.5.1**, code **7**, was uploaded manually and published to **Internal testing** on October 10, 2026. [Manage Miniscore in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/tracks/4701443907528615174?tab=releases). The source is commit `26df5f1`; bundle SHA-256 is `b8d75fbd408812791ff096e42ebb8b89c6aeae513e17606696ac316b359de194`.
+
+Testers must be selected in the track's Testers tab before they can install through the [join link](https://play.google.com/apps/internaltest/4701443907528615174). Google displays a temporary package-based app name until store setup and review are complete. Production distribution is not configured.
+
+This release used the local private Miniscore upload key. No signing or Play credentials were transferred to GitHub. The workflow below is prepared for future automation and still requires owner-approved secret/environment configuration and merging to `main` before use.
+
 ## Local release build
 
 Set `KEYSTORE_PATH`, `STORE_PASSWORD`, `KEY_ALIAS` (default `upload`), and `KEY_PASSWORD` in the build environment. Run Gradle 9.6.1 with Java 17 or newer and Android SDK platform 36.1 / build tools 36.0.0:
