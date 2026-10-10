@@ -1,0 +1,7 @@
+{
+  "name": "miniscore-deployment-tools",
+  "private": true,
+  "devDependencies": {
+    "railway": "3.13.1"
+  }
+}

@@ -1,0 +1,13 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Miniscore admin</title><link rel="stylesheet" href="/admin/assets/admin.css"><script src="/admin/assets/admin.js" defer></script></head>
+<body><header><div class="brand"><img class="logo" src="/admin/assets/logo.svg" alt=""><div><h1>Miniscore</h1><p>Game administration</p></div></div><button id="import">Import now</button></header>
+<main><p id="message" role="status" aria-live="polite">Loading games…</p><p id="status" class="muted"></p>
+<div class="layout"><aside><label for="search">Search games</label><input id="search" placeholder="Team, date or status"><div id="games"></div>
+<details><summary>Publication history</summary><div id="history"></div></details></aside>
+<section id="editor" hidden><div class="editor-title"><h2 id="title"></h2><span id="badge"></span></div>
+<div class="actions"><button id="save">Save draft</button><button id="preview">Preview</button><button id="publish" class="primary">Publish</button><button id="default">Make default</button></div>
+<p id="draft-status" class="muted"></p><form id="fields" novalidate></form>
+<details><summary>Manual corrections</summary><p>Published corrections remain after automatic imports. Clearing them restores the latest provider values for this game.</p><button id="clear" class="secondary">Clear corrections</button></details>
+<dialog id="preview-dialog"><h2>Game preview</h2><div id="preview-content"></div><button id="close-preview">Close preview</button></dialog>
+</section></div></main><footer>Daily import · 8:00 AM Europe/Skopje · Changes reach the app on its next refresh</footer></body></html>

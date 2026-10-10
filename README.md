@@ -4,9 +4,9 @@ A high-fidelity, mobile-first web interface for presenting basketball statistics
 
 ## Android: remotely updated games
 
-**Miniscore 1.6.0**, package `com.ivicastojanoski.miniscore`, loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
+**Miniscore 1.7.0**, package `com.ivicastojanoski.miniscore`, loads games and stats from the [Railway API](https://miniscore-api-production.up.railway.app/games), backed by PostgreSQL. Install this APK once; later stat updates do not require a new APK. The private [owner dashboard](https://miniscore-api-production.up.railway.app/admin) supports drafts, previews, corrections, publishing and rollback. Read the [backend guide](docs/railway-backend.md).
 
-The app refreshes on opening/resuming, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The scoreboard date comes from the selected game's date. A [GitHub workflow](https://github.com/sivica/Mini-score/actions/workflows/daily-game-feed.yml) updates the feed daily at **08:00 Europe/Skopje**, fetching ESPN NBA results, player stats and upcoming games. [Automation details](docs/daily-game-feed.md).
+The app refreshes on opening/resuming, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The scoreboard date comes from the selected game's date. Railway imports ESPN game stats daily at **08:00 Europe/Skopje**, preserving manual corrections. Older APKs through 1.6.0 retain the [legacy GitHub feed](docs/game-feed.md) and its daily publisher.
 
 The main screen centers the mint-teal **Score pair** mark. Open the left drawer for the **Miniscore** name, game search and dated game cards with logos, scores and tipoff times. Selecting a game closes the drawer and returns its box score to the top. Refreshes of the same game preserve the scroll position. The unfinished bottom navigation and game-selector sheet have been removed. The app includes only published games and the real offline fallback.
 
@@ -14,7 +14,7 @@ The compact scoreboard shows team logos around mirrored scores, with names only 
 
 ## Play Store distribution
 
-The replacement build is **1.6.0 / code 12**, package `com.ivicastojanoski.miniscore`, and requires a new Play Console app. Miniscore **1.5.1 / code 7** was published to Play **Internal testing** under the old package `com.aistudio.nbatracker.qfzwpm`. At the owner's request on October 10, 2026, that old Play app was **deleted**. Google confirms a recovery deadline of **October 17, 2026**. [Old app deletion status in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution). A manual GitHub publishing workflow targets the replacement package, but credentials remain local. See the [release setup guide](docs/play-store.md).
+The replacement build is **1.7.0 / code 13**, package `com.ivicastojanoski.miniscore`, and requires a new Play Console app. Miniscore **1.5.1 / code 7** was published to Play **Internal testing** under the old package `com.aistudio.nbatracker.qfzwpm`. At the owner's request on October 10, 2026, that old Play app was **deleted**. Google confirms a recovery deadline of **October 17, 2026**. [Old app deletion status in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution). A manual GitHub publishing workflow targets the replacement package, but credentials remain local. See the [release setup guide](docs/play-store.md).
 
 ## Initial published game
 
@@ -22,7 +22,7 @@ Philadelphia 76ers at Brooklyn Nets, October 8, 2026, Barclays Center: **PHI 108
 
 Sources: [NBA result and quarter scores](https://www.nba.com/game/phi-vs-bkn-0012600034), [RealGM player box score](https://basketball.realgm.com/nba/boxscore/2026-10-08/Philadelphia-at-Brooklyn/526643).
 
-This game's photos and logos are bundled for offline use; [NBA asset sources](docs/nba-image-sources.json). New games can use HTTPS image URLs with image caching and initials/team-code fallbacks. `PreseasonGameData.kt` is the first-launch offline fallback, `GameFeedRepository.kt` fetches/validates/caches published games, and the development branch's `games.json` is a test fixture. The live file is on **game-data**.
+This game's photos and logos are bundled for offline use; [NBA asset sources](docs/nba-image-sources.json). New games can use HTTPS image URLs with image caching and initials/team-code fallbacks. `PreseasonGameData.kt` is the first-launch offline fallback, `GameFeedRepository.kt` fetches/validates/caches published games, and the development branch's `games.json` is a test fixture. The current API uses PostgreSQL; **game-data** serves older APKs.
 
 The separate static web demo continues to use `data.js` and shows this same final game, with preseason records PHI 1–1 / BKN 2–0. The sections below describe that web demo.
 

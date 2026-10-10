@@ -166,7 +166,7 @@ class GameFeedRepository(
     }
 
     companion object {
-        const val FEED_URL = "https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json"
+        const val FEED_URL = BuildConfig.GAME_FEED_URL
         private val client = OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS).callTimeout(25, TimeUnit.SECONDS).build()
 

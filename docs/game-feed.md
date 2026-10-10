@@ -1,6 +1,6 @@
-# Update Miniscore games without rebuilding the APK
+# Legacy Update Miniscore games without rebuilding the APK
 
-Install **Miniscore 1.5.1 once**. Its date, games, scores, rosters and player stats then come from a public GitHub JSON feed (existing 1.3 installations also support feed updates):
+This guide applies to older APKs through **1.6.0**. **1.7.0** uses the [Railway backend](railway-backend.md). Install **Miniscore 1.5.1 once**. Its date, games, scores, rosters and player stats then come from a public GitHub JSON feed (existing 1.3 installations also support feed updates):
 
 - [Edit the live games.json](https://github.com/sivica/Mini-score/edit/game-data/games.json)
 - [View the live feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json)
@@ -19,7 +19,7 @@ The `game-data` branch is the published data source. The copy of `games.json` on
 4. Set `competition`, `venue`, and the two teams. Set `defaultGameId` to the new game's `id` to open it by default.
 5. Before tipoff use `status: "SCHEDULED"`, `score: 0`, `players: []` and `quarters: []` for both teams. Optionally add `tipoffUTC`, for example `"2026-10-10T00:00:00Z"`. Version 1.5 displays that time as **8:00 PM ET** in collapsed game cards and the scheduled-game state. The app displays dashes for scheduled scores and a message when stats are unavailable.
 6. When verified stats are available, add the players, scores and quarter scores; set `status` to `LIVE` or `FINISHED` as appropriate. Do not copy yesterday's player stats into a new game.
-7. Click **Commit changes** and commit directly to **game-data**. Reopen the app, tap the refresh icon, or pull down the lineup to download the published data. GitHub may take a few minutes to serve a new revision.
+7. Click **Commit changes** and commit directly to **game-data**. Reopen the app, pull down the lineup to download the published data. GitHub may take a few minutes to serve a new revision.
 
 You can also ask Codex to update this file with a sourced game, or use GitHub Desktop / git to commit data edits to `game-data`. The next morning's automated run replaces covered games with verified provider data, so manual edits to those games are temporary overrides.
 
@@ -48,7 +48,7 @@ Team logos and all 30 headshots for the initial game are bundled. Other download
 
 ## Refresh and offline behavior
 
-The app checks the feed when opened or resumed. Pull to refresh and the header refresh button both request another download. A small spinner shows the request; a failed refresh displays **“Couldn’t refresh. Showing saved games.”**
+The app checks the feed when opened or resumed. Pull to refresh requests another download. A small spinner shows the request; a failed refresh displays **“Couldn’t refresh. Showing saved games.”**
 
 Every valid feed is saved to internal storage before the next launch. Offline, the app loads the last saved feed; on a first launch without a connection it shows the bundled October 8 game. An invalid JSON file, unsupported schema, duplicate ID, negative or fractional stat, invalid date, or insecure image URL is rejected without replacing the working cache. Up to 100 games and a 2 MiB feed are supported.
 

@@ -14,8 +14,14 @@ android {
     applicationId = "com.ivicastojanoski.miniscore"
     minSdk = 24
     targetSdk = 36
-    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 12
-    versionName = providers.gradleProperty("versionName").orNull ?: "1.6.0"
+    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 13
+    versionName = providers.gradleProperty("versionName").orNull ?: "1.7.0"
+    val gameFeedUrl = providers.gradleProperty("gameFeedUrl").orNull
+      ?: "https://miniscore-api-production.up.railway.app/games"
+    require(gameFeedUrl.startsWith("https://") && !gameFeedUrl.contains('"') && !gameFeedUrl.contains('\\')) {
+      "gameFeedUrl must be an HTTPS URL"
+    }
+    buildConfigField("String", "GAME_FEED_URL", "\"$gameFeedUrl\"")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
