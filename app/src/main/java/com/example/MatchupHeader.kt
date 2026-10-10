@@ -156,11 +156,7 @@ private fun ScorePair(game: Game, modifier: Modifier = Modifier) {
     }
 }
 
-internal fun shortTeamName(team: Team): String = when (team.code) {
-    "PHI" -> "76ers"
-    "BKN" -> "Nets"
-    else -> team.shortName
-}
+internal fun shortTeamName(team: Team): String = team.code
 
 @Composable
 fun LineupSectionHeader(game: Game, title: String) {

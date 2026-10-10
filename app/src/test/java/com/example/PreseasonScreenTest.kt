@@ -71,8 +71,8 @@ class PreseasonScreenTest {
         assertTrue("Logo centered in main app bar", kotlin.math.abs(logo.center.x - bar.center.x) < 1f)
         composeTestRule.onNodeWithTag("game_selector").assertDoesNotExist()
         composeTestRule.onNodeWithTag("lineup_header_Starting lineup").assertDoesNotExist()
-        composeTestRule.onNodeWithTag("scoreboard_away_name").assertTextEquals("76ers").assertIsDisplayed()
-        composeTestRule.onNodeWithTag("scoreboard_home_name").assertTextEquals("Nets").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("scoreboard_away_name").assertTextEquals("PHI").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("scoreboard_home_name").assertTextEquals("BKN").assertIsDisplayed()
         for (label in listOf("Games", "Players", "Standings", "Settings")) {
             composeTestRule.onNodeWithText(label).assertDoesNotExist()
         }
@@ -115,6 +115,8 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithTag("open_games_drawer").performClick()
         composeTestRule.onNodeWithTag("games_drawer").assertIsDisplayed()
         composeTestRule.onNodeWithText("Miniscore").assertIsDisplayed()
+        composeTestRule.onNodeWithTag("drawer_away_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertTextEquals("PHI")
+        composeTestRule.onNodeWithTag("drawer_home_name_${PreseasonGameData.GAME_ID}", useUnmergedTree = true).assertTextEquals("BKN")
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/games-drawer-matches.png")
         composeTestRule.onNodeWithTag("game_search").performTextReplacement("no-such-team")
         composeTestRule.onNodeWithText("No games found").assertIsDisplayed()
@@ -295,6 +297,10 @@ class PreseasonScreenTest {
                 }
             }
         }
+        composeTestRule.onNodeWithTag("scoreboard_away_name").assertTextEquals("MEM")
+        composeTestRule.onNodeWithTag("scoreboard_home_name").assertTextEquals("CHI")
+        composeTestRule.onNodeWithTag("drawer_away_name_${game.id}", useUnmergedTree = true).assertTextEquals("MEM")
+        composeTestRule.onNodeWithTag("drawer_home_name_${game.id}", useUnmergedTree = true).assertTextEquals("CHI")
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/centered-header-200-percent.png")
         for (tag in listOf("game_context", "selected_game_date", "team_score_MEM", "team_score_CHI", "scoreboard_away_name", "scoreboard_home_name",
             "drawer_away_name_${game.id}", "drawer_home_name_${game.id}", "drawer_status_${game.id}")) {
