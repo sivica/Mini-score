@@ -1,6 +1,6 @@
 # Play Internal testing releases
 
-Miniscore uses package `com.aistudio.nbatracker.qfzwpm`. Its first signed release is version **1.5.1**, version code **7**. The initial bundle must be uploaded manually to a new Miniscore app in Play Console before the publishing API can be used.
+Miniscore now uses the owner-approved package `com.ivicastojanoski.miniscore`, version **1.5.2**, version code **8**. This identity requires a new app in Play Console; its initial bundle must be uploaded manually before the publishing API can be used. The name remains **Miniscore**, with the existing lavender **m** launcher icon. The daily JSON feed continues to use the same URL.
 
 ## First release published
 
@@ -8,7 +8,7 @@ Version **1.5.1**, code **7**, was uploaded manually and published to **Internal
 
 At the owner's request on October 10, 2026, the old app's internal test was paused and the app was then **deleted** after explicit approval. Google verified the developer-registration receipt and package and confirms that the app can be recovered until **October 17, 2026**. After that deadline deletion is permanent. Existing installations remain on users' devices, but the old app is no longer available for new device downloads or Play updates. Production distribution was never configured. [Deletion status in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution).
 
-The package `com.aistudio.nbatracker.qfzwpm` belongs to the deleted app and must not be used to create a replacement Play app. Future publication requires either recovering the old app before the deadline or explicitly configuring a new app/package. The build and publishing instructions below describe the previous release setup. The registration transaction ID is private and is not stored in this repository.
+The package `com.aistudio.nbatracker.qfzwpm` belongs to the deleted app and must not be used to create a replacement Play app. The replacement uses `com.ivicastojanoski.miniscore`; it installs separately from the old app and has its own local cache. The build and publishing instructions below target the replacement. The registration transaction ID is private and is not stored in this repository.
 
 This release used the local private Miniscore upload key. No signing or Play credentials were transferred to GitHub. The workflow below is prepared for future automation and still requires owner-approved secret/environment configuration and merging to `main` before use.
 
@@ -39,6 +39,6 @@ Merge the workflow and app changes to `main`. From Actions, run **Build and publ
 
 ## Initial Console upload
 
-Create **Miniscore**, English (United States), app category, free, using its existing package name. The owner must confirm Google's Developer Program Policies and export-law declarations. Create an Internal testing release and upload the signed AAB. Complete Play App Signing enrollment and any required release declarations, then review and start the internal release. Tester access is managed separately in the track's Testers tab.
+Create **Miniscore**, English (United States), app category, free, using package `com.ivicastojanoski.miniscore`. The owner must confirm Google's Developer Program Policies and export-law declarations. Create an Internal testing release and upload the signed AAB. Complete Play App Signing enrollment and any required release declarations, then review and start the internal release. Tester access is managed separately in the track's Testers tab.
 
 References: [SampleApp workflow](https://github.com/sivica/SampleApp/blob/main/.github/workflows/play-internal-release.yml), [upload action](https://github.com/r0adkll/upload-google-play), [GitHub environments](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/manage-environments).

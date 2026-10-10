@@ -20,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  PACKAGE_NAME: com.aistudio.nbatracker.qfzwpm
+  PACKAGE_NAME: com.ivicastojanoski.miniscore
 
 jobs:
   build:

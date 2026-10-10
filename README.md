@@ -4,7 +4,7 @@ A high-fidelity, mobile-first web interface for presenting basketball statistics
 
 ## Android: remotely updated games
 
-**Miniscore 1.5.1** loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
+**Miniscore 1.5.2**, package `com.ivicastojanoski.miniscore`, loads dates, games, scores, rosters and player stats from a [GitHub-hosted JSON feed](https://raw.githubusercontent.com/sivica/Mini-score/game-data/games.json). Install this APK once; later data edits do not require a new APK. [Edit the live feed](https://github.com/sivica/Mini-score/edit/game-data/games.json) or read the [step-by-step publishing guide](docs/game-feed.md).
 
 The app refreshes on opening/resuming, from the header refresh button, or by pulling down the lineup. Valid feeds are cached for offline use. Failed or malformed downloads retain the previous games. The scoreboard date comes from the selected game's date. A [GitHub workflow](https://github.com/sivica/Mini-score/actions/workflows/daily-game-feed.yml) updates the feed daily at **08:00 Europe/Skopje**, fetching ESPN NBA results, player stats and upcoming games. [Automation details](docs/daily-game-feed.md).
 
@@ -14,7 +14,7 @@ The scoreboard uses compact team names/logos and mirrored scores in the center. 
 
 ## Play Store distribution
 
-Miniscore **1.5.1 / code 7** was published to Play **Internal testing**. At the owner's request on October 10, 2026, the old Play app was **deleted**. Google confirms a recovery deadline of **October 17, 2026**. The old package is `com.aistudio.nbatracker.qfzwpm`. [Old app deletion status in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution). Any future Play release must use a recovered app or a new app/package configured by the owner. A manual GitHub publishing workflow is prepared, but credentials remain local. See the [release setup guide](docs/play-store.md).
+The replacement build is **1.5.2 / code 8**, package `com.ivicastojanoski.miniscore`, and requires a new Play Console app. Miniscore **1.5.1 / code 7** was published to Play **Internal testing** under the old package `com.aistudio.nbatracker.qfzwpm`. At the owner's request on October 10, 2026, that old Play app was **deleted**. Google confirms a recovery deadline of **October 17, 2026**. [Old app deletion status in Play Console](https://play.google.com/console/u/0/developers/4637234217663254020/app/4975701497914028566/advanced-distribution). A manual GitHub publishing workflow targets the replacement package, but credentials remain local. See the [release setup guide](docs/play-store.md).
 
 ## Initial published game
 

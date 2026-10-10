@@ -11,11 +11,11 @@ android {
   compileSdk { version = release(36) { minorApiLevel = 1 } }
 
   defaultConfig {
-    applicationId = "com.aistudio.nbatracker.qfzwpm"
+    applicationId = "com.ivicastojanoski.miniscore"
     minSdk = 24
     targetSdk = 36
-    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 7
-    versionName = providers.gradleProperty("versionName").orNull ?: "1.5.1"
+    versionCode = providers.gradleProperty("versionCode").orNull?.toInt() ?: 8
+    versionName = providers.gradleProperty("versionName").orNull ?: "1.5.2"
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
