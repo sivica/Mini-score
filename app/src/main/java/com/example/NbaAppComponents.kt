@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.ui.theme.*
 import androidx.compose.animation.*
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,7 +26,6 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
@@ -44,7 +42,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
@@ -343,21 +340,15 @@ class GameViewModel : ViewModel() {
 }
 
 // ==========================================
-// 6. ORIGINAL TEAM BADGES
+// 6. TEAM NAMES
 // ==========================================
 
-/** App-owned code badge. Feed logo URLs are deliberately never loaded. */
+/** Text-only team identity. Feed logo URLs are deliberately never loaded. */
 @Composable
-fun TeamLogoCanvas(team: Team, size: Dp, modifier: Modifier = Modifier, tagSuffix: String = "",
-    labelFontSize: TextUnit = (size.value * 0.2f).sp) {
-    Box(modifier.size(size).clip(CircleShape).background(colorResource(R.color.miniscore_logo_background))
-        .testTag("team_logo_${team.code}$tagSuffix")
-        .semantics(mergeDescendants = true) { contentDescription = "${team.name} team badge" },
-        contentAlignment = Alignment.Center) {
-        Text(team.code, color = Color(0xFF102925), fontSize = labelFontSize,
-            lineHeight = labelFontSize * 1.2f,
-            fontWeight = FontWeight.Bold, maxLines = 1, textAlign = TextAlign.Center)
-    }
+fun TeamNameText(team: Team, modifier: Modifier = Modifier) {
+    Text(team.code, color = TextPrimary, fontSize = 14.sp,
+        lineHeight = 18.sp, fontWeight = FontWeight.Medium, textAlign = TextAlign.Center,
+        maxLines = 1, modifier = modifier.semantics { contentDescription = team.name })
 }
 
 // ==========================================
@@ -490,29 +481,24 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
             .clickable(onClickLabel = "Open player details") { onPlayerClick(player) }
             .testTag("lineup_player_${player.id}")
     ) {
-        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-            if (player.isLeftTeam) PlayerPortrait(player, size = 28.dp)
-            Column(Modifier.weight(1f)) {
-                Text(player.name, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
-                    maxLines = 1, overflow = TextOverflow.Ellipsis,
+        Column(Modifier.fillMaxWidth()) {
+            Text(player.name, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
+                maxLines = 1, overflow = TextOverflow.Ellipsis,
+                textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
+                modifier = Modifier.fillMaxWidth().testTag("player_name_${player.id}"))
+            Row(Modifier.fillMaxWidth().padding(top = 3.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (!player.isLeftTeam) {
+                    PlayerMinutes(player, Modifier.alignByBaseline())
+                    Spacer(Modifier.width(6.dp))
+                }
+                Text("#${player.number}", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
                     textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
-                    modifier = Modifier.fillMaxWidth().testTag("player_name_${player.id}"))
-                Row(Modifier.fillMaxWidth().padding(top = 3.dp), verticalAlignment = Alignment.CenterVertically) {
-                    if (!player.isLeftTeam) {
-                        PlayerMinutes(player, Modifier.alignByBaseline())
-                        Spacer(Modifier.width(6.dp))
-                    }
-                    Text("#${player.number}", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
-                        textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
-                        maxLines = 1, modifier = Modifier.weight(1f).alignByBaseline())
-                    if (player.isLeftTeam) {
-                        Spacer(Modifier.width(6.dp))
-                        PlayerMinutes(player, Modifier.alignByBaseline())
-                    }
+                    maxLines = 1, modifier = Modifier.weight(1f).alignByBaseline())
+                if (player.isLeftTeam) {
+                    Spacer(Modifier.width(6.dp))
+                    PlayerMinutes(player, Modifier.alignByBaseline())
                 }
             }
-            if (!player.isLeftTeam) PlayerPortrait(player, size = 28.dp)
         }
         Row(modifier = Modifier.fillMaxWidth().padding(top = 6.dp)) {
             listOf("PTS", "REB", "AST", "FGM", "FGA").forEach { label ->
@@ -548,20 +534,6 @@ private fun PlayerMinutes(player: Player, modifier: Modifier = Modifier) {
     Text(player.stats.minutesDisplay, color = TextPrimary, fontSize = 14.sp, lineHeight = 18.sp,
         fontFamily = FontFamily.Monospace, maxLines = 1,
         modifier = modifier.testTag("player_minutes_${player.id}"))
-}
-
-/** Generic avatar drawn in app code; no bundled photo or feed image request. */
-@Composable
-fun PlayerPortrait(player: Player, size: Dp, modifier: Modifier = Modifier) {
-    val avatarColor = TextSecondary
-    Canvas(modifier.size(size).clip(CircleShape).background(SportsDarkSurface)
-        .testTag("player_portrait_${player.id}")
-        .semantics { contentDescription = "${player.name} avatar" }) {
-        val unit = this.size.minDimension
-        drawCircle(avatarColor, radius = unit * 0.16f, center = Offset(unit * 0.5f, unit * 0.35f))
-        drawOval(avatarColor, topLeft = Offset(unit * 0.2f, unit * 0.57f),
-            size = androidx.compose.ui.geometry.Size(unit * 0.6f, unit * 0.45f))
-    }
 }
 
 // ==========================================
@@ -736,8 +708,6 @@ fun PlayerDetailBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                PlayerPortrait(player, size = 54.dp)
-                Spacer(modifier = Modifier.width(16.dp))
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(

@@ -4,7 +4,7 @@ Tracked in [IVI-10](https://linear.app/ivicastojanoski/issue/IVI-10/provide-mini
 
 ## Owner-approved direction
 
-The owner accepted GitHub Pages hosting for the policy, a teen-and-adult audience, and a content-permission audit. The intended audience is ages **13–15, 16–17, and 18+**. This is an audience decision, not an IARC rating or proof of compliance with rules for minors in every launch country. The Play Console declaration is a separate task in IVI-11. The owner subsequently confirmed no existing licences and authorized original badges and generic avatars, with the statistics-source licence remaining unresolved.
+The owner accepted GitHub Pages hosting for the policy, a teen-and-adult audience, and a content-permission audit. The intended audience is ages **13–15, 16–17, and 18+**. This is an audience decision, not an IARC rating or proof of compliance with rules for minors in every launch country. The Play Console declaration is a separate task in IVI-11. The owner subsequently confirmed no existing licences and authorized original badges and generic avatars, with the statistics-source licence remaining unresolved. The latest direction replaces those badges with plain three-letter team codes and removes avatars entirely.
 
 The policy source is [`privacy/index.html`](../privacy/index.html). Its public URL is `https://sivica.github.io/Mini-score/privacy/`. The repository's existing Pages configuration publishes the root of `develop`; changes to this page on that branch do not trigger the `main` Android release workflow. Keep the page synchronized when the app's practices change.
 
@@ -14,7 +14,7 @@ The policy source is [`privacy/index.html`](../privacy/index.html). Its public U
 | --- | --- |
 | Account and permissions | `AndroidManifest.xml` requests INTERNET only. The public app has no account creation or sign-in. Owner dashboard credentials are not public-app credentials. |
 | Game requests | `GameFeedRepository.kt` uses OkHttp to GET the Railway `/games` endpoint on opening/resuming and refresh. It sends no user profile, search string or selected-game ID. The service receives connection metadata, including an IP address. |
-| Image requests | Existing code 1002 uses Coil `AsyncImage` for feed-provided HTTPS logos and portraits; image hosts receive IP addresses and request metadata. This PR replaces rendering with app-owned badges/avatars, removes Coil and all 32 bundled NBA images, and ignores feed image URLs for display. |
+| Image requests | Existing code 1002 uses Coil `AsyncImage` for feed-provided HTTPS logos and portraits; image hosts receive IP addresses and request metadata. This PR replaces team artwork with plain three-letter codes and removes player images/avatars entirely. It removes Coil and all 32 bundled NBA images, and ignores feed image URLs for display. |
 | Local state | `filesDir/games-cache.json` holds the last valid feed; existing releases can cache images; Compose maintains selection/search state. No per-user search history is stored by the backend. Old image caches may remain until cleared or the app is uninstalled; the proposed app does not display them. |
 | Backup | `allowBackup=true`; current backup XML does not exclude the feed file. Android may back up/transfer eligible app data. Do not promise uninstall deletes all cloud/device-backup copies. |
 | Ads, purchases and analytics | No active ads, billing, Firebase Analytics or Crashlytics integration was found in application code/dependencies. The Firebase BOM and logging-interceptor dependency alone do not activate those SDKs. |
@@ -39,7 +39,7 @@ NBA terms restrict public redistribution without permission. Google Play also id
 
 ### Decisions still needed
 
-- The owner selected the image replacement path. This PR implements original mint-teal team-code badges and generic avatars, without remote image loads or bundled photos. The earlier Play build and saved Store graphics still contain the old images. Rebuild/revalidate the app and regenerate Store screenshots/feature graphic before using this change for Production; do not treat code 1002 as remediated.
+- The owner selected the image replacement path. This PR implements the latest requested text-only team codes and removes player avatars, without remote image loads or bundled photos. The earlier Play build and saved Store graphics still contain the old images. Rebuild/revalidate the app and regenerate Store screenshots/feature graphic before using this change for Production; do not treat code 1002 as remediated.
 - Separately establish an authorized statistics source. Removing images, entering data manually or adding attribution does not by itself resolve data-source rights.
 - A paid provider must explicitly permit the planned use. A subscription or accessible endpoint is not sufficient evidence that logos/photos and redistribution are included.
 - Do not mark IVI-10 done until the public URL is verified, audience approval is recorded, and content rights or an acceptable replacement source are established.

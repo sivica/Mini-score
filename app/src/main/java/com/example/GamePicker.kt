@@ -24,7 +24,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.ui.theme.*
@@ -36,7 +35,6 @@ import java.util.TimeZone
 @Composable
 fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit) {
     val largeText = LocalDensity.current.fontScale >= 1.5f
-    val badgeSize = if (largeText) 64.dp else 48.dp
     Card(onClick = onClick, shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = if (selected) ElegantSelectedBg else SportsDarkSurface),
         border = BorderStroke(1.dp, ElegantBorderColor),
@@ -46,13 +44,13 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
             if (largeText) DrawerScore(game, 14, Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamLogoCanvas(game.awayTeam, badgeSize, tagSuffix = "_drawer_${game.id}", labelFontSize = 12.sp)
+                    TeamNameText(game.awayTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.awayTeam.code}_${game.id}"))
                 }
                 if (!largeText) {
-                    DrawerScore(game, 18, Modifier.weight(2f))
+                    DrawerScore(game, 18, Modifier.weight(1.25f))
                 }
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamLogoCanvas(game.homeTeam, badgeSize, tagSuffix = "_drawer_${game.id}", labelFontSize = 12.sp)
+                    TeamNameText(game.homeTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.homeTeam.code}_${game.id}"))
                 }
             }
             Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,
