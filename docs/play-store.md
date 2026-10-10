@@ -18,7 +18,7 @@ The deleted app's release used the local private Miniscore upload key. The repla
 
 ## Local release build
 
-Set `KEYSTORE_PATH`, `STORE_PASSWORD`, `KEY_ALIAS` (default `upload`), and `KEY_PASSWORD` in the build environment. Run Gradle 9.6.1 with Java 17 or newer and Android SDK platform 36.1 / build tools 36.0.0:
+Set `KEYSTORE_PATH`, `STORE_PASSWORD`, `KEY_ALIAS` (default `upload`), and `KEY_PASSWORD` in the build environment. Run Gradle 9.6.1 with Java 21 and Android SDK platform 36.1 / build tools 36.0.0. The Android 36 Robolectric tests require Java 21, so both PR checks and publishing use it:
 
 ```sh
 gradle --no-daemon --no-configuration-cache testDebugUnitTest bundleRelease
