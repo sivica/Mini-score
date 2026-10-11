@@ -409,7 +409,8 @@ fun MainNbaScreen(viewModel: GameViewModel, onRefresh: () -> Unit = { viewModel.
                 importSessionId = session.id
                 importChart.launch(arrayOf("application/json", "text/plain"))
             }, refreshing = session.refreshing || session.importing, error = session.error,
-            modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing))
+            modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing),
+            promptInput = if (BuildConfig.CHATGPT_ENABLED) ({ com.example.chatgpt.ChatGptChartInput(session, viewModel.visualizations) }) else null)
         return
     }
     val games = viewModel.games.filterNot { it.isDemo }

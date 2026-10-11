@@ -1,5 +1,7 @@
 # Game visualizations
 
+The separate opt-in [ChatGPT Android prototype](chatgpt-android-prototype.md) can generate validated chart settings using an eligible user's own plan. It remains disabled in release builds pending eligibility and real-account verification.
+
 This MVP adds two charts for an available `FINISHED` or `LIVE` game's player statistics. Open **Charts** from the displayed game. The session captures native game data; changing filters never fetches data. **Refresh** explicitly requests the latest published feed for that same game. It does not promise live scores or change the selected game to the feed's new default.
 
 Native controls select chart, team, player, metric and sort order. **Show accessible source table** presents the same filtered, sorted data without requiring WebView. Field goals show made, attempted, missed and percentage; the combined percentage is total made divided by total attempts, rather than an average of player percentages. Unavailable counts remain **Unknown**. Zero attempts produce **N/A** for a player's percentage. A combined percentage is Unknown if any relevant count is missing.
