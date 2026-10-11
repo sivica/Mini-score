@@ -4,6 +4,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.async
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.setMain
@@ -141,7 +143,7 @@ class GameFeedTest {
                 catch (_: Exception) { rejected = true }
                 assertTrue("Reject $description", rejected)
                 assertArrayEquals("Keep exact cache bytes after $description", saved, cache.readBytes())
-                assertEquals("Reload saved games after $description", expected, GameFeedRepository(cache).cachedFeed())
+                assertEquals("Reload saved games after $description", expected.copy(provenance = expected.provenance.copy(fromCache = true)), GameFeedRepository(cache).cachedFeed())
             }
         } finally { directory.deleteRecursively() }
     }
@@ -160,7 +162,7 @@ class GameFeedTest {
                 val feed = repository.refresh()
                 assertTrue(feed.games.single().awayQuarters.isEmpty())
                 assertTrue(feed.games.single().homeQuarters.isEmpty())
-                assertEquals(feed, repository.cachedFeed())
+                assertEquals(feed.copy(provenance = feed.provenance.copy(fromCache = true)), repository.cachedFeed())
             } finally { directory.deleteRecursively() }
         }
     }
@@ -183,5 +185,84 @@ class GameFeedTest {
             assertEquals("Saturday, October 10, 2026", model.games.single { it.id == "cached-game" }.dateLabel)
             assertNotNull(model.feedMessage.value)
         } finally { directory.deleteRecursively(); Dispatchers.resetMain() }
+    }
+
+    @Test fun provenanceAndOlderPublicationsCommitAtomically() = runBlocking {
+        val directory = java.nio.file.Files.createTempDirectory("miniscore-provenance-test").toFile()
+        try {
+            val cache = File(directory, "games.json")
+            val stamp = "2026-10-11T08:00:00.000Z"
+            val repository = GameFeedRepository.withDownload(cache, { FeedDownload(fixture(), 7, stamp) }, { 1000 })
+            val accepted = repository.refresh()
+            assertEquals(FeedProvenance(7, stamp, 1000, false), accepted.provenance)
+            val saved = cache.readBytes()
+            for (publication in listOf(FeedDownload(fixture(), 6, stamp), FeedDownload(fixture(), null, stamp), FeedDownload("{}", 8, stamp), FeedDownload(fixture(), 8, "broken"))) {
+                assertThrows(Exception::class.java) { runBlocking { GameFeedRepository.withDownload(cache, { publication }, { 2000 }).refresh() } }
+                assertArrayEquals(saved, cache.readBytes())
+                assertEquals(accepted.copy(provenance = accepted.provenance.copy(fromCache = true)), repository.cachedFeed())
+            }
+            val newer = GameFeedRepository.withDownload(cache, { FeedDownload(fixture(), 8, stamp) }, { 3000 }).refresh()
+            assertEquals(8L, newer.provenance.revision)
+            assertEquals(3000L, GameFeedRepository(cache).cachedFeed()!!.provenance.fetchedAtMillis)
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun legacyCacheProvenanceRemainsUnknown() = runBlocking {
+        val directory = java.nio.file.Files.createTempDirectory("miniscore-legacy-test").toFile()
+        try {
+            val cache = File(directory, "games.json").apply { writeText(fixture()) }
+            assertEquals(FeedProvenance(fromCache = true), GameFeedRepository(cache).cachedFeed()!!.provenance)
+        } finally { directory.deleteRecursively() }
+    }
+
+    @Test fun cancelledDownloadNeverReplacesCache() = runBlocking {
+        val directory = java.nio.file.Files.createTempDirectory("miniscore-cancelled-test").toFile()
+        val release = java.util.concurrent.CountDownLatch(1)
+        try {
+            val cache = File(directory, "games.json")
+            val raw = fixture()
+            GameFeedRepository.withDownload(cache, { FeedDownload(raw, 5) }, { 1000 }).refresh()
+            val saved = cache.readBytes()
+            val entered = java.util.concurrent.CountDownLatch(1)
+            val repository = GameFeedRepository.withDownload(cache, {
+                entered.countDown()
+                check(release.await(5, java.util.concurrent.TimeUnit.SECONDS))
+                FeedDownload(raw, 6)
+            }, { 2000 })
+            val job = launch(Dispatchers.IO) { repository.refresh() }
+            check(entered.await(5, java.util.concurrent.TimeUnit.SECONDS))
+            job.cancel()
+            release.countDown()
+            job.join()
+            assertArrayEquals(saved, cache.readBytes())
+            assertEquals(5L, GameFeedRepository(cache).cachedFeed()!!.provenance.revision)
+        } finally { release.countDown(); directory.deleteRecursively() }
+    }
+
+    @Test fun lateOlderResponseCannotOverwriteNewerPublication() = runBlocking {
+        val directory = java.nio.file.Files.createTempDirectory("miniscore-ordered-test").toFile()
+        val release = java.util.concurrent.CountDownLatch(1)
+        try {
+            val cache = File(directory, "games.json")
+            val raw = fixture()
+            val entered = java.util.concurrent.CountDownLatch(1)
+            val late = async(Dispatchers.IO) {
+                try {
+                    GameFeedRepository.withDownload(cache, {
+                        entered.countDown()
+                        check(release.await(5, java.util.concurrent.TimeUnit.SECONDS))
+                        FeedDownload(raw, 8)
+                    }).refresh()
+                    false
+                } catch (_: IllegalArgumentException) { true }
+            }
+            check(entered.await(5, java.util.concurrent.TimeUnit.SECONDS))
+            GameFeedRepository.withDownload(cache, { FeedDownload(raw, 9) }, { 2000 }).refresh()
+            val saved = cache.readBytes()
+            release.countDown()
+            assertTrue(late.await())
+            assertArrayEquals(saved, cache.readBytes())
+            assertEquals(9L, GameFeedRepository(cache).cachedFeed()!!.provenance.revision)
+        } finally { release.countDown(); directory.deleteRecursively() }
     }
 }

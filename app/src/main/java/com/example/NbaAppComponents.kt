@@ -3,6 +3,11 @@ package com.example
 import android.os.Bundle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import com.example.visualization.VisualizationSessionController
+import com.example.visualization.VisualizationScreen
 import com.example.ui.theme.*
 import androidx.compose.animation.*
 import androidx.compose.foundation.Image
@@ -23,6 +28,7 @@ import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -234,6 +240,12 @@ class GameViewModel : ViewModel() {
     val games: List<Game> get() = _games.values.sortedWith(compareByDescending<Game> { it.gameDate }.thenBy { if (it.id == feedDefaultId) 0 else 1 }.thenBy { it.id })
     private var feedRepository: GameFeedRepository? = null
     private var feedDefaultId: String? = null
+    private var feedProvenance = FeedProvenance()
+    val visualizations = VisualizationSessionController(viewModelScope,
+        loadLatestFeed = { checkNotNull(feedRepository) { "No saved feed source" }.refresh() },
+        onAcceptedFeed = { applyVisualizationFeed(it) })
+    private val _visualizationMessage = MutableStateFlow<String?>(null)
+    val visualizationMessage = _visualizationMessage.asStateFlow()
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
     private val _feedMessage = MutableStateFlow<String?>(null)
@@ -264,15 +276,23 @@ class GameViewModel : ViewModel() {
         }
     }
 
-    internal fun applyFeed(feed: GameFeed) {
+    internal fun applyFeed(feed: GameFeed, preserveGameId: String? = null) {
+        val oldRevision = feedProvenance.revision
+        if (oldRevision != null && (feed.provenance.revision == null || feed.provenance.revision < oldRevision)) return
         val oldSelection = _selectedGameId.value
         val followDefault = feedDefaultId == null && oldSelection == PreseasonGameData.GAME_ID || oldSelection == feedDefaultId
         _games.clear()
         feed.games.forEach { _games[it.id] = it }
-        if (followDefault || oldSelection !in _games) _selectedGameId.value = feed.defaultGameId
+        if (preserveGameId != null && preserveGameId in _games) _selectedGameId.value = preserveGameId
+        else if (followDefault || oldSelection !in _games) _selectedGameId.value = feed.defaultGameId
         feedDefaultId = feed.defaultGameId
+        feedProvenance = feed.provenance
         _selectedPlayer.value = null
         _aiAnalysisState.value = AiState.Idle
+    }
+
+    private fun applyVisualizationFeed(feed: GameFeed) {
+        applyFeed(feed, preserveGameId = visualizations.session.value?.snapshot?.gameId)
     }
 
     private val _selectedGameId = MutableStateFlow(PreseasonGameData.GAME_ID)
@@ -300,9 +320,21 @@ class GameViewModel : ViewModel() {
 
     fun selectGame(id: String) {
         if (id !in _games) return
+        visualizations.close()
+        _visualizationMessage.value = null
         _selectedGameId.value = id
         _selectedPlayer.value = null
         _aiAnalysisState.value = AiState.Idle // Reset AI state when switching games
+    }
+
+    fun openVisualization() {
+        val game = _games[_selectedGameId.value] ?: return
+        try {
+            visualizations.open(game, feedProvenance)
+            _visualizationMessage.value = null
+        } catch (_: Exception) {
+            _visualizationMessage.value = "Charts will be available when this game has player stats."
+        }
     }
 
     fun selectPlayer(player: Player?) {
@@ -358,12 +390,35 @@ fun TeamNameText(team: Team, modifier: Modifier = Modifier) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainNbaScreen(viewModel: GameViewModel, onRefresh: () -> Unit = { viewModel.refreshGames() }) {
+    val visualization by viewModel.visualizations.session.collectAsState()
+    val context = LocalContext.current
+    var importSessionId by rememberSaveable { mutableStateOf<Long?>(null) }
+    val importChart = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null && viewModel.visualizations.session.value?.id == importSessionId) {
+            viewModel.visualizations.importSpec { context.contentResolver.openInputStream(uri) }
+        }
+        importSessionId = null
+    }
+    visualization?.let { session ->
+        BackHandler { viewModel.visualizations.close() }
+        VisualizationScreen(snapshot = session.snapshot, spec = session.spec,
+            onSpecChange = viewModel.visualizations::changeSpec,
+            onClose = viewModel.visualizations::close,
+            onRefresh = viewModel.visualizations::refresh,
+            onImportSpec = {
+                importSessionId = session.id
+                importChart.launch(arrayOf("application/json", "text/plain"))
+            }, refreshing = session.refreshing || session.importing, error = session.error,
+            modifier = Modifier.windowInsetsPadding(WindowInsets.safeDrawing))
+        return
+    }
     val games = viewModel.games.filterNot { it.isDemo }
     val selectedGameId by viewModel.selectedGameId.collectAsState()
     val selectedGame = games.find { it.id == selectedGameId } ?: games.firstOrNull() ?: return
     val selectedPlayer by viewModel.selectedPlayer.collectAsState()
     val isRefreshing by viewModel.isRefreshing.collectAsState()
     val feedMessage by viewModel.feedMessage.collectAsState()
+    val visualizationMessage by viewModel.visualizationMessage.collectAsState()
     val listState = rememberLazyListState()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -386,6 +441,14 @@ fun MainNbaScreen(viewModel: GameViewModel, onRefresh: () -> Unit = { viewModel.
                         Icon(Icons.Default.Menu, "Open games drawer", tint = AccentCyan)
                     }
                     MiniscoreLogo(32.dp, Modifier.align(Alignment.Center).testTag("app_logo"))
+                    TextButton(onClick = viewModel::openVisualization,
+                        modifier = Modifier.align(Alignment.CenterEnd).heightIn(min = 48.dp).testTag("open_charts")) {
+                        Text("Charts", color = AccentCyan)
+                    }
+                }
+                visualizationMessage?.let {
+                    Text(it, color = TextSecondary, fontSize = 14.sp,
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
                 }
                 feedMessage?.let {
                     Text(it, color = TextSecondary, fontSize = 12.sp,

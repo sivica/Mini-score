@@ -42,6 +42,8 @@ jobs:
         run: base64 --decode debug.keystore.base64 > debug.keystore
       - name: Test, build and lint Android
         run: gradle --no-daemon --no-configuration-cache testDebugUnitTest assembleDebug lintVitalRelease
+      - name: Test packaged chart renderer
+        run: node --test app/src/test/js/renderer.test.cjs
       - name: Remove debug key
         if: always()
         run: rm -f debug.keystore

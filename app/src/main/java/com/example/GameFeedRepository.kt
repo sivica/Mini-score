@@ -4,6 +4,16 @@ import android.util.AtomicFile
 import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.ensureActive
+import kotlinx.coroutines.suspendCancellableCoroutine
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Response
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
+import java.io.IOException
+import kotlin.coroutines.coroutineContext
+import com.example.visualization.StrictJson
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -14,7 +24,14 @@ import java.util.Locale
 import java.util.TimeZone
 import java.util.concurrent.TimeUnit
 
-data class GameFeed(val defaultGameId: String, val games: List<Game>)
+data class FeedProvenance(
+    val revision: Long? = null,
+    val publishedAt: String? = null,
+    val fetchedAtMillis: Long? = null,
+    val fromCache: Boolean = false
+)
+data class FeedDownload(val json: String, val revision: Long? = null, val publishedAt: String? = null)
+data class GameFeed(val defaultGameId: String, val games: List<Game>, val provenance: FeedProvenance = FeedProvenance())
 
 /** Reject a broken publication as a whole, keeping the last working feed on the device. */
 object GameFeedCodec {
@@ -22,6 +39,7 @@ object GameFeedCodec {
 
     fun decode(json: String): GameFeed {
         require(json.toByteArray(Charsets.UTF_8).size <= MAX_BYTES) { "Feed too large" }
+        StrictJson.parse(json, MAX_BYTES, 16)
         val root = JSONObject(json)
         require(root.stat("schemaVersion", 1) == 1) { "Unsupported feed version" }
         val entries = root.getJSONArray("games")
@@ -136,47 +154,114 @@ object GameFeedCodec {
     }
 }
 
-class GameFeedRepository(
+class GameFeedRepository private constructor(
     private val cache: File,
-    private val download: () -> String = { downloadFeed() }
+    private val transport: suspend () -> FeedDownload,
+    private val clock: () -> Long
 ) {
+    constructor(cache: File) : this(cache, { downloadFeed() }, System::currentTimeMillis)
+    /** Retained for callers/tests that supply a plain JSON publication without HTTP metadata. */
+    constructor(cache: File, download: () -> String) : this(cache, { FeedDownload(download()) }, System::currentTimeMillis)
+    private val lock = synchronized(locks) { locks.getOrPut(cache.canonicalPath) { Any() } }
+    private var acceptedRevision: Long? = null
+
     suspend fun cachedFeed(): GameFeed? = withContext(Dispatchers.IO) {
-        try {
-            val atomic = AtomicFile(cache)
-            atomic.openRead().use { input ->
-                val bytes = input.readNBytesCompat(GameFeedCodec.MAX_BYTES)
-                GameFeedCodec.decode(bytes.toString(Charsets.UTF_8))
-            }
-        } catch (_: Exception) { null }
+        synchronized(lock) { readCache()?.let { it.copy(provenance = it.provenance.copy(fromCache = true)) } }
     }
 
+    private fun readCache(): GameFeed? = try {
+        val raw = AtomicFile(cache).openRead().use { it.readNBytesCompat(GameFeedCodec.MAX_BYTES + 8192).toString(Charsets.UTF_8) }
+        StrictJson.parse(raw, GameFeedCodec.MAX_BYTES + 8192, 17)
+        val root = JSONObject(raw)
+        if (!root.has("cacheSchemaVersion")) GameFeedCodec.decode(raw)
+        else {
+            require(root.get("cacheSchemaVersion") == 1)
+            require(root.keys().asSequence().toSet() == setOf("cacheSchemaVersion", "feed", "provenance"))
+            val meta = root.getJSONObject("provenance")
+            require(meta.keys().asSequence().toSet() == setOf("revision", "publishedAt", "fetchedAtMillis"))
+            fun nullableLong(key: String): Long? = if (meta.isNull(key)) null else {
+                val value = meta.get(key); require(value is Int || value is Long); (value as Number).toLong().also { require(it >= 0) }
+            }
+            val provenance = FeedProvenance(nullableLong("revision"), if (meta.isNull("publishedAt")) null else meta.getString("publishedAt"), nullableLong("fetchedAtMillis"))
+            validateProvenance(provenance)
+            GameFeedCodec.decode(root.getJSONObject("feed").toString()).copy(provenance = provenance)
+        }
+    } catch (_: Exception) { null }
+
+
     suspend fun refresh(): GameFeed = withContext(Dispatchers.IO) {
-        val json = download()
-        val feed = GameFeedCodec.decode(json)
-        // A storage failure must not discard valid downloaded games from this session.
-        val atomic = AtomicFile(cache)
-        var output: java.io.FileOutputStream? = null
-        try {
-            cache.parentFile?.mkdirs()
-            output = atomic.startWrite()
-            output.write(json.toByteArray(Charsets.UTF_8))
-            atomic.finishWrite(output)
-        } catch (_: Exception) { atomic.failWrite(output) }
-        feed
+        coroutineContext.ensureActive()
+        val downloaded = transport()
+        coroutineContext.ensureActive()
+        val provenance = FeedProvenance(downloaded.revision, downloaded.publishedAt, clock())
+        validateProvenance(provenance)
+        val feed = GameFeedCodec.decode(downloaded.json).copy(provenance = provenance)
+        synchronized(lock) {
+            coroutineContext.ensureActive()
+            val currentRevision = listOfNotNull(acceptedRevision, readCache()?.provenance?.revision).maxOrNull()
+            require(currentRevision == null || (provenance.revision != null && provenance.revision >= currentRevision)) { "Publication is older than the accepted feed" }
+            // The feed and its metadata commit together; rejected feeds never touch the atomic cache.
+            val envelope = JSONObject().put("cacheSchemaVersion", 1).put("feed", JSONObject(downloaded.json))
+                .put("provenance", JSONObject().put("revision", provenance.revision ?: JSONObject.NULL)
+                    .put("publishedAt", provenance.publishedAt ?: JSONObject.NULL)
+                    .put("fetchedAtMillis", provenance.fetchedAtMillis ?: JSONObject.NULL)).toString()
+            val atomic = AtomicFile(cache)
+            var output: java.io.FileOutputStream? = null
+            try {
+                cache.parentFile?.mkdirs()
+                output = atomic.startWrite()
+                output.write(envelope.toByteArray(Charsets.UTF_8))
+                coroutineContext.ensureActive()
+                atomic.finishWrite(output)
+            } catch (cancelled: kotlinx.coroutines.CancellationException) { atomic.failWrite(output); throw cancelled }
+            catch (_: Exception) { atomic.failWrite(output) }
+            acceptedRevision = provenance.revision ?: acceptedRevision
+            feed
+        }
     }
 
     companion object {
         const val FEED_URL = BuildConfig.GAME_FEED_URL
+        private val locks = mutableMapOf<String, Any>()
         private val client = OkHttpClient.Builder().connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(15, TimeUnit.SECONDS).callTimeout(25, TimeUnit.SECONDS).build()
+        fun withDownload(cache: File, download: () -> FeedDownload, clock: () -> Long = System::currentTimeMillis) = GameFeedRepository(cache, { download() }, clock)
 
-        private fun downloadFeed(): String {
+        private fun validateProvenance(value: FeedProvenance) {
+            require(value.revision == null || value.revision >= 0) { "Invalid revision" }
+            require(value.fetchedAtMillis == null || value.fetchedAtMillis >= 0) { "Invalid fetch time" }
+            value.publishedAt?.let { require(it.length <= 64 && StrictJson.validPublicationTime(it)) { "Invalid publication time" } }
+        }
+        private suspend fun downloadFeed(): FeedDownload = suspendCancellableCoroutine { continuation ->
             val request = Request.Builder().url(FEED_URL).header("Cache-Control", "no-cache").build()
-            return client.newCall(request).execute().use { response ->
+            val call = client.newCall(request)
+            continuation.invokeOnCancellation { call.cancel() }
+            call.enqueue(object : Callback {
+                override fun onFailure(call: Call, error: IOException) {
+                    if (continuation.isActive) continuation.resumeWithException(error)
+                }
+                override fun onResponse(call: Call, response: Response) {
+                    try {
+                        val value = decodeResponse(response)
+                        if (continuation.isActive) continuation.resume(value)
+                    } catch (error: Exception) {
+                        if (continuation.isActive) continuation.resumeWithException(error)
+                    }
+                }
+            })
+        }
+
+        private fun decodeResponse(response: Response): FeedDownload {
+            return response.use {
                 check(response.isSuccessful) { "Feed HTTP ${response.code}" }
                 val body = checkNotNull(response.body)
                 require(body.contentLength() <= GameFeedCodec.MAX_BYTES) { "Feed too large" }
-                body.byteStream().use { it.readNBytesCompat(GameFeedCodec.MAX_BYTES).toString(Charsets.UTF_8) }
+                val revision = response.header("X-Miniscore-Revision")?.let {
+                    require(it.matches(Regex("0|[1-9][0-9]*"))) { "Invalid revision header" }
+                    it.toLongOrNull() ?: error("Revision overflow")
+                }
+                val raw = body.byteStream().use { it.readNBytesCompat(GameFeedCodec.MAX_BYTES).toString(Charsets.UTF_8) }
+                FeedDownload(raw, revision, response.header("X-Miniscore-Updated-At"))
             }
         }
     }
