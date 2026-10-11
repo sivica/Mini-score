@@ -25,6 +25,7 @@ data class VisualizationSession(
     val spec: VisualizationSpec,
     val refreshing: Boolean = false,
     val importing: Boolean = false,
+    val settingsRevision: Long = 0,
     val error: String? = null
 )
 
@@ -65,10 +66,22 @@ class VisualizationSessionController(
         val current = _session.value ?: return
         try {
             VisualizationContract.validateSpec(spec, current.snapshot)
-            _session.value = current.copy(spec = spec, error = null)
+            _session.value = current.copy(spec = spec, settingsRevision = current.settingsRevision + 1, error = null)
         } catch (_: Exception) {
             _session.value = current.copy(error = "That chart is not available for this game. Your previous chart is unchanged.")
         }
+    }
+
+    /** An AI request cannot overwrite a refreshed, closed, imported or manually edited chart. */
+    fun applyGeneratedSpec(expected: VisualizationSession, spec: VisualizationSpec): Boolean {
+        val current = _session.value ?: return false
+        if (current.id != expected.id || current.settingsRevision != expected.settingsRevision || current.snapshot != expected.snapshot || current.spec != expected.spec ||
+            current.refreshing || current.importing) return false
+        return try {
+            VisualizationContract.validateSpec(spec, current.snapshot)
+            _session.value = current.copy(spec = spec, settingsRevision = current.settingsRevision + 1, error = null)
+            true
+        } catch (_: Exception) { false }
     }
 
     /** Import is bounded while reading; arbitrary HTML, scripts and URLs are never accepted. */
@@ -94,7 +107,7 @@ class VisualizationSessionController(
                 val final = _session.value?.takeIf { it.id == sessionId && importSequence == request }
                     ?: return@launch
                 VisualizationContract.validateSpec(spec, final.snapshot)
-                _session.value = final.copy(spec = spec, importing = false, error = null)
+                _session.value = final.copy(spec = spec, settingsRevision = final.settingsRevision + 1, importing = false, error = null)
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {
@@ -128,7 +141,7 @@ class VisualizationSessionController(
                 val snapshot = VisualizationContract.snapshotFromGame(game, feed.provenance, now())
                 VisualizationContract.validateSpec(current.spec, snapshot)
                 onAcceptedFeed(feed)
-                _session.value = current.copy(snapshot = snapshot, refreshing = false, error = null)
+                _session.value = current.copy(snapshot = snapshot, settingsRevision = current.settingsRevision + 1, refreshing = false, error = null)
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Exception) {

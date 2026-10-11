@@ -22,6 +22,8 @@ android {
       "gameFeedUrl must be an HTTPS URL"
     }
     buildConfigField("String", "GAME_FEED_URL", "\"$gameFeedUrl\"")
+    // Local feasibility prototype only. Release builds always disable this pending eligibility and device sign-in validation.
+    buildConfigField("boolean", "CHATGPT_ENABLED", "false")
 
     testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
   }
@@ -50,6 +52,12 @@ android {
       signingConfig = signingConfigs.getByName("release")
     }
     debug {
+      val chatGptPrototype = providers.gradleProperty("chatGptEnabled").orNull?.toBooleanStrictOrNull() ?: false
+      buildConfigField("boolean", "CHATGPT_ENABLED", chatGptPrototype.toString())
+      if (chatGptPrototype) {
+        applicationIdSuffix = ".chatgptprototype"
+        resValue("string", "app_name", "Miniscore ChatGPT test")
+      }
       signingConfig = signingConfigs.getByName("debugConfig")
     }
   }
@@ -60,6 +68,7 @@ android {
   buildFeatures {
     compose = true
     buildConfig = true
+    resValues = true
   }
   testOptions { unitTests { isIncludeAndroidResources = true } }
 }

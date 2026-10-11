@@ -50,6 +50,7 @@ fun VisualizationScreen(
     error: String? = null,
     modifier: Modifier = Modifier,
     createChartView: (android.content.Context) -> WebView = { WebView(it) },
+    promptInput: (@Composable () -> Unit)? = null,
 ) {
     var showTable by remember { mutableStateOf(false) }
     var failure by remember(snapshot.gameId) { mutableStateOf<String?>(null) }
@@ -93,6 +94,7 @@ fun VisualizationScreen(
                     onSpecChange(spec.copy(sort = it))
                 }
             }
+            if (promptInput != null) item { promptInput() }
             item {
                 val metadata = snapshot.provenance
                 Text(buildString {
