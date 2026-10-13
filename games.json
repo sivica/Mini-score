@@ -1,7 +1,238 @@
 {
   "schemaVersion": 1,
-  "defaultGameId": "espn_401908941",
+  "defaultGameId": "espn_401898721",
   "games": [
+    {
+      "id": "espn_401918011",
+      "date": "2026-10-14",
+      "competition": "NBA Preseason",
+      "status": "SCHEDULED",
+      "tipoffUTC": "2026-10-15T02:30:00Z",
+      "sources": [
+        "https://www.espn.com/nba/boxscore/_/gameId/401918011"
+      ],
+      "venue": "Intuit Dome",
+      "home": {
+        "code": "LAC",
+        "name": "LA Clippers",
+        "shortName": "Clippers",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/lac.png",
+        "primaryColor": "#12173f",
+        "secondaryColor": "#c8102e"
+      },
+      "away": {
+        "code": "DEN",
+        "name": "Denver Nuggets",
+        "shortName": "Nuggets",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/den.png",
+        "primaryColor": "#0e2240",
+        "secondaryColor": "#fec524"
+      }
+    },
+    {
+      "id": "espn_401914125",
+      "date": "2026-10-14",
+      "competition": "NBA Preseason",
+      "status": "SCHEDULED",
+      "tipoffUTC": "2026-10-15T00:00:00Z",
+      "sources": [
+        "https://www.espn.com/nba/boxscore/_/gameId/401914125"
+      ],
+      "venue": "Target Center",
+      "home": {
+        "code": "MIN",
+        "name": "Minnesota Timberwolves",
+        "shortName": "Timberwolves",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
+        "primaryColor": "#266092",
+        "secondaryColor": "#79bc43"
+      },
+      "away": {
+        "code": "DET",
+        "name": "Detroit Pistons",
+        "shortName": "Pistons",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/det.png",
+        "primaryColor": "#1d428a",
+        "secondaryColor": "#c8102e"
+      }
+    },
+    {
+      "id": "espn_401908942",
+      "date": "2026-10-14",
+      "competition": "NBA Preseason",
+      "status": "SCHEDULED",
+      "tipoffUTC": "2026-10-15T00:00:00Z",
+      "sources": [
+        "https://www.espn.com/nba/boxscore/_/gameId/401908942"
+      ],
+      "venue": "Fiserv Forum",
+      "home": {
+        "code": "MIL",
+        "name": "Milwaukee Bucks",
+        "shortName": "Bucks",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mil.png",
+        "primaryColor": "#00471b",
+        "secondaryColor": "#eee1c6"
+      },
+      "away": {
+        "code": "CHI",
+        "name": "Chicago Bulls",
+        "shortName": "Bulls",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/chi.png",
+        "primaryColor": "#ce1141",
+        "secondaryColor": "#000000"
+      }
+    },
+    {
+      "id": "espn_401901825",
+      "date": "2026-10-14",
+      "competition": "NBA Preseason",
+      "status": "SCHEDULED",
+      "tipoffUTC": "2026-10-15T00:00:00Z",
+      "sources": [
+        "https://www.espn.com/nba/boxscore/_/gameId/401901825"
+      ],
+      "venue": "American Airlines Center",
+      "home": {
+        "code": "DAL",
+        "name": "Dallas Mavericks",
+        "shortName": "Mavericks",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/dal.png",
+        "primaryColor": "#0064b1",
+        "secondaryColor": "#bbc4ca"
+      },
+      "away": {
+        "code": "NOP",
+        "name": "New Orleans Pelicans",
+        "shortName": "Pelicans",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/no.png",
+        "primaryColor": "#0a2240",
+        "secondaryColor": "#b4975a"
+      }
+    },
+    {
+      "id": "espn_401898722",
+      "date": "2026-10-14",
+      "competition": "NBA Preseason",
+      "status": "SCHEDULED",
+      "tipoffUTC": "2026-10-15T00:00:00Z",
+      "sources": [
+        "https://www.espn.com/nba/boxscore/_/gameId/401898722"
+      ],
+      "venue": "Frost Bank Center",
+      "home": {
+        "code": "SAS",
+        "name": "San Antonio Spurs",
+        "shortName": "Spurs",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
+        "primaryColor": "#000000",
+        "secondaryColor": "#c4ced4"
+      },
+      "away": {
+        "code": "PHX",
+        "name": "Phoenix Suns",
+        "shortName": "Suns",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/phx.png",
+        "primaryColor": "#29127a",
+        "secondaryColor": "#e56020"
+      }
+    },
+    {
+      "id": "espn_401898405",
+      "date": "2026-10-14",
+      "competition": "NBA Preseason",
+      "status": "SCHEDULED",
+      "tipoffUTC": "2026-10-14T23:30:00Z",
+      "sources": [
+        "https://www.espn.com/nba/boxscore/_/gameId/401898405"
+      ],
+      "venue": "TD Garden",
+      "home": {
+        "code": "BOS",
+        "name": "Boston Celtics",
+        "shortName": "Celtics",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bos.png",
+        "primaryColor": "#008348",
+        "secondaryColor": "#ffffff"
+      },
+      "away": {
+        "code": "CHA",
+        "name": "Charlotte Hornets",
+        "shortName": "Hornets",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/cha.png",
+        "primaryColor": "#008ca8",
+        "secondaryColor": "#1d1060"
+      }
+    },
+    {
+      "id": "espn_401898404",
+      "date": "2026-10-14",
+      "competition": "NBA Preseason",
+      "status": "SCHEDULED",
+      "tipoffUTC": "2026-10-14T23:30:00Z",
+      "sources": [
+        "https://www.espn.com/nba/boxscore/_/gameId/401898404"
+      ],
+      "venue": "Kaseya Center",
+      "home": {
+        "code": "MIA",
+        "name": "Miami Heat",
+        "shortName": "Heat",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/mia.png",
+        "primaryColor": "#98002e",
+        "secondaryColor": "#000000"
+      },
+      "away": {
+        "code": "BKN",
+        "name": "Brooklyn Nets",
+        "shortName": "Nets",
+        "score": 0,
+        "quarters": [],
+        "players": [],
+        "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
+        "primaryColor": "#000000",
+        "secondaryColor": "#ffffff"
+      }
+    },
     {
       "id": "espn_401901826",
       "date": "2026-10-13",
@@ -171,7 +402,7 @@
       "id": "espn_401898721",
       "date": "2026-10-12",
       "competition": "NBA Preseason",
-      "status": "SCHEDULED",
+      "status": "FINISHED",
       "tipoffUTC": "2026-10-13T01:00:00Z",
       "sources": [
         "https://www.espn.com/nba/boxscore/_/gameId/401898721"
@@ -181,9 +412,337 @@
         "code": "UTA",
         "name": "Utah Jazz",
         "shortName": "Jazz",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 119,
+        "quarters": [
+          33,
+          35,
+          31,
+          20
+        ],
+        "players": [
+          {
+            "id": "espn_4066336",
+            "name": "Lauri Markkanen",
+            "number": "23",
+            "starter": true,
+            "stats": {
+              "points": 11,
+              "rebounds": 1,
+              "assists": 2,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 3,
+              "fgAttempted": 7,
+              "minutes": 19,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4066336.png"
+          },
+          {
+            "id": "espn_4277961",
+            "name": "Jaren Jackson Jr.",
+            "number": "20",
+            "starter": true,
+            "stats": {
+              "points": 13,
+              "rebounds": 3,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 6,
+              "fgAttempted": 8,
+              "minutes": 18,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4277961.png"
+          },
+          {
+            "id": "espn_4397077",
+            "name": "Jaxson Hayes",
+            "number": "11",
+            "starter": true,
+            "stats": {
+              "points": 11,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 5,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4397077.png"
+          },
+          {
+            "id": "espn_4433627",
+            "name": "Keyonte George",
+            "number": "3",
+            "starter": true,
+            "stats": {
+              "points": 13,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 5,
+              "fgAttempted": 7,
+              "minutes": 16,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4433627.png"
+          },
+          {
+            "id": "espn_5041955",
+            "name": "Darryn Peterson",
+            "number": "22",
+            "starter": true,
+            "stats": {
+              "points": 14,
+              "rebounds": 2,
+              "assists": 5,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 5,
+              "fgAttempted": 10,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5041955.png"
+          },
+          {
+            "id": "espn_4278395",
+            "name": "Taylor Funk",
+            "number": "33",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 0,
+              "fgAttempted": 0,
+              "minutes": 7,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_4433618",
+            "name": "Harrison Ingram",
+            "number": "00",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4433618.png"
+          },
+          {
+            "id": "espn_5105839",
+            "name": "Brice Sensabaugh",
+            "number": "28",
+            "starter": false,
+            "stats": {
+              "points": 11,
+              "rebounds": 2,
+              "assists": 2,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 3,
+              "fgAttempted": 7,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5105839.png"
+          },
+          {
+            "id": "espn_4277919",
+            "name": "Mo Bamba",
+            "number": "44",
+            "starter": false,
+            "stats": {
+              "points": 9,
+              "rebounds": 9,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 4,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4277919.png"
+          },
+          {
+            "id": "espn_4684682",
+            "name": "Jonas Aidoo",
+            "number": "13",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 5,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 1,
+              "fgAttempted": 4,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4684682.png"
+          },
+          {
+            "id": "espn_3133602",
+            "name": "Svi Mykhailiuk",
+            "number": "10",
+            "starter": false,
+            "stats": {
+              "points": 7,
+              "rebounds": 7,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 6,
+              "minutes": 19,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3133602.png"
+          },
+          {
+            "id": "espn_4065663",
+            "name": "Josh Okogie",
+            "number": "21",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 0,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 4,
+              "minutes": 11,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4065663.png"
+          },
+          {
+            "id": "espn_4432811",
+            "name": "Josh Green",
+            "number": "5",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 0,
+              "minutes": 11,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432811.png"
+          },
+          {
+            "id": "espn_4433268",
+            "name": "Trey Alexander",
+            "number": "15",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 0,
+              "fgAttempted": 4,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4433268.png"
+          },
+          {
+            "id": "espn_4683766",
+            "name": "Isaiah Collier",
+            "number": "8",
+            "starter": false,
+            "stats": {
+              "points": 11,
+              "rebounds": 3,
+              "assists": 5,
+              "steals": 5,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 4,
+              "fgAttempted": 7,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4683766.png"
+          },
+          {
+            "id": "espn_4683933",
+            "name": "Tamar Bates",
+            "number": "0",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 4,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4683933.png"
+          },
+          {
+            "id": "espn_4873138",
+            "name": "Ace Bailey",
+            "number": "19",
+            "starter": false,
+            "stats": {
+              "points": 6,
+              "rebounds": 6,
+              "assists": 3,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 8,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4873138.png"
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/utah.png",
         "primaryColor": "#4e008e",
         "secondaryColor": "#79a3dc"
@@ -192,9 +751,243 @@
         "code": "SAS",
         "name": "San Antonio Spurs",
         "shortName": "Spurs",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 109,
+        "quarters": [
+          26,
+          35,
+          17,
+          31
+        ],
+        "players": [
+          {
+            "id": "espn_6578",
+            "name": "Harrison Barnes",
+            "number": "40",
+            "starter": true,
+            "stats": {
+              "points": 19,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 3,
+              "fgAttempted": 8,
+              "minutes": 23,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/6578.png"
+          },
+          {
+            "id": "espn_4395723",
+            "name": "Keldon Johnson",
+            "number": "3",
+            "starter": true,
+            "stats": {
+              "points": 15,
+              "rebounds": 4,
+              "assists": 4,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 10,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4395723.png"
+          },
+          {
+            "id": "espn_4592479",
+            "name": "Julian Champagnie",
+            "number": "30",
+            "starter": true,
+            "stats": {
+              "points": 14,
+              "rebounds": 4,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 5,
+              "fgMade": 5,
+              "fgAttempted": 13,
+              "minutes": 26,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4592479.png"
+          },
+          {
+            "id": "espn_3064560",
+            "name": "Luke Kornet",
+            "number": "7",
+            "starter": true,
+            "stats": {
+              "points": 0,
+              "rebounds": 3,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 3,
+              "fgMade": 0,
+              "fgAttempted": 2,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3064560.png"
+          },
+          {
+            "id": "espn_3134916",
+            "name": "Jordan McLaughlin",
+            "number": "0",
+            "starter": true,
+            "stats": {
+              "points": 14,
+              "rebounds": 1,
+              "assists": 6,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 6,
+              "fgAttempted": 10,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3134916.png"
+          },
+          {
+            "id": "espn_4713010",
+            "name": "David Jones Garcia",
+            "number": "25",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 5,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 4,
+              "fgMade": 2,
+              "fgAttempted": 8,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4713010.png"
+          },
+          {
+            "id": "espn_5105337",
+            "name": "Maliq Brown",
+            "number": "15",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 3,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5105337.png"
+          },
+          {
+            "id": "espn_5105809",
+            "name": "Tarris Reed Jr.",
+            "number": "10",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 17,
+              "assists": 1,
+              "steals": 4,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 6,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5105809.png"
+          },
+          {
+            "id": "espn_3155937",
+            "name": "Jon Elmore",
+            "number": "33",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 1,
+              "assists": 3,
+              "steals": 2,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 4,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3155937.png"
+          },
+          {
+            "id": "espn_4433176",
+            "name": "RJ Davis",
+            "number": "14",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 1,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 8,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4433176.png"
+          },
+          {
+            "id": "espn_4703421",
+            "name": "Taelon Peter",
+            "number": "8",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 17,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4703421.png"
+          },
+          {
+            "id": "espn_5107968",
+            "name": "Ja'Kobi Gillespie",
+            "number": "17",
+            "starter": false,
+            "stats": {
+              "points": 25,
+              "rebounds": 1,
+              "assists": 3,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 9,
+              "fgAttempted": 14,
+              "minutes": 25,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5107968.png"
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/sa.png",
         "primaryColor": "#000000",
         "secondaryColor": "#c4ced4"
@@ -204,7 +997,7 @@
       "id": "espn_401914124",
       "date": "2026-10-12",
       "competition": "NBA Preseason",
-      "status": "SCHEDULED",
+      "status": "FINISHED",
       "tipoffUTC": "2026-10-12T23:30:00Z",
       "sources": [
         "https://www.espn.com/nba/boxscore/_/gameId/401914124"
@@ -214,9 +1007,338 @@
         "code": "NYK",
         "name": "New York Knicks",
         "shortName": "Knicks",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 104,
+        "quarters": [
+          25,
+          25,
+          30,
+          24
+        ],
+        "players": [
+          {
+            "id": "espn_3934719",
+            "name": "OG Anunoby",
+            "number": "8",
+            "starter": true,
+            "stats": {
+              "points": 15,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 4,
+              "fgAttempted": 8,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3934719.png"
+          },
+          {
+            "id": "espn_3136195",
+            "name": "Karl-Anthony Towns",
+            "number": "32",
+            "starter": true,
+            "stats": {
+              "points": 11,
+              "rebounds": 2,
+              "assists": 4,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 3,
+              "fgAttempted": 6,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3136195.png"
+          },
+          {
+            "id": "espn_3062679",
+            "name": "Josh Hart",
+            "number": "3",
+            "starter": true,
+            "stats": {
+              "points": 2,
+              "rebounds": 3,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3062679.png"
+          },
+          {
+            "id": "espn_3147657",
+            "name": "Mikal Bridges",
+            "number": "25",
+            "starter": true,
+            "stats": {
+              "points": 9,
+              "rebounds": 2,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 6,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3147657.png"
+          },
+          {
+            "id": "espn_3934672",
+            "name": "Jalen Brunson",
+            "number": "11",
+            "starter": true,
+            "stats": {
+              "points": 20,
+              "rebounds": 5,
+              "assists": 3,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 6,
+              "fgAttempted": 13,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3934672.png"
+          },
+          {
+            "id": "espn_3914285",
+            "name": "Drew Eubanks",
+            "number": "17",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 3,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3914285.png"
+          },
+          {
+            "id": "espn_5211983",
+            "name": "Pacome Dadiet",
+            "number": "4",
+            "starter": false,
+            "stats": {
+              "points": 7,
+              "rebounds": 1,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 3,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5211983.png"
+          },
+          {
+            "id": "espn_5289900",
+            "name": "Mohamed Diawara",
+            "number": "51",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 3,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 0,
+              "fgAttempted": 1,
+              "minutes": 13,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5289900.png"
+          },
+          {
+            "id": "espn_6585",
+            "name": "Andre Drummond",
+            "number": "0",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 4,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 3,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/6585.png"
+          },
+          {
+            "id": "espn_4065673",
+            "name": "Tony Bradley",
+            "number": "18",
+            "starter": false,
+            "stats": {
+              "points": 10,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 5,
+              "fgAttempted": 5,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4065673.png"
+          },
+          {
+            "id": "espn_2528426",
+            "name": "Jordan Clarkson",
+            "number": "00",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 2,
+              "fgAttempted": 3,
+              "minutes": 10,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/2528426.png"
+          },
+          {
+            "id": "espn_3914044",
+            "name": "Landry Shamet",
+            "number": "44",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 0,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 0,
+              "fgAttempted": 2,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3914044.png"
+          },
+          {
+            "id": "espn_4277869",
+            "name": "Jose Alvarado",
+            "number": "5",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 2,
+              "assists": 2,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 2,
+              "fgAttempted": 8,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4277869.png"
+          },
+          {
+            "id": "espn_4397018",
+            "name": "Ochai Agbaji",
+            "number": "30",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 3,
+              "minutes": 10,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4397018.png"
+          },
+          {
+            "id": "espn_4411057",
+            "name": "Kevin McCullar Jr.",
+            "number": "9",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 0,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4411057.png"
+          },
+          {
+            "id": "espn_4431823",
+            "name": "Miles McBride",
+            "number": "2",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 5,
+              "minutes": 13,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4431823.png"
+          },
+          {
+            "id": "espn_4433225",
+            "name": "Tyler Kolek",
+            "number": "13",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 0,
+              "assists": 4,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 2,
+              "fgAttempted": 5,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4433225.png"
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/ny.png",
         "primaryColor": "#1d428a",
         "secondaryColor": "#f58426"
@@ -225,9 +1347,318 @@
         "code": "MIN",
         "name": "Minnesota Timberwolves",
         "shortName": "Timberwolves",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 122,
+        "quarters": [
+          30,
+          32,
+          28,
+          32
+        ],
+        "players": [
+          {
+            "id": "espn_4431671",
+            "name": "Jaden McDaniels",
+            "number": "3",
+            "starter": true,
+            "stats": {
+              "points": 22,
+              "rebounds": 5,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 4,
+              "fgMade": 8,
+              "fgAttempted": 12,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4431671.png"
+          },
+          {
+            "id": "espn_4895758",
+            "name": "Cody Williams",
+            "number": "9",
+            "starter": true,
+            "stats": {
+              "points": 6,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 2,
+              "fgAttempted": 3,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4895758.png"
+          },
+          {
+            "id": "espn_3032976",
+            "name": "Rudy Gobert",
+            "number": "27",
+            "starter": true,
+            "stats": {
+              "points": 2,
+              "rebounds": 3,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3032976.png"
+          },
+          {
+            "id": "espn_4432816",
+            "name": "LaMelo Ball",
+            "number": "1",
+            "starter": true,
+            "stats": {
+              "points": 10,
+              "rebounds": 3,
+              "assists": 7,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 5,
+              "fgMade": 3,
+              "fgAttempted": 7,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432816.png"
+          },
+          {
+            "id": "espn_4594268",
+            "name": "Anthony Edwards",
+            "number": "5",
+            "starter": true,
+            "stats": {
+              "points": 26,
+              "rebounds": 3,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 8,
+              "fgAttempted": 16,
+              "minutes": 25,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4594268.png"
+          },
+          {
+            "id": "espn_3136196",
+            "name": "Trey Lyles",
+            "number": "41",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 3,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 16,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3136196.png"
+          },
+          {
+            "id": "espn_4431695",
+            "name": "Drew Timme",
+            "number": "17",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 0,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 6,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4431695.png"
+          },
+          {
+            "id": "espn_4431828",
+            "name": "KJ Martin",
+            "number": "00",
+            "starter": false,
+            "stats": {
+              "points": 6,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 3,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4431828.png"
+          },
+          {
+            "id": "espn_4702134",
+            "name": "Norchad Omier",
+            "number": "23",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 4,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 6,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5061585",
+            "name": "Isaiah Evans",
+            "number": "33",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5061585.png"
+          },
+          {
+            "id": "espn_5279133",
+            "name": "Joan Beringer",
+            "number": "19",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 4,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5279133.png"
+          },
+          {
+            "id": "espn_4397002",
+            "name": "Ayo Dosunmu",
+            "number": "13",
+            "starter": false,
+            "stats": {
+              "points": 11,
+              "rebounds": 4,
+              "assists": 2,
+              "steals": 3,
+              "blocks": 1,
+              "turnovers": 2,
+              "fgMade": 3,
+              "fgAttempted": 6,
+              "minutes": 20,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4397002.png"
+          },
+          {
+            "id": "espn_4432247",
+            "name": "Jaylen Clark",
+            "number": "7",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 10,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432247.png"
+          },
+          {
+            "id": "espn_4592492",
+            "name": "Bones Hyland",
+            "number": "8",
+            "starter": false,
+            "stats": {
+              "points": 6,
+              "rebounds": 2,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 9,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4592492.png"
+          },
+          {
+            "id": "espn_4592686",
+            "name": "Antonio Reeves",
+            "number": "12",
+            "starter": false,
+            "stats": {
+              "points": 6,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 4,
+              "minutes": 11,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4592686.png"
+          },
+          {
+            "id": "espn_4592979",
+            "name": "Zyon Pullin",
+            "number": "15",
+            "starter": false,
+            "stats": {
+              "points": 8,
+              "rebounds": 3,
+              "assists": 3,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 4,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4592979.png"
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/min.png",
         "primaryColor": "#266092",
         "secondaryColor": "#79bc43"
@@ -237,7 +1668,7 @@
       "id": "espn_401901824",
       "date": "2026-10-12",
       "competition": "NBA Preseason",
-      "status": "SCHEDULED",
+      "status": "FINISHED",
       "tipoffUTC": "2026-10-12T23:00:00Z",
       "sources": [
         "https://www.espn.com/nba/boxscore/_/gameId/401901824"
@@ -247,9 +1678,281 @@
         "code": "WAS",
         "name": "Washington Wizards",
         "shortName": "Wizards",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 122,
+        "quarters": [
+          32,
+          40,
+          22,
+          28
+        ],
+        "players": [
+          {
+            "id": "espn_5142718",
+            "name": "AJ Dybantsa",
+            "number": "4",
+            "starter": true,
+            "stats": {
+              "points": 14,
+              "rebounds": 4,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 1,
+              "turnovers": 3,
+              "fgMade": 5,
+              "fgAttempted": 12,
+              "minutes": 25,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5142718.png"
+          },
+          {
+            "id": "espn_5174563",
+            "name": "Kyshawn George",
+            "number": "18",
+            "starter": true,
+            "stats": {
+              "points": 21,
+              "rebounds": 1,
+              "assists": 4,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 6,
+              "fgAttempted": 7,
+              "minutes": 25,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5174563.png"
+          },
+          {
+            "id": "espn_4278129",
+            "name": "Deandre Ayton",
+            "number": "6",
+            "starter": true,
+            "stats": {
+              "points": 4,
+              "rebounds": 7,
+              "assists": 4,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 2,
+              "fgAttempted": 4,
+              "minutes": 25,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4278129.png"
+          },
+          {
+            "id": "espn_5160992",
+            "name": "Alex Sarr",
+            "number": "20",
+            "starter": true,
+            "stats": {
+              "points": 6,
+              "rebounds": 9,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 3,
+              "fgAttempted": 10,
+              "minutes": 23,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5160992.png"
+          },
+          {
+            "id": "espn_4277905",
+            "name": "Trae Young",
+            "number": "3",
+            "starter": true,
+            "stats": {
+              "points": 11,
+              "rebounds": 3,
+              "assists": 11,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 8,
+              "fgMade": 1,
+              "fgAttempted": 5,
+              "minutes": 28,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4277905.png"
+          },
+          {
+            "id": "espn_4432907",
+            "name": "Justin Champagnie",
+            "number": "9",
+            "starter": false,
+            "stats": {
+              "points": 7,
+              "rebounds": 3,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 7,
+              "minutes": 16,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432907.png"
+          },
+          {
+            "id": "espn_5105841",
+            "name": "Felix Okpara",
+            "number": "34",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5105841.png"
+          },
+          {
+            "id": "espn_4432187",
+            "name": "Reece Beekman",
+            "number": "26",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 0,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432187.png"
+          },
+          {
+            "id": "espn_4432645",
+            "name": "Trevor Keels",
+            "number": "13",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 1,
+              "minutes": 3,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432645.png"
+          },
+          {
+            "id": "espn_4432819",
+            "name": "Tre Mann",
+            "number": "1",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 0,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 3,
+              "minutes": 12,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432819.png"
+          },
+          {
+            "id": "espn_4845374",
+            "name": "Bub Carrington",
+            "number": "7",
+            "starter": false,
+            "stats": {
+              "points": 14,
+              "rebounds": 0,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 3,
+              "fgAttempted": 5,
+              "minutes": 13,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4845374.png"
+          },
+          {
+            "id": "espn_5104155",
+            "name": "Bilal Coulibaly",
+            "number": "0",
+            "starter": false,
+            "stats": {
+              "points": 19,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 3,
+              "blocks": 1,
+              "turnovers": 0,
+              "fgMade": 7,
+              "fgAttempted": 11,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5104155.png"
+          },
+          {
+            "id": "espn_5144126",
+            "name": "Will Riley",
+            "number": "27",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 1,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5144126.png"
+          },
+          {
+            "id": "espn_5238230",
+            "name": "Tre Johnson",
+            "number": "12",
+            "starter": false,
+            "stats": {
+              "points": 13,
+              "rebounds": 0,
+              "assists": 3,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 5,
+              "fgAttempted": 9,
+              "minutes": 20,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5238230.png"
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/wsh.png",
         "primaryColor": "#e31837",
         "secondaryColor": "#002b5c"
@@ -258,9 +1961,300 @@
         "code": "BKN",
         "name": "Brooklyn Nets",
         "shortName": "Nets",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 131,
+        "quarters": [
+          36,
+          37,
+          30,
+          28
+        ],
+        "players": [
+          {
+            "id": "espn_3064514",
+            "name": "Julius Randle",
+            "number": "30",
+            "starter": true,
+            "stats": {
+              "points": 14,
+              "rebounds": 4,
+              "assists": 9,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 5,
+              "fgAttempted": 8,
+              "minutes": 23,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3064514.png"
+          },
+          {
+            "id": "espn_4278104",
+            "name": "Michael Porter Jr.",
+            "number": "17",
+            "starter": true,
+            "stats": {
+              "points": 22,
+              "rebounds": 4,
+              "assists": 0,
+              "steals": 2,
+              "blocks": 1,
+              "turnovers": 3,
+              "fgMade": 8,
+              "fgAttempted": 13,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4278104.png"
+          },
+          {
+            "id": "espn_4432194",
+            "name": "Day'Ron Sharpe",
+            "number": "20",
+            "starter": true,
+            "stats": {
+              "points": 4,
+              "rebounds": 2,
+              "assists": 3,
+              "steals": 3,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 21,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4432194.png"
+          },
+          {
+            "id": "espn_4702177",
+            "name": "Keon Ellis",
+            "number": "1",
+            "starter": true,
+            "stats": {
+              "points": 15,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 4,
+              "fgAttempted": 7,
+              "minutes": 21,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4702177.png"
+          },
+          {
+            "id": "espn_5175643",
+            "name": "Egor Demin",
+            "number": "8",
+            "starter": true,
+            "stats": {
+              "points": 4,
+              "rebounds": 0,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 2,
+              "fgAttempted": 8,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5175643.png"
+          },
+          {
+            "id": "espn_4687718",
+            "name": "Josh Minott",
+            "number": "00",
+            "starter": false,
+            "stats": {
+              "points": 6,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 4,
+              "minutes": 7,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4687718.png"
+          },
+          {
+            "id": "espn_4702670",
+            "name": "Grant Nelson",
+            "number": "16",
+            "starter": false,
+            "stats": {
+              "points": 9,
+              "rebounds": 4,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 4,
+              "fgAttempted": 5,
+              "minutes": 9,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4702670.png"
+          },
+          {
+            "id": "espn_4712896",
+            "name": "Noah Clowney",
+            "number": "21",
+            "starter": false,
+            "stats": {
+              "points": 15,
+              "rebounds": 3,
+              "assists": 4,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 5,
+              "fgAttempted": 8,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4712896.png"
+          },
+          {
+            "id": "espn_5107173",
+            "name": "Danny Wolf",
+            "number": "2",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 1,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 4,
+              "minutes": 9,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5107173.png"
+          },
+          {
+            "id": "espn_5174655",
+            "name": "Chaney Johnson",
+            "number": "31",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 1,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 2,
+              "fgAttempted": 3,
+              "minutes": 16,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5174655.png"
+          },
+          {
+            "id": "espn_3150844",
+            "name": "Moritz Wagner",
+            "number": "13",
+            "starter": false,
+            "stats": {
+              "points": 13,
+              "rebounds": 5,
+              "assists": 1,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 8,
+              "minutes": 18,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3150844.png"
+          },
+          {
+            "id": "espn_3907823",
+            "name": "Terance Mann",
+            "number": "14",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 9,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3907823.png"
+          },
+          {
+            "id": "espn_5037873",
+            "name": "Drake Powell",
+            "number": "4",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 10,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5037873.png"
+          },
+          {
+            "id": "espn_5242502",
+            "name": "Ben Saraf",
+            "number": "77",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 0,
+              "assists": 4,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 0,
+              "fgAttempted": 0,
+              "minutes": 8,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5242502.png"
+          },
+          {
+            "id": "espn_5279130",
+            "name": "Nolan Traore",
+            "number": "10",
+            "starter": false,
+            "stats": {
+              "points": 17,
+              "rebounds": 1,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 6,
+              "fgAttempted": 8,
+              "minutes": 20,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5279130.png"
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/bkn.png",
         "primaryColor": "#000000",
         "secondaryColor": "#ffffff"
@@ -270,7 +2264,7 @@
       "id": "espn_401898402",
       "date": "2026-10-12",
       "competition": "NBA Preseason",
-      "status": "SCHEDULED",
+      "status": "FINISHED",
       "tipoffUTC": "2026-10-12T23:00:00Z",
       "sources": [
         "https://www.espn.com/nba/boxscore/_/gameId/401898402"
@@ -280,9 +2274,240 @@
         "code": "ATL",
         "name": "Atlanta Hawks",
         "shortName": "Hawks",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 113,
+        "quarters": [
+          29,
+          27,
+          23,
+          34
+        ],
+        "players": [
+          {
+            "id": "espn_4280151",
+            "name": "Corey Kispert",
+            "number": "24",
+            "starter": true,
+            "stats": {
+              "points": 6,
+              "rebounds": 1,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 2,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 11,
+              "minutes": 26,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4280151.png"
+          },
+          {
+            "id": "espn_4873201",
+            "name": "Asa Newell",
+            "number": "14",
+            "starter": true,
+            "stats": {
+              "points": 7,
+              "rebounds": 10,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 2,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 14,
+              "minutes": 27,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4873201.png"
+          },
+          {
+            "id": "espn_3146557",
+            "name": "Jock Landale",
+            "number": "31",
+            "starter": true,
+            "stats": {
+              "points": 17,
+              "rebounds": 6,
+              "assists": 5,
+              "steals": 3,
+              "blocks": 2,
+              "turnovers": 0,
+              "fgMade": 7,
+              "fgAttempted": 11,
+              "minutes": 21,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3146557.png"
+          },
+          {
+            "id": "espn_4278039",
+            "name": "Nickeil Alexander-Walker",
+            "number": "7",
+            "starter": true,
+            "stats": {
+              "points": 16,
+              "rebounds": 6,
+              "assists": 5,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 4,
+              "fgAttempted": 10,
+              "minutes": 25,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4278039.png"
+          },
+          {
+            "id": "espn_5149077",
+            "name": "Kingston Flemings",
+            "number": "4",
+            "starter": true,
+            "stats": {
+              "points": 7,
+              "rebounds": 2,
+              "assists": 7,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 11,
+              "minutes": 28,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5149077.png"
+          },
+          {
+            "id": "espn_2578185",
+            "name": "Dorian Finney-Smith",
+            "number": "8",
+            "starter": false,
+            "stats": {
+              "points": 8,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 6,
+              "minutes": 17,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/2578185.png"
+          },
+          {
+            "id": "espn_4431714",
+            "name": "Jalen Wilson",
+            "number": "22",
+            "starter": false,
+            "stats": {
+              "points": 12,
+              "rebounds": 8,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 4,
+              "fgAttempted": 13,
+              "minutes": 30,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4431714.png"
+          },
+          {
+            "id": "espn_4712902",
+            "name": "Cameron Corhen",
+            "number": "32",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 1,
+              "minutes": 3,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5106262",
+            "name": "Zuby Ejiofor",
+            "number": "20",
+            "starter": false,
+            "stats": {
+              "points": 15,
+              "rebounds": 9,
+              "assists": 3,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 3,
+              "fgMade": 5,
+              "fgAttempted": 9,
+              "minutes": 23,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5106262.png"
+          },
+          {
+            "id": "espn_4431941",
+            "name": "RayJ Dennis",
+            "number": "10",
+            "starter": false,
+            "stats": {
+              "points": 13,
+              "rebounds": 4,
+              "assists": 7,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 6,
+              "fgAttempted": 11,
+              "minutes": 24,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4431941.png"
+          },
+          {
+            "id": "espn_4683857",
+            "name": "Kobe Johnson",
+            "number": "12",
+            "starter": false,
+            "stats": {
+              "points": 10,
+              "rebounds": 3,
+              "assists": 0,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 4,
+              "minutes": 10,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_4712845",
+            "name": "Isaac McKneely",
+            "number": "15",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 0,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 1,
+              "minutes": 4,
+              "seconds": 0
+            }
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/atl.png",
         "primaryColor": "#c8102e",
         "secondaryColor": "#fdb927"
@@ -291,9 +2516,185 @@
         "code": "OKC",
         "name": "Oklahoma City Thunder",
         "shortName": "Thunder",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 110,
+        "quarters": [
+          28,
+          21,
+          30,
+          31
+        ],
+        "players": [
+          {
+            "id": "espn_4684208",
+            "name": "Brooks Barnhizer",
+            "number": "23",
+            "starter": true,
+            "stats": {
+              "points": 20,
+              "rebounds": 8,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 2,
+              "turnovers": 2,
+              "fgMade": 8,
+              "fgAttempted": 23,
+              "minutes": 40,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4684208.png"
+          },
+          {
+            "id": "espn_5174983",
+            "name": "Aday Mara",
+            "number": "15",
+            "starter": true,
+            "stats": {
+              "points": 17,
+              "rebounds": 10,
+              "assists": 6,
+              "steals": 0,
+              "blocks": 4,
+              "turnovers": 5,
+              "fgMade": 4,
+              "fgAttempted": 9,
+              "minutes": 33,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5174983.png"
+          },
+          {
+            "id": "espn_5105800",
+            "name": "Josh Dix",
+            "number": "21",
+            "starter": true,
+            "stats": {
+              "points": 16,
+              "rebounds": 3,
+              "assists": 7,
+              "steals": 2,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 6,
+              "fgAttempted": 15,
+              "minutes": 37,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5105800.png"
+          },
+          {
+            "id": "espn_5106270",
+            "name": "Otega Oweh",
+            "number": "13",
+            "starter": true,
+            "stats": {
+              "points": 11,
+              "rebounds": 10,
+              "assists": 1,
+              "steals": 2,
+              "blocks": 1,
+              "turnovers": 2,
+              "fgMade": 5,
+              "fgAttempted": 13,
+              "minutes": 35,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5106270.png"
+          },
+          {
+            "id": "espn_5241364",
+            "name": "Bennett Stirtz",
+            "number": "14",
+            "starter": true,
+            "stats": {
+              "points": 26,
+              "rebounds": 4,
+              "assists": 5,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 5,
+              "fgMade": 9,
+              "fgAttempted": 16,
+              "minutes": 38,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5241364.png"
+          },
+          {
+            "id": "espn_5116468",
+            "name": "Andrew Holifield",
+            "number": "17",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 6,
+              "assists": 0,
+              "steals": 1,
+              "blocks": 2,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 17,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5116468.png"
+          },
+          {
+            "id": "espn_5109790",
+            "name": "Christoph Tilly",
+            "number": "33",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 2,
+              "fgAttempted": 2,
+              "minutes": 10,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5109790.png"
+          },
+          {
+            "id": "espn_4277923",
+            "name": "Zhaire Smith",
+            "number": "40",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 5,
+              "minutes": 11,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4277923.png"
+          },
+          {
+            "id": "espn_4897155",
+            "name": "Anthony Pritchard",
+            "number": "30",
+            "starter": false,
+            "stats": {
+              "points": 6,
+              "rebounds": 7,
+              "assists": 5,
+              "steals": 0,
+              "blocks": 2,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 5,
+              "minutes": 19,
+              "seconds": 0
+            }
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/okc.png",
         "primaryColor": "#007ac1",
         "secondaryColor": "#ef3b24"
@@ -303,7 +2704,7 @@
       "id": "espn_401914130",
       "date": "2026-10-12",
       "competition": "NBA Preseason",
-      "status": "SCHEDULED",
+      "status": "FINISHED",
       "tipoffUTC": "2026-10-12T20:00:00Z",
       "sources": [
         "https://www.espn.com/nba/boxscore/_/gameId/401914130"
@@ -313,9 +2714,281 @@
         "code": "POR",
         "name": "Portland Trail Blazers",
         "shortName": "Trail Blazers",
-        "score": 0,
-        "quarters": [],
-        "players": [],
+        "score": 119,
+        "quarters": [
+          34,
+          38,
+          28,
+          19
+        ],
+        "players": [
+          {
+            "id": "espn_4431736",
+            "name": "Toumani Camara",
+            "number": "33",
+            "starter": true,
+            "stats": {
+              "points": 14,
+              "rebounds": 2,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 7,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4431736.png"
+          },
+          {
+            "id": "espn_4683021",
+            "name": "Deni Avdija",
+            "number": "8",
+            "starter": true,
+            "stats": {
+              "points": 9,
+              "rebounds": 5,
+              "assists": 4,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 3,
+              "fgAttempted": 4,
+              "minutes": 17,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4683021.png"
+          },
+          {
+            "id": "espn_5105565",
+            "name": "Donovan Clingan",
+            "number": "23",
+            "starter": true,
+            "stats": {
+              "points": 11,
+              "rebounds": 6,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 3,
+              "fgMade": 5,
+              "fgAttempted": 7,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5105565.png"
+          },
+          {
+            "id": "espn_3995",
+            "name": "Jrue Holiday",
+            "number": "5",
+            "starter": true,
+            "stats": {
+              "points": 6,
+              "rebounds": 5,
+              "assists": 3,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 5,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3995.png"
+          },
+          {
+            "id": "espn_4279888",
+            "name": "Ja Morant",
+            "number": "1",
+            "starter": true,
+            "stats": {
+              "points": 5,
+              "rebounds": 0,
+              "assists": 5,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 2,
+              "fgAttempted": 6,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4279888.png"
+          },
+          {
+            "id": "espn_4593043",
+            "name": "John Tonje",
+            "number": "2",
+            "starter": false,
+            "stats": {
+              "points": 1,
+              "rebounds": 2,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 0,
+              "fgAttempted": 3,
+              "minutes": 19,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4593043.png"
+          },
+          {
+            "id": "espn_4610139",
+            "name": "Jeremy Sochan",
+            "number": "4",
+            "starter": false,
+            "stats": {
+              "points": 8,
+              "rebounds": 8,
+              "assists": 2,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 6,
+              "minutes": 21,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4610139.png"
+          },
+          {
+            "id": "espn_4066399",
+            "name": "Micah Potter",
+            "number": "9",
+            "starter": false,
+            "stats": {
+              "points": 7,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 3,
+              "fgAttempted": 8,
+              "minutes": 17,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4066399.png"
+          },
+          {
+            "id": "espn_4592435",
+            "name": "Branden Carlson",
+            "number": "10",
+            "starter": false,
+            "stats": {
+              "points": 3,
+              "rebounds": 4,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 4,
+              "fgMade": 1,
+              "fgAttempted": 2,
+              "minutes": 14,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4592435.png"
+          },
+          {
+            "id": "espn_5217746",
+            "name": "Yang Hansen",
+            "number": "16",
+            "starter": false,
+            "stats": {
+              "points": 13,
+              "rebounds": 4,
+              "assists": 4,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 6,
+              "fgAttempted": 8,
+              "minutes": 21,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5217746.png"
+          },
+          {
+            "id": "espn_4578893",
+            "name": "Vit Krejci",
+            "number": "27",
+            "starter": false,
+            "stats": {
+              "points": 10,
+              "rebounds": 5,
+              "assists": 2,
+              "steals": 3,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 6,
+              "minutes": 21,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4578893.png"
+          },
+          {
+            "id": "espn_4683678",
+            "name": "Scoot Henderson",
+            "number": "00",
+            "starter": false,
+            "stats": {
+              "points": 14,
+              "rebounds": 0,
+              "assists": 3,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 4,
+              "fgAttempted": 7,
+              "minutes": 16,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4683678.png"
+          },
+          {
+            "id": "espn_4703889",
+            "name": "Jayson Kent",
+            "number": "29",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 6,
+              "assists": 1,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 2,
+              "fgAttempted": 6,
+              "minutes": 21,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4703889.png"
+          },
+          {
+            "id": "espn_5081727",
+            "name": "Sidy Cissoko",
+            "number": "91",
+            "starter": false,
+            "stats": {
+              "points": 13,
+              "rebounds": 2,
+              "assists": 3,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 5,
+              "fgAttempted": 5,
+              "minutes": 15,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/5081727.png"
+          }
+        ],
         "logoUrl": "https://a.espncdn.com/i/teamlogos/nba/500/scoreboard/por.png",
         "primaryColor": "#e03a3e",
         "secondaryColor": "#000000"
@@ -324,9 +2997,233 @@
         "code": "LON",
         "name": "London Lions",
         "shortName": "Lions",
-        "score": 0,
-        "quarters": [],
-        "players": []
+        "score": 66,
+        "quarters": [
+          21,
+          12,
+          16,
+          17
+        ],
+        "players": [
+          {
+            "id": "espn_4684286",
+            "name": "Maxwell Lewis",
+            "number": "2",
+            "starter": true,
+            "stats": {
+              "points": 13,
+              "rebounds": 5,
+              "assists": 0,
+              "steals": 4,
+              "blocks": 1,
+              "turnovers": 4,
+              "fgMade": 4,
+              "fgAttempted": 8,
+              "minutes": 22,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/4684286.png"
+          },
+          {
+            "id": "espn_5176195",
+            "name": "Joel Scott",
+            "number": "1",
+            "starter": true,
+            "stats": {
+              "points": 8,
+              "rebounds": 1,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 1,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 10,
+              "minutes": 26,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_3133629",
+            "name": "Keenan Evans",
+            "number": "12",
+            "starter": true,
+            "stats": {
+              "points": 7,
+              "rebounds": 3,
+              "assists": 1,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 3,
+              "fgAttempted": 5,
+              "minutes": 20,
+              "seconds": 0
+            },
+            "portraitUrl": "https://a.espncdn.com/i/headshots/nba/players/full/3133629.png"
+          },
+          {
+            "id": "espn_3133638",
+            "name": "Tarik Phillip",
+            "number": "22",
+            "starter": true,
+            "stats": {
+              "points": 3,
+              "rebounds": 0,
+              "assists": 2,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 4,
+              "fgMade": 0,
+              "fgAttempted": 8,
+              "minutes": 18,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5454814",
+            "name": "Thomas Kennedy",
+            "number": "54",
+            "starter": true,
+            "stats": {
+              "points": 4,
+              "rebounds": 6,
+              "assists": 3,
+              "steals": 1,
+              "blocks": 0,
+              "turnovers": 3,
+              "fgMade": 2,
+              "fgAttempted": 7,
+              "minutes": 20,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5454791",
+            "name": "Mo Soluade",
+            "number": "6",
+            "starter": false,
+            "stats": {
+              "points": 2,
+              "rebounds": 3,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 4,
+              "minutes": 24,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5454813",
+            "name": "Deane Williams",
+            "number": "31",
+            "starter": false,
+            "stats": {
+              "points": 4,
+              "rebounds": 3,
+              "assists": 0,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 1,
+              "fgMade": 1,
+              "fgAttempted": 6,
+              "minutes": 21,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5458322",
+            "name": "Devante Adams",
+            "number": "3",
+            "starter": false,
+            "stats": {
+              "points": 12,
+              "rebounds": 2,
+              "assists": 4,
+              "steals": 2,
+              "blocks": 1,
+              "turnovers": 5,
+              "fgMade": 5,
+              "fgAttempted": 12,
+              "minutes": 24,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_4897852",
+            "name": "Ethan Price",
+            "number": "10",
+            "starter": false,
+            "stats": {
+              "points": 8,
+              "rebounds": 2,
+              "assists": 2,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 2,
+              "fgMade": 3,
+              "fgAttempted": 4,
+              "minutes": 23,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_4684167",
+            "name": "Joshua O'Garro",
+            "number": "7",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 2,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 1,
+              "minutes": 11,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5454794",
+            "name": "Emilis Zibuda",
+            "number": "8",
+            "starter": false,
+            "stats": {
+              "points": 0,
+              "rebounds": 1,
+              "assists": 0,
+              "steals": 0,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 0,
+              "fgAttempted": 4,
+              "minutes": 6,
+              "seconds": 0
+            }
+          },
+          {
+            "id": "espn_5454812",
+            "name": "Landrius Horton",
+            "number": "23",
+            "starter": false,
+            "stats": {
+              "points": 5,
+              "rebounds": 4,
+              "assists": 2,
+              "steals": 2,
+              "blocks": 0,
+              "turnovers": 0,
+              "fgMade": 1,
+              "fgAttempted": 7,
+              "minutes": 25,
+              "seconds": 0
+            }
+          }
+        ]
       }
     },
     {
