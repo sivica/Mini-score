@@ -44,12 +44,12 @@ jobs:
         with:
           ref: game-data
           path: published-feed
-      - name: Fetch and validate daily games
+      - name: Fetch and validate finished games from today or yesterday
         env:
           NBA_DATE: ${{ inputs.nba_date }}
         run: |
           set -euo pipefail
-          args=(--feed published-feed/games.json)
+          args=(--feed published-feed/games.json --finished-only)
           if [[ -n "$NBA_DATE" ]]; then args+=(--date "$NBA_DATE"); fi
           python scripts/update_game_feed.py "${args[@]}"
       - name: Publish validated changes

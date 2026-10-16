@@ -256,30 +256,46 @@ def event_to_game(event, existing, fetch):
     return game
 
 
-def build_feed(previous, today, fetch=fetch_json):
+def build_feed(previous, today, fetch=fetch_json, *, finished_only=False):
     validate_feed(previous)
     cutoff = (today - timedelta(days=7)).isoformat()
+    recent_days = {today - timedelta(days=1), today}
     normalized = copy.deepcopy(previous["games"])
     for game in normalized:
         for side in ("away", "home"):
             game[side]["code"] = TEAM_CODES.get(game[side]["code"], game[side]["code"])
     retained = [g for g in normalized if g["date"] >= cutoff]
+    if finished_only:
+        retained = [g for g in retained if g["status"] == "FINISHED"
+                    and date.fromisoformat(g["date"]) in recent_days]
     identity = lambda g: (g["date"], g["away"]["code"], g["home"]["code"])
     existing = {identity(g): g for g in normalized}
     games = {identity(g): g for g in retained}
     seen = set()
     # Catch up retained games after a missed daily run, including legacy IDs
     # which cannot be used directly with ESPN's summary endpoint.
-    days = {today + timedelta(days=offset) for offset in (-1, 0, 1)}
-    days.update(date.fromisoformat(g["date"]) for g in retained
-                if g["status"] in ("SCHEDULED", "LIVE", "POSTPONED")
-                and g["date"] < today.isoformat())
+    days = recent_days if finished_only else {today + timedelta(days=offset) for offset in (-1, 0, 1)}
+    if not finished_only:
+        days.update(date.fromisoformat(g["date"]) for g in retained
+                    if g["status"] in ("SCHEDULED", "LIVE", "POSTPONED")
+                    and g["date"] < today.isoformat())
     for day in sorted(days):
         scoreboard = fetch(API + "scoreboard?" + urlencode({"dates": day.strftime("%Y%m%d"), "limit": 100}))
         for event in array(scoreboard["events"], 100):
             if event["id"] in seen:
                 continue
             seen.add(event["id"])
+            if finished_only:
+                competitions = array(event["competitions"], 1)
+                require(len(competitions) == 1, "Missing competition")
+                if provider_status(competitions[0]) != "FINISHED":
+                    continue
+                tipoff = datetime.fromisoformat(event["date"].replace("Z", "+00:00"))
+                require(tipoff.tzinfo is not None, "Missing tipoff timezone")
+                event_date = tipoff.astimezone(EASTERN).date()
+                require(abs((event_date - day).days) <= 1, "Stale scoreboard date")
+                if event_date not in recent_days:
+                    continue
             game = event_to_game(event, existing, fetch)
             require(abs((date.fromisoformat(game["date"]) - day).days) <= 1, "Stale scoreboard date")
             games[identity(game)] = game
@@ -294,11 +310,11 @@ def build_feed(previous, today, fetch=fetch_json):
     return output
 
 
-def update_file(path, today, fetch=fetch_json):
+def update_file(path, today, fetch=fetch_json, *, finished_only=False):
     original = path.read_bytes()
     require(len(original) <= MAX_BYTES, "Existing feed too large")
     previous = json.loads(original)
-    result = build_feed(previous, today, fetch)
+    result = build_feed(previous, today, fetch, finished_only=finished_only)
     if previous == result:
         return False
     # All reads and validation happen before the atomic replace. Failures leave bytes untouched.
@@ -321,8 +337,10 @@ def main():
     parser.add_argument("--feed", type=Path, required=True)
     parser.add_argument("--date", type=date.fromisoformat, default=datetime.now(EASTERN).date(),
                         help="NBA Eastern date; defaults to today")
+    parser.add_argument("--finished-only", action="store_true",
+                        help="Publish only finished games from today or yesterday in NBA Eastern time")
     args = parser.parse_args()
-    changed = update_file(args.feed, args.date)
+    changed = update_file(args.feed, args.date, finished_only=args.finished_only)
     print("Validated and updated games.json" if changed else "No data changes; games.json preserved")
 
 
