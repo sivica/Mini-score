@@ -23,7 +23,8 @@ async function fixture(t) {
   const program = `
 import uvicorn
 import backend.app as module
-def imported(previous, today):
+def imported(previous, today, *, finished_only):
+    assert finished_only is True
     game = next(g for g in previous['games'] if g['id'] == previous['defaultGameId'])
     game['venue'] = 'New provider arena'
     game['away']['players'][0]['stats']['rebounds'] += 1

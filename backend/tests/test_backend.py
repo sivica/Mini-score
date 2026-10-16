@@ -11,6 +11,7 @@ from fastapi.testclient import TestClient
 
 from backend.app import create_app, daily_date
 from backend.store import Conflict, Store
+from scripts.update_game_feed import build_feed
 
 SEED = json.loads((Path(__file__).parents[1] / "seed.json").read_text())
 
@@ -299,3 +300,82 @@ def test_api_draft_conflict_preserves_publication_and_first_draft(client):
         request["draftVersion"] = version
         assert client.post("/admin/game", auth=auth, headers=headers, json=request).status_code == 422
     assert client.get("/games").json() == state["published"]
+
+
+def configure_finished_import(monkeypatch, day=datetime(2026, 10, 10, 12, tzinfo=timezone.utc)):
+    class Clock(datetime):
+        @classmethod
+        def now(cls, tz=None):
+            return day.astimezone(tz) if tz else day.replace(tzinfo=None)
+    monkeypatch.setattr("backend.app.datetime", Clock)
+    fixture = Path(__file__).parents[2] / "scripts/tests/fixtures"
+    event = json.loads((fixture / "scoreboard-event.json").read_text())
+    summary = json.loads((fixture / "boxscore.json").read_text())
+    calls = []
+    def imported(previous, today, *, finished_only=False):
+        calls.append((today, finished_only))
+        def fetch(url):
+            if "summary?" in url:
+                return copy.deepcopy(summary)
+            return {"events": [copy.deepcopy(event)]} if "dates=20261009" in url else {"events": []}
+        return build_feed(previous, today, fetch, finished_only=finished_only)
+    monkeypatch.setattr("backend.app.build_feed", imported)
+    return calls
+
+
+def test_manual_import_publishes_only_recent_finals_and_preserves_saved_edits(client, monkeypatch):
+    calls = configure_finished_import(monkeypatch)
+    store = client.app.state.store
+    game = finished(store)
+    game["venue"] = "Owner correction"
+    store.save_game(game, 1, publish=True)
+    game["venue"] = "Unpublished draft"
+    store.save_game(game, 2, draft_version=1)
+    before = store.read()
+    response = client.post("/admin/import", auth=("owner", "a-long-local-test-password"),
+                           headers={"X-Miniscore-Admin": "1"})
+    assert response.status_code == 200
+    after = store.read()
+    assert calls == [(datetime(2026, 10, 10).date(), True)]
+    games = client.get("/games").json()["games"]
+    assert games and all(g["status"] == "FINISHED" and g["date"] in ("2026-10-09", "2026-10-10")
+                         for g in games)
+    for key in ("drafts", "draftVersions", "corrections", "defaultOverride"):
+        assert after[key] == before[key]
+    assert after["revision"] == before["revision"] + 1
+    assert after["history"][1:] == before["history"]
+    assert after["history"][0]["raw"] == before["raw"]
+
+
+def test_empty_finished_window_preserves_public_response_etag_and_revision(client, monkeypatch):
+    configure_finished_import(monkeypatch, day=datetime(2026, 10, 20, 12, tzinfo=timezone.utc))
+    store = client.app.state.store
+    before = store.read()
+    published = client.get("/games")
+    response = client.post("/admin/import", auth=("owner", "a-long-local-test-password"),
+                           headers={"X-Miniscore-Admin": "1"})
+    assert response.status_code == 502
+    after = store.read()
+    for key in ("published", "raw", "revision", "updatedAt", "drafts", "draftVersions", "corrections", "history"):
+        assert after[key] == before[key]
+    current = client.get("/games")
+    assert current.content == published.content
+    assert current.headers["etag"] == published.headers["etag"]
+    assert after["importError"] and not after["importing"]
+
+
+def test_daily_scheduler_uses_finished_only_import(tmp_path, monkeypatch):
+    calls = configure_finished_import(monkeypatch)
+    monkeypatch.setattr("backend.app.daily_date", lambda now: "2026-10-10")
+    app = create_app(f"sqlite:///{tmp_path}/daily.db", seed=copy.deepcopy(SEED))
+    async def check():
+        async with app.router.lifespan_context(app):
+            async with asyncio.timeout(3):
+                while app.state.store.read()["lastImport"] is None:
+                    await asyncio.sleep(0.01)
+            state = app.state.store.read()
+            assert calls == [(datetime(2026, 10, 10).date(), True)]
+            assert state["lastDailyAttempt"] == "2026-10-10"
+            assert all(g["status"] == "FINISHED" and g["date"] in ("2026-10-09", "2026-10-10")
+                       for g in state["published"]["games"])
+    asyncio.run(check())
