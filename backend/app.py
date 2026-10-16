@@ -53,7 +53,8 @@ def create_app(database_url=None, scheduler=True, seed=None):
                 state = await run_in_threadpool(store.read) if due else None
                 if due and state["lastDailyAttempt"] != due:
                     await run_in_threadpool(store.import_feed,
-                                            lambda previous: build_feed(previous, datetime.now(EASTERN).date()), due)
+                                            lambda previous: build_feed(previous, datetime.now(EASTERN).date(),
+                                                                        finished_only=True), due)
             except Conflict:
                 pass
             except Exception:
@@ -209,7 +210,8 @@ def create_app(database_url=None, scheduler=True, seed=None):
     async def import_now():
         try:
             await run_in_threadpool(store.import_feed,
-                                    lambda previous: build_feed(previous, datetime.now(EASTERN).date()))
+                                    lambda previous: build_feed(previous, datetime.now(EASTERN).date(),
+                                                                finished_only=True))
         except Conflict:
             raise
         except Exception as exc:
