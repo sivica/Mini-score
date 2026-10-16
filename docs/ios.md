@@ -57,4 +57,24 @@ The statistics-source licence remains unresolved, as already recorded in the pol
 - Light/dark appearances and accessibility-extra-large Dynamic Type (stacked cards) inspected. This is Apple's named accessibility category, not an exact percentage setting.
 - The desktop Simulator input bridge did not deliver drag/scroll gestures reliably. Pull-to-refresh is implemented with native SwiftUI `refreshable`, but the gesture still needs an on-device/TestFlight check. Do not describe that manual gesture check as passed.
 - Apple membership, App Store Connect and Xcode account access verified. With owner approval, an Apple Distribution certificate and the `Miniscore App Store` provisioning profile were created on October 16, 2026 (both expire October 16, 2027). The private key is in the Mac login Keychain; the temporary private-key file was removed after import. No API key was created or committed.
-- A signed Release archive for version 1.0.0 (1) passes `codesign --verify --deep --strict`; its embedded profile matches `36HS92C4DU.com.ivicastojanoski.miniscore` and has debugging disabled. App Store Connect accepted the upload at 17:09 Europe/Skopje on October 16, 2026 (`xcodebuild` reported `Upload succeeded` and `EXPORT SUCCEEDED`). Apple then processes the build before it can be assigned to internal testers. No public App Store release was submitted.
+- A signed Release archive for version 1.0.0 (1) passes `codesign --verify --deep --strict`; its embedded profile matches `36HS92C4DU.com.ivicastojanoski.miniscore` and has debugging disabled. App Store Connect accepted the upload at 17:09 Europe/Skopje on October 16, 2026 (`xcodebuild` reported `Upload succeeded` and `EXPORT SUCCEEDED`). Apple processed the build; it is **Testing** in **Miniscore Internal**, with the owner as its one approved tester. No public App Store release was submitted.
+
+## App Store submission draft (October 16, 2026)
+
+Public metadata is versioned in [`ios/AppStore/en-US.json`](../ios/AppStore/en-US.json). Private App Review contact information is stored only in App Store Connect.
+
+- Version **1.0.0**, build **1**, remains **Prepare for Submission**. The build is attached and manual release is selected.
+- Saved English listing: Miniscore; subtitle **Basketball box scores**; category **Sports**; promotional text, description, keywords, copyright, support URL and reviewer notes. No login is required. The listing describes published daily data, not live play-by-play.
+- Saved screenshots: one 1206×2622 iPhone screenshot, two 1320×2868 large-iPhone screenshots and two 2064×2752 iPad screenshots. Images show the real app, contain no team artwork/player photos, and use opaque JPEGs.
+- Age questionnaire: no objectionable content, social features, advertising, gambling or unrestricted browsing. Calculated 4+ overridden to **13+**, matching the existing teen/adult audience policy (regional equivalents apply).
+- Pricing: **Free** in all currencies; availability configured for all **175 countries or regions**, taking effect only after approval and manual release. Account compliance and regional eligibility can still restrict actual availability.
+- Public [support](https://sivica.github.io/Mini-score/support/) and [privacy](https://sivica.github.io/Mini-score/privacy/) pages were published on the existing `develop` GitHub Pages source and verified. Privacy coverage now includes iPhone/iPad, Apple backups and TestFlight.
+- Privacy-label draft: **Other Diagnostic Data**, **App Functionality**, **linked to user**, **not used for tracking**. This conservatively accounts for unredacted request/IP logs used for operations/security; no anonymization was found in the Docker Uvicorn configuration. No location is inferred from IP in app code. The client has no telemetry SDK. Optional support email is user-initiated outside the app; confirm production/provider practices and support handling before publishing the label. See [Apple's data collection, IP-address and optional-disclosure guidance](https://developer.apple.com/app-store/app-privacy-details/). A client privacy manifest does not replace this server disclosure.
+
+Before public submission:
+
+- Test signed TestFlight build on a physical device: game switching, pull-to-refresh, reopen with saved games offline, and support/privacy links. The desktop gesture bridge did not verify pull-to-refresh.
+- Confirm production logging/provider/support practices, review and publish the privacy label.
+- Complete applicable account compliance information, including the Digital Services Act trader-status setup shown in App Store Connect. Only the owner can supply their actual business/trader status and approve any public contact disclosure.
+- Resolve the existing statistics-source rights issue before affirming Content Rights. It remains deliberately unanswered; source-code MIT licensing does not grant data rights.
+- Review the completed submission and explicitly approve sending it to App Review. Adding a build or saving metadata does not submit it.
