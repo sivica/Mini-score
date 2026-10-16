@@ -4,7 +4,9 @@ The **Update daily NBA game feed** GitHub Actions workflow runs once daily at **
 
 The updater reads ESPN's public NBA scoreboard and box-score JSON, converts it to Miniscore schema version 1, and publishes only `games.json` on the `game-data` branch. It requires no additional API credentials, Play credentials, or app release. ESPN's public endpoints are not a contracted API and may change or become unavailable; failures stop publication and preserve the previous feed.
 
-At each run it refreshes yesterday, today, and tomorrow according to **America/New_York**, covering the previous night's NBA games and the next schedule. It keeps a week of recent games, up to the app's 100-game limit. The newest completed game is the default; if none has completed, the earliest upcoming game is selected. Existing game IDs are preserved by matching the game date and away/home team codes, so earlier manually added games are not duplicated.
+At each run it fetches **yesterday and today in America/New_York** and publishes only **FINISHED** games whose NBA Eastern game date is in that window, up to the app's 100-game limit. Scheduled, live, postponed, cancelled, older and future games are excluded, including entries already present in the published JSON. The newest completed game is the default. Existing game IDs are preserved by matching the game date and away/home team codes, so earlier manually added games are not duplicated. Games after midnight UTC still use their NBA Eastern date.
+
+The workflow passes `--finished-only` to the shared importer. Railway's daily and admin imports keep their existing schedule/history behavior. If there are no completed games in the two-day window, publication fails safely and keeps the previous JSON rather than publishing an empty feed the installed app would reject. Previously validated finals within the window are retained if the provider temporarily omits them.
 
 Player photos and team logos use ESPN image URLs. Player stats include PTS, REB, AST, FGM, FGA and the app's detail stats. Players marked DNP are omitted. ESPN sometimes supplies whole, rounded minutes rather than minute/second precision; in that case seconds are zero. No previous game's stats are copied into a new game. Scheduled/postponed/cancelled games have zero scores and empty player/quarter arrays, and the app displays its scheduled-game state.
 
@@ -20,7 +22,7 @@ Local verification:
 
 ```sh
 python3 -m unittest discover -s scripts/tests -v
-python3 scripts/update_game_feed.py --feed /path/to/copied/games.json --date 2026-10-10
+python3 scripts/update_game_feed.py --feed /path/to/copied/games.json --date 2026-10-10 --finished-only
 ```
 
 Sources: [ESPN scoreboard](https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard), [example ESPN box score](https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=401898395), [GitHub scheduling and timezones](https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onschedule). In public repositories, GitHub disables schedules after 60 days without repository activity; re-enable the workflow if that occurs during an extended offseason without data changes.

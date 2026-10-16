@@ -9,7 +9,7 @@ The `game-data` branch is the published data source. The copy of `games.json` on
 
 ## Automatic morning update
 
-[Update daily NBA game feed](https://github.com/sivica/Mini-score/actions/workflows/daily-game-feed.yml) runs at **08:00 Europe/Skopje** daily, following daylight saving time. It fetches ESPN schedules and player box scores for yesterday, today and tomorrow in NBA Eastern time, keeps one week of recent games, and publishes validated changes. Source or validation failures preserve the previous JSON. The newest completed game is the default. See [the automation guide](daily-game-feed.md) for manual runs and data-source limitations. No app update or new API credentials are required.
+[Update daily NBA game feed](https://github.com/sivica/Mini-score/actions/workflows/daily-game-feed.yml) runs at **08:00 Europe/Skopje** daily, following daylight saving time. It publishes only finished ESPN games and player box scores from **today or yesterday in NBA Eastern time**, removing unfinished, older and future entries. Source/validation failures or a window without completed games preserve the previous JSON. The newest completed game is the default. See [the automation guide](daily-game-feed.md) for manual runs and data-source limitations. No app update or new API credentials are required.
 
 ## Tomorrow's game
 
