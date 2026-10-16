@@ -27,3 +27,9 @@ __pycache__/
 backend/*.db
 node_modules/
 .venv/
+ios/.build/
+ios/DerivedData/
+ios/build/
+ios/.ios-release/
+*.xcuserstate
+xcuserdata/

@@ -1,0 +1,24 @@
+name: iOS checks
+on:
+  pull_request:
+    paths: ['ios/**', '.github/workflows/ios-checks.yml']
+  push:
+    branches: [main]
+    paths: ['ios/**', '.github/workflows/ios-checks.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - name: Test strict feed validation and cache preservation
+        run: swift test --package-path ios
+      - name: Build native app for iPhone and iPad simulators
+        run: >-
+          xcodebuild -quiet -project ios/Miniscore.xcodeproj -scheme Miniscore
+          -configuration Release -sdk iphonesimulator
+          -destination 'generic/platform=iOS Simulator'
+          -derivedDataPath ios/DerivedData CODE_SIGNING_ALLOWED=NO build
