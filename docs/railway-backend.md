@@ -69,7 +69,19 @@ railway config apply
 railway up --service miniscore-api --detach
 ```
 
-Review the plan; keep the database and volume. CLI deployments are currently manual; GitHub autodeploys are not connected. API/database usage consumes the owner's Railway allowance. Publication history is not a database backup.
+Review the plan; keep the database and volume. API/database usage consumes the owner's Railway allowance. Publication history is not a database backup.
+
+### Automatic deployments from main
+
+`.github/workflows/railway-production.yml` deploys after **Test Miniscore backend** succeeds for a push to `main`. PR checks and fork runs cannot deploy. The workflow skips superseded commits, serializes deployments, uploads the tested commit, waits for that exact deployment to become healthy, then calls the existing authenticated import endpoint. A manual run is available on `main`, but it also requires passing backend CI for that commit.
+
+The `railway-production` GitHub environment is restricted to `main`. Its `RAILWAY_TOKEN` is a Railway project token scoped to this project's **production** environment, not an account-wide token. Only the deploy/import steps receive it. The pinned Railway CLI retrieves the existing API owner credentials at runtime for the import; they are not copied into GitHub secrets or printed. The import script rejects redirects, retries only definite import-lock conflicts, and validates the public finished-game feed afterwards. An ambiguous network failure is not retried automatically.
+
+The Railway service's native GitHub auto-deploy source must remain disconnected so one merge cannot produce two deployments. No Mac, browser session, new service, hourly checker or APK update is required. The daily 08:00 Europe/Skopje import continues independently. Main pushes also retain the separate existing Play Internal testing workflow.
+
+Deployments do not replace PostgreSQL or its volume. Imports preserve manual corrections and saved drafts. Failed imports retain the previous validated publication and fail the workflow visibly; a successful backend deployment can therefore coexist with a failed stats-refresh step. If no games have finished in the today/yesterday window, the old feed remains available and the workflow reports that refresh failure. Provider licensing remains a separate unresolved release concern.
+
+To revoke automation, delete the GitHub environment secret and revoke its named project token in Railway. To retry a failure, rerun the GitHub workflow against current, passing `main`; check the job logs and the public `/health` and `/games` responses. Do not print Railway variables or owner credentials when debugging.
 
 ## Encrypted daily backups on Hobby
 
