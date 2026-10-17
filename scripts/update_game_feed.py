@@ -173,6 +173,12 @@ def parse_players(team_box):
         require(isinstance(stats["FG"], str) and re.fullmatch(r"\d+-\d+", stats["FG"]), "Invalid FG")
         fg = stats["FG"].split("-")
         minutes = stats["MIN"]
+        # ESPN sometimes marks unused roster rows didNotPlay=false with MIN="--".
+        # Omit only explicit zero-activity nonstarters; never turn missing time into 0.
+        if minutes == "--" and entry["starter"] is False and all(
+                value == ("0-0" if name in ("FG", "3PT", "FT") else "0")
+                for name, value in stats.items() if name != "MIN"):
+            continue
         require(isinstance(minutes, str) and re.fullmatch(r"\d+(?::[0-5]\d)?", minutes), "Invalid minutes")
         parts = minutes.split(":")
         athlete = entry["athlete"]
