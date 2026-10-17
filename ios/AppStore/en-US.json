@@ -1,0 +1,14 @@
+{
+  "name": "Miniscore",
+  "subtitle": "Basketball box scores",
+  "promotionalText": "Compare both teams at a glance. Explore player stats, quarter scores and saved games in a compact basketball box score.",
+  "description": "Basketball box scores, without the clutter.\n\nMiniscore puts both teams together in a compact view, so you can compare final scores and player statistics at a glance.\n\n\u2022 Browse and search published games by team or date.\n\u2022 Compare points, rebounds, assists, field goals made and attempted.\n\u2022 See minutes played, starters and substitutes ordered by playing time.\n\u2022 Tap a player for their full name, steals, blocks and turnovers.\n\u2022 Expand the score for venue and quarter totals.\n\u2022 Pull to refresh, or reopen the app to check for updates.\n\u2022 Revisit saved games offline after a successful refresh.\n\u2022 Use light or dark appearance and larger text sizes.\n\nNo Miniscore account is required. New game data appears when published; availability and update times may vary. Miniscore does not provide live play-by-play coverage.\n\nSupport: s.ivica@gmail.com",
+  "keywords": "basketball,boxscore,scores,stats,players,rebounds,assists,offline",
+  "supportURL": "https://sivica.github.io/Mini-score/support/",
+  "privacyURL": "https://sivica.github.io/Mini-score/privacy/",
+  "version": "1.0.0",
+  "copyright": "2026 Ivica Stojanoski",
+  "category": "Sports",
+  "reviewNotes": "No sign-in is required. Open the menu to select a published game. Tap a player for additional stats or the Final arrow for venue and quarter scores. Pull down to refresh. The app caches validated game data for offline use; first launch also includes a dated bundled snapshot. Game data is published daily rather than live play-by-play.",
+  "reviewContactEmail": "s.ivica@gmail.com"
+}

@@ -1,0 +1,59 @@
+// !$*UTF8*$!
+{ archiveVersion = 1; classes = {}; objectVersion = 56; objects = {
+70A50DFFAE3FCB8471161032 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Miniscore/GameStore.swift"; sourceTree = SOURCE_ROOT; };
+7D738493BA17064E82CE33B2 = { isa = PBXBuildFile; fileRef = 70A50DFFAE3FCB8471161032; };
+7AE7CA6653855FC627EDD06E = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Miniscore/GamesDrawer.swift"; sourceTree = SOURCE_ROOT; };
+8892BD6D8CE08B882F3407D8 = { isa = PBXBuildFile; fileRef = 7AE7CA6653855FC627EDD06E; };
+849C4A50F113282F168EC256 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Miniscore/GamesView.swift"; sourceTree = SOURCE_ROOT; };
+98B599242CA7DAA6C4886FCE = { isa = PBXBuildFile; fileRef = 849C4A50F113282F168EC256; };
+7DB6F0CB6E2C7ED574A246A4 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Miniscore/MiniscoreApp.swift"; sourceTree = SOURCE_ROOT; };
+33799290C52AC780D2308943 = { isa = PBXBuildFile; fileRef = 7DB6F0CB6E2C7ED574A246A4; };
+B865CE60ED5AE84ECBE14B83 = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/MiniscoreCore/FeedRepository.swift"; sourceTree = SOURCE_ROOT; };
+2C0F61B743F5D094429C8277 = { isa = PBXBuildFile; fileRef = B865CE60ED5AE84ECBE14B83; };
+27543808D8A7232D127C49EF = { isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Sources/MiniscoreCore/GameFeed.swift"; sourceTree = SOURCE_ROOT; };
+5C870F87A43FF23E77EABBC6 = { isa = PBXBuildFile; fileRef = 27543808D8A7232D127C49EF; };
+8B86F26123DEE56E61844E70 = { isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Miniscore/Assets.xcassets"; sourceTree = SOURCE_ROOT; };
+4B087A0CD3D4C3CC54E00333 = { isa = PBXBuildFile; fileRef = 8B86F26123DEE56E61844E70; };
+333514B5551F376312092ADF = { isa = PBXFileReference; lastKnownFileType = text.xml; path = "Miniscore/PrivacyInfo.xcprivacy"; sourceTree = SOURCE_ROOT; };
+5B340DA304306F81938639B8 = { isa = PBXBuildFile; fileRef = 333514B5551F376312092ADF; };
+C5DE3CDDBE45B5A399D02B30 = { isa = PBXFileReference; lastKnownFileType = text.json; path = "Miniscore/SampleGames.json"; sourceTree = SOURCE_ROOT; };
+84F808D0A3D46D92781A1BDC = { isa = PBXBuildFile; fileRef = C5DE3CDDBE45B5A399D02B30; };
+A8792157CB4F27FB949C035F = { isa = PBXFileReference; explicitFileType = wrapper.application; path = Miniscore.app; sourceTree = BUILT_PRODUCTS_DIR; };
+0A3E27B8CA818264D75C8D81 = { isa = PBXGroup; children = (A8792157CB4F27FB949C035F,); name = Products; sourceTree = "<group>"; };
+C8D2DC745BFC63C0D67231CE = { isa = PBXGroup; children = (70A50DFFAE3FCB8471161032, 7AE7CA6653855FC627EDD06E, 849C4A50F113282F168EC256, 7DB6F0CB6E2C7ED574A246A4, B865CE60ED5AE84ECBE14B83, 27543808D8A7232D127C49EF, 8B86F26123DEE56E61844E70, 333514B5551F376312092ADF, C5DE3CDDBE45B5A399D02B30, 0A3E27B8CA818264D75C8D81,); sourceTree = "<group>"; };
+878A52FC5FF6A57D50B7B870 = { isa = PBXSourcesBuildPhase; buildActionMask = 2147483647; files = (7D738493BA17064E82CE33B2, 8892BD6D8CE08B882F3407D8, 98B599242CA7DAA6C4886FCE, 33799290C52AC780D2308943, 2C0F61B743F5D094429C8277, 5C870F87A43FF23E77EABBC6,); runOnlyForDeploymentPostprocessing = 0; };
+41D311A605520FC7B8B9A980 = { isa = PBXResourcesBuildPhase; buildActionMask = 2147483647; files = (4B087A0CD3D4C3CC54E00333, 5B340DA304306F81938639B8, 84F808D0A3D46D92781A1BDC,); runOnlyForDeploymentPostprocessing = 0; };
+E2AA269EB967A8853A258BFA = { isa = PBXFrameworksBuildPhase; buildActionMask = 2147483647; files = (); runOnlyForDeploymentPostprocessing = 0; };
+2B23A31EEC75B029432F2445 = { isa = XCBuildConfiguration; name = Debug; buildSettings = { CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; };
+EDDA600A3F771F810A8065C9 = { isa = XCBuildConfiguration; name = Debug; buildSettings = {
+        ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic;
+        CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = 36HS92C4DU; ENABLE_PREVIEWS = YES;
+        GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Miniscore/Info.plist;
+        LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+        MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.ivicastojanoski.miniscore;
+        PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+        SUPPORTS_MACCATALYST = NO; SWIFT_VERSION = 6.0; TARGETED_DEVICE_FAMILY = "1,2";
+        SWIFT_OPTIMIZATION_LEVEL = "-Onone"; SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+    }; };
+07CA1E69F6068DEA30A4DA6B = { isa = XCBuildConfiguration; name = Release; buildSettings = { CLANG_ENABLE_MODULES = YES; SDKROOT = iphoneos; IPHONEOS_DEPLOYMENT_TARGET = 17.0; }; };
+594BCDCC96599D88EF772A08 = { isa = XCBuildConfiguration; name = Release; buildSettings = {
+        ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon; CODE_SIGN_STYLE = Automatic;
+        CURRENT_PROJECT_VERSION = 1; DEVELOPMENT_TEAM = 36HS92C4DU; ENABLE_PREVIEWS = YES;
+        GENERATE_INFOPLIST_FILE = NO; INFOPLIST_FILE = Miniscore/Info.plist;
+        LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+        MARKETING_VERSION = 1.0.0; PRODUCT_BUNDLE_IDENTIFIER = com.ivicastojanoski.miniscore;
+        PRODUCT_NAME = "$(TARGET_NAME)"; SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+        SUPPORTS_MACCATALYST = NO; SWIFT_VERSION = 6.0; TARGETED_DEVICE_FAMILY = "1,2";
+        SWIFT_OPTIMIZATION_LEVEL = "-O"; SWIFT_COMPILATION_MODE = wholemodule;
+    }; };
+76F8DEC3DFE0BDB465198890 = { isa = XCConfigurationList; buildConfigurations = (2B23A31EEC75B029432F2445, 07CA1E69F6068DEA30A4DA6B,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+1B672BF3DA427763BF644BE3 = { isa = XCConfigurationList; buildConfigurations = (EDDA600A3F771F810A8065C9, 594BCDCC96599D88EF772A08,); defaultConfigurationIsVisible = 0; defaultConfigurationName = Release; };
+34A04005BCAF206EEC990BD9 = { isa = PBXNativeTarget; buildConfigurationList = 1B672BF3DA427763BF644BE3;
+    buildPhases = (878A52FC5FF6A57D50B7B870, E2AA269EB967A8853A258BFA, 41D311A605520FC7B8B9A980,); buildRules = (); dependencies = ();
+    name = Miniscore; productName = Miniscore; productReference = A8792157CB4F27FB949C035F; productType = "com.apple.product-type.application"; };
+244210E48437B6556980A702 = { isa = PBXProject; attributes = { BuildIndependentTargetsInParallel = YES; LastUpgradeCheck = 2660;
+    TargetAttributes = { 34A04005BCAF206EEC990BD9 = { CreatedOnToolsVersion = 26.6; ProvisioningStyle = Automatic; }; }; };
+    buildConfigurationList = 76F8DEC3DFE0BDB465198890; compatibilityVersion = "Xcode 14.0"; developmentRegion = en;
+    hasScannedForEncodings = 0; knownRegions = (en, Base,); mainGroup = C8D2DC745BFC63C0D67231CE; productRefGroup = 0A3E27B8CA818264D75C8D81;
+    projectDirPath = ""; projectRoot = ""; targets = (34A04005BCAF206EEC990BD9,); };
+}; rootObject = 244210E48437B6556980A702; }
