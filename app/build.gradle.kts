@@ -50,6 +50,8 @@ android {
       signingConfig = signingConfigs.getByName("release")
     }
     debug {
+      applicationIdSuffix = ".preview"
+      versionNameSuffix = "-images-preview"
       signingConfig = signingConfigs.getByName("debugConfig")
     }
   }
@@ -97,6 +99,7 @@ dependencies {
   implementation(libs.androidx.room.ktx)
   implementation(libs.androidx.room.runtime)
   implementation(libs.converter.moshi)
+  implementation(libs.coil.compose)
   // implementation(libs.firebase.ai)
   implementation(libs.kotlinx.coroutines.android)
   implementation(libs.kotlinx.coroutines.core)

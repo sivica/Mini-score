@@ -103,7 +103,8 @@ object GameFeedCodec {
                     blocks = stats.stat("blocks", 100), turnovers = stats.stat("turnovers", 100),
                     fgMade = fgMade, fgAttempted = fgAttempted,
                     minutes = stats.stat("minutes", 100), seconds = stats.stat("seconds", 59)
-                ), portraitUrl = json.imageUrl("portraitUrl"), teamCode = code
+                ), portraitUrl = json.imageUrl("portraitUrl"), teamCode = code,
+                position = json.optionalText("position")?.also { require(isPlayerPosition(it)) }
             )
         }.also { require(it.count { p -> p.isStarting } <= 5) { "More than five starters" } }
     }
@@ -182,7 +183,7 @@ class GameFeedRepository(
     }
 }
 
-private fun java.io.InputStream.readNBytesCompat(limit: Int): ByteArray {
+internal fun java.io.InputStream.readNBytesCompat(limit: Int): ByteArray {
     val output = java.io.ByteArrayOutputStream()
     val buffer = ByteArray(8192)
     while (true) {

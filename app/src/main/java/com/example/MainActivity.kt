@@ -16,7 +16,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        gameViewModel.startFeed(GameFeedRepository(java.io.File(filesDir, "games-cache.json")))
+        gameViewModel.startFeed(GameFeedRepository(java.io.File(filesDir, "games-cache.json")),
+            PlayerPositionRepository(java.io.File(filesDir, "player-positions-cache.json")))
         
         // Supports borderless edge-to-edge drawing
         enableEdgeToEdge(

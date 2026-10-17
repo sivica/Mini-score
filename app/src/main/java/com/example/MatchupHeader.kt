@@ -34,7 +34,7 @@ fun ScoreboardHeaderPanel(game: Game) {
                     ScorePair(game, Modifier.fillMaxWidth().padding(vertical = 6.dp))
                     Row(Modifier.fillMaxWidth()) {
                         listOf(game.awayTeam, game.homeTeam).forEach { team ->
-                            TeamNameText(team, Modifier.weight(1f).padding(horizontal = 4.dp)
+                            TeamIdentity(team, Modifier.weight(1f).padding(horizontal = 4.dp)
                                 .testTag("scoreboard_team_${team.code}"))
                         }
                     }
@@ -44,7 +44,7 @@ fun ScoreboardHeaderPanel(game: Game) {
                 } else {
                     Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            TeamNameText(game.awayTeam, Modifier.fillMaxWidth()
+                            TeamIdentity(game.awayTeam, Modifier.fillMaxWidth()
                                 .testTag("scoreboard_team_${game.awayTeam.code}"))
                         }
                         Column(Modifier.weight(2f), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -52,7 +52,7 @@ fun ScoreboardHeaderPanel(game: Game) {
                             ScorePair(game, Modifier.fillMaxWidth().padding(top = 5.dp))
                         }
                         Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                            TeamNameText(game.homeTeam, Modifier.fillMaxWidth()
+                            TeamIdentity(game.homeTeam, Modifier.fillMaxWidth()
                                 .testTag("scoreboard_team_${game.homeTeam.code}"))
                         }
                     }

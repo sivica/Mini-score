@@ -44,13 +44,13 @@ fun CollapsedGameCard(game: Game, selected: Boolean = false, onClick: () -> Unit
             if (largeText) DrawerScore(game, 14, Modifier.fillMaxWidth())
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamNameText(game.awayTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.awayTeam.code}_${game.id}"))
+                    TeamIdentity(game.awayTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.awayTeam.code}_${game.id}"), 32.dp)
                 }
                 if (!largeText) {
                     DrawerScore(game, 18, Modifier.weight(1.25f))
                 }
                 Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                    TeamNameText(game.homeTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.homeTeam.code}_${game.id}"))
+                    TeamIdentity(game.homeTeam, Modifier.fillMaxWidth().testTag("drawer_team_${game.homeTeam.code}_${game.id}"), 32.dp)
                 }
             }
             Text(pickerStatus(game), color = TextSecondary, fontSize = 12.sp, lineHeight = 18.sp,

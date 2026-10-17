@@ -45,6 +45,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -92,7 +93,8 @@ data class Player(
     val isTopPerformer: Boolean = false,
     val keyPlays: List<String> = emptyList(),
     val portraitUrl: String? = null,
-    val teamCode: String? = null
+    val teamCode: String? = null,
+    val position: String? = null
 )
 
 data class Team(
@@ -233,15 +235,19 @@ class GameViewModel : ViewModel() {
     // Convert to regular list for observing changes
     val games: List<Game> get() = _games.values.sortedWith(compareByDescending<Game> { it.gameDate }.thenBy { if (it.id == feedDefaultId) 0 else 1 }.thenBy { it.id })
     private var feedRepository: GameFeedRepository? = null
+    private var positionRepository: PlayerPositionRepository? = null
+    private var positionJob: Job? = null
+    private var positionGameId: String? = null
     private var feedDefaultId: String? = null
     private val _isRefreshing = MutableStateFlow(false)
     val isRefreshing = _isRefreshing.asStateFlow()
     private val _feedMessage = MutableStateFlow<String?>(null)
     val feedMessage = _feedMessage.asStateFlow()
 
-    fun startFeed(repository: GameFeedRepository) {
+    fun startFeed(repository: GameFeedRepository, positions: PlayerPositionRepository? = null) {
         if (feedRepository != null) return
         feedRepository = repository
+        positionRepository = positions
         refreshGames(loadCache = true)
     }
 
@@ -273,6 +279,7 @@ class GameViewModel : ViewModel() {
         feedDefaultId = feed.defaultGameId
         _selectedPlayer.value = null
         _aiAnalysisState.value = AiState.Idle
+        loadPositions()
     }
 
     private val _selectedGameId = MutableStateFlow(PreseasonGameData.GAME_ID)
@@ -303,6 +310,34 @@ class GameViewModel : ViewModel() {
         _selectedGameId.value = id
         _selectedPlayer.value = null
         _aiAnalysisState.value = AiState.Idle // Reset AI state when switching games
+        loadPositions()
+    }
+
+    private fun loadPositions() {
+        val repository = positionRepository ?: return
+        val id = _selectedGameId.value
+        if (positionGameId == id && positionJob?.isActive == true) return
+        positionJob?.cancel()
+        positionGameId = id
+        positionJob = viewModelScope.launch {
+            try {
+                val positions = repository.forGame(id)
+                val current = _games[id] ?: return@launch
+                val enriched = current.withPlayerPositions(positions)
+                _games[id] = enriched
+                _selectedPlayer.value?.let { selected ->
+                    if (_selectedGameId.value == id) {
+                        _selectedPlayer.value = (enriched.startingAway + enriched.startingHome +
+                            enriched.substitutesAway + enriched.substitutesHome).find { it.id == selected.id }
+                    }
+                }
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                // Positions are optional; scores and the saved feed stay intact.
+                if (BuildConfig.DEBUG) android.util.Log.w("MiniscorePositions", "Position metadata unavailable", error)
+            }
+        }
     }
 
     fun selectPlayer(player: Player?) {
@@ -343,7 +378,7 @@ class GameViewModel : ViewModel() {
 // 6. TEAM NAMES
 // ==========================================
 
-/** Text-only team identity. Feed logo URLs are deliberately never loaded. */
+/** Three-letter identity remains visible beneath the preview's remote team logo. */
 @Composable
 fun TeamNameText(team: Team, modifier: Modifier = Modifier) {
     Text(team.code, color = TextPrimary, fontSize = 14.sp,
@@ -487,16 +522,25 @@ fun PlayerLineupCell(player: Player, modifier: Modifier = Modifier, onPlayerClic
                 textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
                 modifier = Modifier.fillMaxWidth().testTag("player_name_${player.id}"))
             Row(Modifier.fillMaxWidth().padding(top = 3.dp), verticalAlignment = Alignment.CenterVertically) {
+                if (player.isLeftTeam) {
+                    PlayerPortrait(player, 32.dp)
+                    Spacer(Modifier.width(6.dp))
+                }
                 if (!player.isLeftTeam) {
                     PlayerMinutes(player, Modifier.alignByBaseline())
                     Spacer(Modifier.width(6.dp))
                 }
-                Text("#${player.number}", color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
+                Text(listOfNotNull("#${player.number}", player.position).joinToString(" · "),
+                    color = TextSecondary, fontSize = 12.sp, lineHeight = 16.sp,
                     textAlign = if (player.isLeftTeam) TextAlign.Start else TextAlign.End,
                     maxLines = 1, modifier = Modifier.weight(1f).alignByBaseline())
                 if (player.isLeftTeam) {
                     Spacer(Modifier.width(6.dp))
                     PlayerMinutes(player, Modifier.alignByBaseline())
+                }
+                if (!player.isLeftTeam) {
+                    Spacer(Modifier.width(6.dp))
+                    PlayerPortrait(player, 32.dp)
                 }
             }
         }
@@ -708,6 +752,7 @@ fun PlayerDetailBottomSheet(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                PlayerPortrait(player, 64.dp, Modifier.padding(end = 12.dp), "player_details_portrait")
                 Column(modifier = Modifier.weight(1f)) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(
@@ -716,7 +761,7 @@ fun PlayerDetailBottomSheet(
                         )
                         Spacer(modifier = Modifier.width(6.dp))
                         Text(
-                            text = "No. ${player.number}",
+                            text = listOfNotNull("No. ${player.number}", player.position).joinToString(" · "),
                             color = TextSecondary,
                             fontSize = 12.sp,
                             fontWeight = FontWeight.Bold

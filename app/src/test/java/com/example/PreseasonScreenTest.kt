@@ -10,6 +10,7 @@ import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.hasAnyAncestor
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasTestTag
+import androidx.compose.ui.test.hasText
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.width
 import androidx.compose.ui.Modifier
@@ -51,10 +52,10 @@ class PreseasonScreenTest {
     @get:Rule val composeTestRule = createComposeRule()
 
     @Test
-    fun textOnlyMatchupIgnoresRemoteImageUrls() {
+    fun imagePlaceholdersAndPositionKeepCoreStatsVisible() {
         val original = PreseasonGameData.createGame()
         val team = original.awayTeam.copy(logoUrl = "https://127.0.0.1:9/unlicensed-logo.png")
-        val player = original.startingAway.first().copy(portraitUrl = "https://127.0.0.1:9/unlicensed-photo.png")
+        val player = original.startingAway.first().copy(portraitUrl = "https://127.0.0.1:9/test-photo.png", position = "SF")
         val game = original.copy(awayTeam = team, startingAway = listOf(player))
         composeTestRule.setContent {
             MyApplicationTheme {
@@ -66,8 +67,9 @@ class PreseasonScreenTest {
         }
         composeTestRule.onNodeWithTag("scoreboard_team_${team.code}").assertTextEquals(team.code).assertIsDisplayed()
         composeTestRule.onNodeWithTag("player_name_${player.id}", useUnmergedTree = true).assertIsDisplayed()
-        composeTestRule.onNodeWithTag("team_logo_${team.code}", useUnmergedTree = true).assertDoesNotExist()
-        composeTestRule.onNodeWithTag("player_portrait_${player.id}", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithTag("team_logo_${team.code}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithTag("player_portrait_${player.id}", useUnmergedTree = true).assertIsDisplayed()
+        composeTestRule.onNodeWithText("#23 · SF", useUnmergedTree = true).assertIsDisplayed()
     }
 
     @Test
@@ -85,7 +87,8 @@ class PreseasonScreenTest {
             }
         }
         for (team in listOf(game.awayTeam, game.homeTeam)) {
-            val node = composeTestRule.onNodeWithTag("drawer_team_${team.code}_${game.id}", useUnmergedTree = true)
+            val node = composeTestRule.onNode(hasText(team.code) and
+                hasAnyAncestor(hasTestTag("drawer_team_${team.code}_${game.id}")), useUnmergedTree = true)
                 .assertTextEquals(team.code).assertIsDisplayed().fetchSemanticsNode()
             val layouts = mutableListOf<TextLayoutResult>()
             assertTrue(node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
@@ -139,7 +142,7 @@ class PreseasonScreenTest {
         for (label in listOf("Games", "Players", "Standings", "Settings")) {
             composeTestRule.onNodeWithText(label).assertDoesNotExist()
         }
-        composeTestRule.onNodeWithTag("player_portrait_phi_23", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithTag("player_portrait_phi_23", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithTag("lineup_player_phi_23").assertTextEquals(
             "LeBron James", "#23", "18:04", "PTS", "REB", "AST", "FGM", "FGA", "10", "4", "5", "1", "1"
         )
@@ -148,7 +151,7 @@ class PreseasonScreenTest {
         )
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-game.png")
         composeTestRule.onNodeWithText("LeBron James").performClick()
-        composeTestRule.onNodeWithTag("player_portrait_phi_23", useUnmergedTree = true).assertDoesNotExist()
+        composeTestRule.onNodeWithTag("player_details_portrait_phi_23", useUnmergedTree = true).assertIsDisplayed()
         composeTestRule.onNodeWithText("Minutes played: 18:04").performScrollTo().assertIsDisplayed()
         composeTestRule.onNodeWithText("Turnovers").performScrollTo().assertIsDisplayed()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/preseason-player.png")
@@ -349,7 +352,11 @@ class PreseasonScreenTest {
         composeTestRule.onNodeWithTag("drawer_home_name_${game.id}", useUnmergedTree = true).assertDoesNotExist()
         composeTestRule.onRoot().captureRoboImage(filePath = "build/screenshots/centered-header-200-percent.png")
         for (tag in listOf("game_context", "selected_game_date", "team_score_MEM", "team_score_CHI", "drawer_status_${game.id}", "scoreboard_team_MEM", "scoreboard_team_CHI", "drawer_team_MEM_${game.id}", "drawer_team_CHI_${game.id}")) {
-            val node = composeTestRule.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode()
+            val node = if (tag.contains("_team_")) {
+                val code = tag.substringAfter("_team_").substringBefore('_')
+                composeTestRule.onNode(hasText(code) and hasAnyAncestor(hasTestTag(tag)), useUnmergedTree = true)
+                    .fetchSemanticsNode()
+            } else composeTestRule.onNodeWithTag(tag, useUnmergedTree = true).fetchSemanticsNode()
             val layouts = mutableListOf<TextLayoutResult>()
             assertTrue(node.config[SemanticsActions.GetTextLayoutResult].action!!.invoke(layouts))
             assertTrue("$tag remains readable at 200%: ${layoutDescription(layouts.first())}", textFits(layouts.first()))
