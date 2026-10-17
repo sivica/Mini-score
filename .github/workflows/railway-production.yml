@@ -1,0 +1,92 @@
+name: Deploy Miniscore backend to Railway
+
+on:
+  workflow_run:
+    workflows: ['Test Miniscore backend']
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: miniscore-railway-production
+  cancel-in-progress: false
+
+jobs:
+  candidate:
+    if: >-
+      (github.event_name == 'workflow_dispatch' && github.ref == 'refs/heads/main') ||
+      (github.event.workflow_run.conclusion == 'success' &&
+       github.event.workflow_run.event == 'push' &&
+       github.event.workflow_run.head_branch == 'main' &&
+       github.event.workflow_run.head_repository.full_name == github.repository)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      sha: ${{ steps.candidate.outputs.sha }}
+    steps:
+      - name: Select current main only after backend CI succeeds
+        id: candidate
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          CANDIDATE_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
+        run: |
+          set -euo pipefail
+          latest=$(gh api "repos/$REPO/commits/main" --jq .sha)
+          if [[ "$latest" != "$CANDIDATE_SHA" ]]; then
+            echo 'Skipped superseded commit.' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          passed=$(gh run list --repo "$REPO" --workflow backend-tests.yml --branch main \
+            --event push --commit "$CANDIDATE_SHA" --status success --limit 1 \
+            --json headSha --jq '.[0].headSha // ""')
+          [[ "$passed" == "$CANDIDATE_SHA" ]] || { echo 'Backend CI must pass first.'; exit 1; }
+          echo "sha=$CANDIDATE_SHA" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: candidate
+    if: needs.candidate.outputs.sha != ''
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    environment: railway-production
+    env:
+      DEPLOY_SHA: ${{ needs.candidate.outputs.sha }}
+      DEPLOY_MESSAGE: GitHub ${{ needs.candidate.outputs.sha }} run ${{ github.run_id }} attempt ${{ github.run_attempt }}
+      RAILWAY_PROJECT: 43e82cd3-ad0e-4e4c-8de1-8e093a36d642
+      RAILWAY_ENVIRONMENT: 61aa1f20-b04c-40da-bebd-896faf2f2a2a
+      RAILWAY_SERVICE: f19c876d-b933-48c7-ab21-be7a0d8bf002
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ needs.candidate.outputs.sha }}
+          persist-credentials: false
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: '3.12'
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '24'
+      - name: Install pinned Railway CLI
+        run: npm install --global @railway/cli@5.63.1
+      - name: Deploy tested backend
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          set -euo pipefail
+          [[ -n "$RAILWAY_TOKEN" ]] || { echo 'Missing Railway production token.'; exit 1; }
+          railway up --project "$RAILWAY_PROJECT" --environment "$RAILWAY_ENVIRONMENT" \
+            --service "$RAILWAY_SERVICE" --detach --message "$DEPLOY_MESSAGE"
+          python scripts/railway_post_deploy.py wait --message "$DEPLOY_MESSAGE"
+      - name: Import and verify finished games
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          set -euo pipefail
+          # Fetch existing owner credentials at runtime; never copy them to GitHub secrets or logs.
+          railway run --no-local --project "$RAILWAY_PROJECT" --environment "$RAILWAY_ENVIRONMENT" \
+            --service "$RAILWAY_SERVICE" -- python scripts/railway_post_deploy.py refresh
+          echo "Deployed $DEPLOY_SHA and validated the finished-game feed." >> "$GITHUB_STEP_SUMMARY"
