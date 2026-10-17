@@ -165,6 +165,56 @@ class DailyFeedTest(unittest.TestCase):
                 summary["boxscore"]["players"][0]["statistics"][0]["athletes"][0]["stats"][1] = value
                 self.assert_preserved(lambda url: summary if "summary?" in url else self.fetch(url))
 
+    def placeholder_summary(self):
+        summary = copy.deepcopy(self.summary)
+        group = summary["boxscore"]["players"][0]["statistics"][0]
+        entry = copy.deepcopy(group["athletes"][0])
+        entry.update(didNotPlay=False, starter=False)
+        entry["athlete"].update(id="placeholder", displayName="Unused roster player")
+        entry["stats"] = ["--" if name == "MIN" else "0-0" if name in ("FG", "3PT", "FT")
+                          else "0" for name in group["names"]]
+        group["athletes"].append(entry)
+        return summary, group, entry
+
+    def test_missing_minutes_zero_activity_nonstarter_does_not_block_final(self):
+        # ESPN can mark unused roster rows didNotPlay=false, MIN="--".
+        summary, _, _ = self.placeholder_summary()
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "games.json"
+            path.write_text(json.dumps(self.previous))
+            fetch = lambda url: summary if "summary?" in url else self.fetch(url)
+            self.assertFalse(update_file(path, date(2026, 10, 10), fetch, finished_only=True))
+            self.assertEqual(self.previous, json.loads(path.read_bytes()))
+
+    def test_missing_minutes_with_activity_or_invalid_values_preserves_cache(self):
+        cases = [("starter", True), ("MIN", None), ("MIN", ""), ("MIN", "DNP"),
+                 ("MIN", "-1"), ("MIN", "1:60"), ("MIN", 0), ("MIN", True),
+                 ("PTS", "1"), ("PTS", "0.0"), ("REB", "1"), ("AST", "1"),
+                 ("STL", "1"), ("BLK", "1"), ("TO", "1"), ("FG", "0-1"),
+                 ("3PT", "0-1"), ("FT", "0-1"), ("PF", "1"), ("+/-", "-1")]
+        for name, value in cases:
+            with self.subTest(name=name, value=value), tempfile.TemporaryDirectory() as folder:
+                summary, group, entry = self.placeholder_summary()
+                if name == "starter":
+                    entry[name] = value
+                else:
+                    entry["stats"][group["names"].index(name)] = value
+                path = Path(folder) / "games.json"
+                original = json.dumps(self.previous, indent=3).encode()
+                path.write_bytes(original)
+                fetch = lambda url: summary if "summary?" in url else self.fetch(url)
+                with self.assertRaises(ValueError):
+                    update_file(path, date(2026, 10, 10), fetch, finished_only=True)
+                self.assertEqual(original, path.read_bytes())
+                self.assertEqual([path], list(path.parent.iterdir()))
+
+    def test_subminute_zero_stat_player_is_retained(self):
+        summary, group, entry = self.placeholder_summary()
+        entry["stats"][group["names"].index("MIN")] = "0:12"
+        game = event_to_game(self.event, {}, lambda url: summary)
+        player = next(p for p in game["away"]["players"] if p["id"] == "espn_placeholder")
+        self.assertEqual((0, 12), (player["stats"]["minutes"], player["stats"]["seconds"]))
+
     def test_inconsistent_final_points_preserve_published_bytes(self):
         summary = copy.deepcopy(self.summary)
         summary["boxscore"]["players"][0]["statistics"][0]["athletes"][0]["stats"][1] = "14"
