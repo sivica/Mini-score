@@ -1,0 +1,11 @@
+:root { color-scheme: dark; font-family: sans-serif; background: #1b1b21; color: #f5f5f8; }
+body { margin: 0; padding: 16px; }
+h1 { font-size: 18px; line-height: 1.5; margin: 0 0 8px; }
+p { font-size: 14px; line-height: 1.5; }
+.player { padding: 12px 0; border-bottom: 1px solid #777780; }
+.name { font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; margin-bottom: 6px; }
+.track { height: 18px; background: #393940; display: flex; border-radius: 3px; overflow: hidden; }
+.bar, .made { background: #71d6c4; }
+.missed { background: #d5b6fa; }
+.detail { font-size: 14px; line-height: 1.5; margin-top: 4px; }
+.legend { color: #e4e4e9; }

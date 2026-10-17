@@ -38,6 +38,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        gameViewModel.refreshGames()
+        // Opening a document picker or returning to the activity must not silently replace
+        // the chart's captured game. Only its explicit Refresh action updates that session.
+        if (gameViewModel.visualizations.session.value == null) gameViewModel.refreshGames()
     }
 }
